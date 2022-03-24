@@ -28,7 +28,8 @@ public class DefaultConfig {
     }
     private static Properties createConfigComments(){
         Properties comments = new Properties();
-        comments.setProperty("mouseSelect", "#if you want to be able to select an item in the access bar by leftclicking");
+        comments.setProperty("mouseSelect", "#This mods GitHib page: https://github.com/TrueHorse/Wild-Tool-Access \n"+
+                                            "#if you want to be able to select an item in the access bar by leftclicking");
         comments.setProperty("escClose", "#if you want to be able to close the bar by pressing esc");
         comments.setProperty("selectSound1", "#the Sound you want to play, when selecting an item in bar 1  0->non; 1->scroll; 2->equip; 3->select");
         comments.setProperty("selectSound2", "#see above, but for bar 2");

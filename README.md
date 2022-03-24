@@ -1,9 +1,8 @@
-# Fabric Example Mod
+# Willd Tool Access
 
-## Setup
+Wild Tool Access is a Minecraft mod, that adds a tool access bar to Minecraft, similar to the one in
+"The Legend of Zelda: Breath of the Wild".
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+# Download
 
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This mod is available on [CurseForge]()
