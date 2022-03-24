@@ -1,0 +1,43 @@
+{
+  "select10": {
+    "sounds": [
+      "wildtoolaccess:select0"
+    ]
+  },
+  "select11": {
+    "sounds": [
+      "wildtoolaccess:select1"
+    ]
+  },
+  "select12": {
+    "sounds": [
+      "wildtoolaccess:select2"
+    ]
+  },
+  "select13": {
+    "sounds": [
+      "wildtoolaccess:select3"
+    ]
+  },
+  "select20": {
+    "sounds": [
+      "wildtoolaccess:select0"
+    ]
+  },
+  "select21": {
+    "sounds": [
+      "wildtoolaccess:select1"
+    ]
+  },
+  "select22": {
+    "sounds": [
+      "wildtoolaccess:select2"
+    ]
+  },
+  "select23": {
+    "sounds": [
+      "wildtoolaccess:select3"
+    ]
+  }
+}
+

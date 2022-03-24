@@ -1,0 +1,4 @@
+The second square is the texture of the first slot of the bar.
+The third square is the texture of the last slot of the bar.
+The fourth square is the texture of the single slot, that is shown, when the bar is empty.
+The first square is the texture of all other slots.

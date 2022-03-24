@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "wildtoolaccess",
+  "version": "${version}",
+
+  "name": "Wild Tool Access",
+  "description": "Lets you access your tools similar to how you access them in Zelda Breath of the Wild.",
+  "authors": [
+    "TrueHooorse"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "",
+  "icon": "assets/wildtoolaccess/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.trueHooorse.wildToolAccess.WildToolAccess"
+    ],
+    "client": [
+      "net.trueHooorse.wildToolAccess.WildToolAccessClient"
+    ]
+  },
+  "mixins": [
+    "wildtoolaccess.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x",
+    "fabric-key-binding-api-v1": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
