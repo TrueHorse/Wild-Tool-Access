@@ -39,7 +39,7 @@ public class DefaultConfig {
         comments.setProperty("yOffset", "#vertical offset of the bar from the default position");
         comments.setProperty("spaceBetweenSlots", "#space left between bar slots");
         comments.setProperty("labels", "#what information should be shown about the items  all->all; enchantments-> enchantments and name;\n"+
-                                        "name->name; non->non");
+                                        "#name->name; non->non");
         comments.setProperty("lastSwapedOutFirst", "#if the tool swaped out should be shown in the first access bar slot next time");
         comments.setProperty("moveIfNextEmpty", "#if the item that would be swaped out of your hotbar should move to the right instead, if that slot is empty");
         comments.setProperty("access1", "#what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff\n"+
