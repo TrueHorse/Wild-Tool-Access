@@ -18,6 +18,7 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.trueHooorse.wildToolAccess.StuffPlaceholder;
+import net.trueHooorse.wildToolAccess.WildToolAccess;
 
 public class WildToolAccessConfig {
 
@@ -33,10 +34,10 @@ public class WildToolAccessConfig {
             try {
                 configs.load(new FileReader(confFile));
             } catch (FileNotFoundException e) {
-                System.out.println("Config file was not found after existing. How?");
+                WildToolAccess.LOGGER.error("Config file was not found after existing. How?");
                 e.printStackTrace();
             } catch (IOException e) {
-                System.out.println("Failed to read the actual config file.");
+                WildToolAccess.LOGGER.error("Failed to read the actual config file.");
                 e.printStackTrace();
             }
         }else{
@@ -56,7 +57,7 @@ public class WildToolAccessConfig {
             confWriter.write(defaultConfigContent);
             confWriter.close();
         } catch (IOException e) {
-            System.out.println("Creation of config file failed");
+            WildToolAccess.LOGGER.error("Creation of config file failed");
             e.printStackTrace();
         }
     }
@@ -84,7 +85,7 @@ public class WildToolAccessConfig {
             case "buckets": return BucketItem.class;
             case "stuff": return StuffPlaceholder.class;
             default:
-            System.out.println("Configured access option does not exist.");
+            WildToolAccess.LOGGER.error("Configured access option does not exist.");
             return null;
         }
     }
