@@ -27,7 +27,7 @@ public class AccessBar{
     }
 
     public void updateAccessStacks(){
-        PlayerInventory inv = client.player.inventory;
+        PlayerInventory inv = client.player.getInventory();
 
         if(!classToAccess.equals(StuffPlaceholder.class)){
             stacks = ((PlayerInventoryAccess)inv).getAllStacksOfType(classToAccess);
@@ -66,7 +66,7 @@ public class AccessBar{
 
     public void selectItem(){
         if(((InGameHudAccess)client.inGameHud).getOpenAccessBar().getSelectedAccessSlot()!=0){
-            PlayerInventory inv = client.player.inventory;
+            PlayerInventory inv = client.player.getInventory();
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
             boolean nextEmpty = inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY;
             SwapItemPacket.sendPacket(selectedToolPos, nextEmpty);
@@ -79,7 +79,7 @@ public class AccessBar{
 
             }
  
-            ItemStack selectedStack = client.player.inventory.getStack(client.player.inventory.selectedSlot);
+            ItemStack selectedStack = client.player.getInventory().getStack(client.player.getInventory().selectedSlot);
             if(classToAccess.isAssignableFrom(selectedStack.getItem().getClass())){
                 lastSwapedOutTool = selectedStack.copy();
             }

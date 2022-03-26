@@ -18,6 +18,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -39,6 +41,8 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     @Shadow
     MinecraftClient client;
     @Shadow
+    ItemRenderer itemRenderer;
+    @Shadow
     int scaledWidth;
     @Shadow
     int scaledHeight;
@@ -53,7 +57,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     @Shadow
     private PlayerEntity getCameraPlayer(){return null;}
     @Shadow
-    private void renderHotbarItem(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack){}
+    private void renderHotbarItem(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initAccessBar(MinecraftClient client, CallbackInfo ci){
@@ -69,11 +73,12 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
             if (playerEntity != null) {
                 openAccessbar.updateAccessStacks();
 
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 if(openAccessbar.getNumber()==1){
-                    this.client.getTextureManager().bindTexture(ACCESS_TEXTURE1);
+                    RenderSystem.setShaderTexture(0, ACCESS_TEXTURE1);
                 }else{
-                    this.client.getTextureManager().bindTexture(ACCESS_TEXTURE2);
+                    RenderSystem.setShaderTexture(0, ACCESS_TEXTURE2);
                 }
                 int i = scaledWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
                 int j = scaledHeight/2 -54+WildToolAccessConfig.getIntValue("yOffset");
@@ -98,14 +103,14 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 this.drawTexture(matrices, i - 1, j - 1, 0, 22, 24, 22);
       
                 this.setZOffset(m);
-                RenderSystem.enableRescaleNormal();
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
 
                 j += 3;
+                int o =1;
                 for(k = 0; k < openAccessbar.getStacks().size(); ++k) {
                     l = i + k * distance + 3 - distance*(openAccessbar.getSelectedAccessSlot()-1);
-                    this.renderHotbarItem(l, j, tickDelta, playerEntity, (ItemStack)openAccessbar.getStacks().get(k));
+                    this.renderHotbarItem(l, j, tickDelta, playerEntity, (ItemStack)openAccessbar.getStacks().get(k),o++);
                 }
 
                 String labConf = WildToolAccessConfig.getStringValue("labels");
@@ -134,7 +139,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
             }
     
             if(labConf.equals("enchantments")){
-                if (selectedStack.hasTag()) {
+                if (selectedStack.hasNbt()) {
                        ItemStack.appendEnchantments(tooltip, selectedStack.getEnchantments());
                 }
             }
