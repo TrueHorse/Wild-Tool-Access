@@ -10,10 +10,10 @@
   ],
   "contact": {
     "homepage": "",
-    "sources": ""
+    "sources": "https://github.com/TrueHorse/Wild-Tool-Access/tree/master"
   },
 
-  "license": "",
+  "license": "https://github.com/TrueHorse/Wild-Tool-Access/blob/master/LICENCE",
   "icon": "assets/wildtoolaccess/icon.png",
 
   "environment": "*",
