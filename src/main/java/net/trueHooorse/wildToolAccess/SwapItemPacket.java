@@ -17,9 +17,9 @@ public class SwapItemPacket {
             Boolean nextEmpty = buf.readBoolean();
             server.execute(() -> {
                 if(nextEmpty&&WildToolAccessConfig.getBoolValue("moveIfNextEmpty")){
-                    ((PlayerInventoryAccess)player.inventory).moveSelectedAndSlot(itemSlot);
+                    ((PlayerInventoryAccess)player.getInventory()).moveSelectedAndSlot(itemSlot);
                 }else{
-                    ((PlayerInventoryAccess)player.inventory).swapSlotWithSelected(itemSlot);
+                    ((PlayerInventoryAccess)player.getInventory()).swapSlotWithSelected(itemSlot);
                 }
             });
         });

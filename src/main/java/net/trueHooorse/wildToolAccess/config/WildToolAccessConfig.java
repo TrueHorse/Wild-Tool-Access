@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
-import net.fabricmc.fabric.api.tag.TagRegistry;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
@@ -24,7 +24,7 @@ public class WildToolAccessConfig {
 
     private static Properties configs = new Properties();
     private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
-    public static Tag<Item> stuffTag = TagRegistry.item(new Identifier("wildtoolaccess","stuff"));
+    public static Tag<Item> stuffTag = TagFactory.ITEM.create(new Identifier("wildtoolaccess","stuff"));
 
     public static void loadCofigs(){
         configs = DefaultConfig.defaultConfigs;
