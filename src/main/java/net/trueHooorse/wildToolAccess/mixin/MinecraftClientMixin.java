@@ -29,7 +29,7 @@ public abstract class MinecraftClientMixin {
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
             client.options.keyAttack.setPressed(false);
         }else{
-            ((MinecraftClientInvoker)client).invokeDoAttack();
+            this.doAttack();
         }
     }
 }
