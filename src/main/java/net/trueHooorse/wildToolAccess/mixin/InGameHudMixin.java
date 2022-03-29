@@ -66,7 +66,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
         accessbar2 = new AccessBar(2, client);
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(F Lnet/minecraft/client/util/math/MatrixStack;)V",shift = At.Shift.AFTER))
     public void renderAccessBar(MatrixStack matrices, float tickDelta, CallbackInfo info){
         if(((GameOptionsAccess)client.options).isAccessBarOpen()){
             PlayerEntity playerEntity = this.getCameraPlayer();
