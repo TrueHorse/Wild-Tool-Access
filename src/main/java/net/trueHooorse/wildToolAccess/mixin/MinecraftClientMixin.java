@@ -19,17 +19,15 @@ public abstract class MinecraftClientMixin {
     public GameOptions options;
     @Shadow
     public InGameHud inGameHud;
-
-    @Shadow
-    private void doAttack(){};
     
-    @Redirect(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doAttack()V"))
-    private void attackOrChoose(MinecraftClient client){
+    @Redirect(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doAttack()Z"))
+    private boolean attackOrChoose(MinecraftClient client){
         if(((GameOptionsAccess)options).isAccessBarOpen()&&WildToolAccessConfig.getBoolValue("mouseSelect")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
-            client.options.keyAttack.setPressed(false);
+            client.options.attackKey.setPressed(false);
+            return false;
         }else{
-            ((MinecraftClientInvoker)client).invokeDoAttack();
+            return ((MinecraftClientInvoker)client).invokeDoAttack();
         }
     }
 }

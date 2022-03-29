@@ -9,5 +9,5 @@ import net.minecraft.client.MinecraftClient;
 public interface MinecraftClientInvoker {
     
     @Invoker("doAttack")
-    public void invokeDoAttack();
+    public boolean invokeDoAttack();
 }

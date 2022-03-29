@@ -34,7 +34,8 @@
     "fabric": "*",
     "minecraft": "1.18.x",
     "java": ">=17",
-    "fabric-key-binding-api-v1": "*"
+    "fabric-key-binding-api-v1": "*",
+    "fabric-registry-sync-v0": "*"
   },
   "suggests": {
     "another-mod": "*"
