@@ -19,6 +19,8 @@ public abstract class MinecraftClientMixin {
     public GameOptions options;
     @Shadow
     public InGameHud inGameHud;
+    @Shadow
+    private boolean doAttack(){return false;};
     
     @Redirect(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doAttack()Z"))
     private boolean attackOrChoose(MinecraftClient client){
@@ -27,7 +29,7 @@ public abstract class MinecraftClientMixin {
             client.options.attackKey.setPressed(false);
             return false;
         }else{
-            return ((MinecraftClientInvoker)client).invokeDoAttack();
+            return this.doAttack();
         }
     }
 }
