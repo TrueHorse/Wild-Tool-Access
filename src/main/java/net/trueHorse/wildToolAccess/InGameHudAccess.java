@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess;
+package net.trueHorse.wildToolAccess;
 
 public interface InGameHudAccess {
 

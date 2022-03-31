@@ -1,11 +1,11 @@
-package net.trueHooorse.wildToolAccess;
+package net.trueHorse.wildToolAccess;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.trueHooorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class SwapItemPacket {
 

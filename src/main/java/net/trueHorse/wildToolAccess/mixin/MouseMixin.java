@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess.mixin;
+package net.trueHorse.wildToolAccess.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.entity.player.PlayerInventory;
-import net.trueHooorse.wildToolAccess.GameOptionsAccess;
-import net.trueHooorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.GameOptionsAccess;
+import net.trueHorse.wildToolAccess.InGameHudAccess;
 
 @Mixin(Mouse.class)
 public abstract class MouseMixin {

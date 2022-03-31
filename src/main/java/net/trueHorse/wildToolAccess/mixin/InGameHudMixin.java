@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess.mixin;
+package net.trueHorse.wildToolAccess.mixin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +30,10 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.trueHooorse.wildToolAccess.AccessBar;
-import net.trueHooorse.wildToolAccess.GameOptionsAccess;
-import net.trueHooorse.wildToolAccess.InGameHudAccess;
-import net.trueHooorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.AccessBar;
+import net.trueHorse.wildToolAccess.GameOptionsAccess;
+import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{

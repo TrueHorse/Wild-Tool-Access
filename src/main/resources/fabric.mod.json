@@ -6,7 +6,7 @@
   "name": "Wild Tool Access",
   "description": "Lets you access your tools similar to how you access them in Zelda Breath of the Wild.",
   "authors": [
-    "TrueHooorse"
+    "TrueHorse"
   ],
   "contact": {
     "homepage": "",
@@ -19,10 +19,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.trueHooorse.wildToolAccess.WildToolAccess"
+      "net.trueHorse.wildToolAccess.WildToolAccess"
     ],
     "client": [
-      "net.trueHooorse.wildToolAccess.WildToolAccessClient"
+      "net.trueHorse.wildToolAccess.WildToolAccessClient"
     ]
   },
   "mixins": [
