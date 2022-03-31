@@ -69,6 +69,8 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
             if (playerEntity != null) {
                 openAccessbar.updateAccessStacks();
 
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 if(openAccessbar.getNumber()==1){
                     this.client.getTextureManager().bindTexture(ACCESS_TEXTURE1);
@@ -99,8 +101,6 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
       
                 this.setZOffset(m);
                 RenderSystem.enableRescaleNormal();
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
 
                 j += 3;
                 for(k = 0; k < openAccessbar.getStacks().size(); ++k) {
@@ -112,6 +112,8 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 if(!labConf.equals("non")&&openAccessbar.getSelectedAccessSlot()!=0){
                     renderLabels(matrices, labConf, i, j);
                 }
+                RenderSystem.disableRescaleNormal();
+                RenderSystem.disableBlend();
             }
         }
     }
