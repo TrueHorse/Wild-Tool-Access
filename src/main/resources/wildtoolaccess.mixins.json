@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
-  "package": "net.trueHooorse.wildToolAccess.mixin",
+  "package": "net.trueHorse.wildToolAccess.mixin",
   "mixins": [
     "PlayerInventoryMixin"
   ],

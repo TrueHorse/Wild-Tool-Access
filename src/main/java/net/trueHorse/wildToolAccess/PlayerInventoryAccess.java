@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess;
+package net.trueHorse.wildToolAccess;
 
 import java.util.ArrayList;
 

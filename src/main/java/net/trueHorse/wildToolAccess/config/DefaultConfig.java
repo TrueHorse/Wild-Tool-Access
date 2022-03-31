@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess.config;
+package net.trueHorse.wildToolAccess.config;
 
 import java.util.Properties;
 
