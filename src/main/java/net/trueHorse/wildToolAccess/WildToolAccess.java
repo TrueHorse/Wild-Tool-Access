@@ -1,7 +1,7 @@
-package net.trueHooorse.wildToolAccess;
+package net.trueHorse.wildToolAccess;
 
 import net.fabricmc.api.ModInitializer;
-import net.trueHooorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class WildToolAccess implements ModInitializer {
 

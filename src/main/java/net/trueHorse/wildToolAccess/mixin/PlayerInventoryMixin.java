@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess.mixin;
+package net.trueHorse.wildToolAccess.mixin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.collection.DefaultedList;
-import net.trueHooorse.wildToolAccess.PlayerInventoryAccess;
+import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
 
 @Mixin(PlayerInventory.class)
 public class PlayerInventoryMixin implements PlayerInventoryAccess{

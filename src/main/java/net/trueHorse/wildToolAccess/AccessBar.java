@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess;
+package net.trueHorse.wildToolAccess;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.trueHooorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class AccessBar{
     

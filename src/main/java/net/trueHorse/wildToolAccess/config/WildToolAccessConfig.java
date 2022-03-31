@@ -1,4 +1,4 @@
-package net.trueHooorse.wildToolAccess.config;
+package net.trueHorse.wildToolAccess.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,7 +17,7 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
-import net.trueHooorse.wildToolAccess.StuffPlaceholder;
+import net.trueHorse.wildToolAccess.StuffPlaceholder;
 
 public class WildToolAccessConfig {
 

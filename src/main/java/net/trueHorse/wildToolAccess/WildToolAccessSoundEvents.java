@@ -1,9 +1,9 @@
-package net.trueHooorse.wildToolAccess;
+package net.trueHorse.wildToolAccess;
 
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.trueHooorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class WildToolAccessSoundEvents {
     public static SoundEvent SELECT_IN_ACCESS1 = register(new Identifier("wildtoolaccess","select1"+WildToolAccessConfig.getIntValue("selectSound1")));
