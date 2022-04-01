@@ -5,4 +5,4 @@
 
 # Download
 
-This mod is available on [CurseForge]() and [Modrinth]()
+This mod is available on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/wta) and [Modrinth](https://modrinth.com/mod/wta)
