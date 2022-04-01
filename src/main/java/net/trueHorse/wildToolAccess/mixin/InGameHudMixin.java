@@ -21,6 +21,7 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.PotionItem;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
@@ -138,6 +139,11 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
             if(labConf.equals("enchantments")){
                 if (selectedStack.hasTag()) {
                        ItemStack.appendEnchantments(tooltip, selectedStack.getEnchantments());
+                }
+                if (selectedStack.getItem() instanceof PotionItem){
+                    List<Text> temp = new ArrayList<Text>();
+                    selectedStack.getItem().appendTooltip(selectedStack, client.player == null ? null : client.player.world, temp, TooltipContext.Default.ADVANCED);
+                    tooltip.add(temp.get(0));
                 }
             }
         }
