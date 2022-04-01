@@ -5,4 +5,4 @@ Wild Tool Access is a Minecraft mod, that adds a tool access bar to Minecraft, s
 
 # Download
 
-This mod is available on [CurseForge]()
+This mod is available on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/wta) and [Modrinth](https://modrinth.com/mod/wta)
