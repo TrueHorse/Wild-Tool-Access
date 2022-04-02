@@ -30,11 +30,11 @@ public class AccessBar{
         PlayerInventory inv = client.player.inventory;
 
         if(!classToAccess.equals(StuffPlaceholder.class)){
-            stacks = ((PlayerInventoryAccess)inv).getAllStacksOfType(classToAccess);
+            stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess);
         }else{
-            stacks = ((PlayerInventoryAccess)inv).getAllStacksWithTag(WildToolAccessConfig.stuffTag);
+            stacks = ((PlayerInventoryAccess)inv).getAllMainStacksWithTag(WildToolAccessConfig.stuffTag);
         }
-        if(WildToolAccessConfig.getBoolValue("LastSwapedOutFirst")){
+        if(WildToolAccessConfig.getBoolValue("lastSwapedOutFirst")){
             ItemStack prioStack = inv.getStack(inv.getSlotWithStack(lastSwapedOutTool)==-1? 1000:inv.getSlotWithStack(lastSwapedOutTool));
             if(prioStack!=ItemStack.EMPTY && inv.contains(prioStack)){
                 ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
@@ -69,6 +69,7 @@ public class AccessBar{
             PlayerInventory inv = client.player.inventory;
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
             boolean nextEmpty = inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY;
+            ItemStack selectedStack = client.player.inventory.getStack(client.player.inventory.selectedSlot);
             SwapItemPacket.sendPacket(selectedToolPos, nextEmpty);
 
             if(this.number==1){
@@ -76,10 +77,8 @@ public class AccessBar{
 
             }else{
                 client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.SELECT_IN_ACCESS2,1.0F,1.0F));
-
             }
  
-            ItemStack selectedStack = client.player.inventory.getStack(client.player.inventory.selectedSlot);
             if(classToAccess.isAssignableFrom(selectedStack.getItem().getClass())){
                 lastSwapedOutTool = selectedStack.copy();
             }

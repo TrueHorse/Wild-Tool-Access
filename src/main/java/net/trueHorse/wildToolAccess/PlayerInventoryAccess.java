@@ -8,9 +8,9 @@ import net.minecraft.tag.Tag;
 
 public interface PlayerInventoryAccess {
     
-    public <T> ArrayList<ItemStack> getAllStacksOfType(Class<T> type);
+    public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type);
 
-    public ArrayList<ItemStack> getAllStacksWithTag(Tag<Item> tag);
+    public ArrayList<ItemStack> getAllMainStacksWithTag(Tag<Item> tag);
 
     public void swapSlotWithSelected(int slot);
 
