@@ -1,7 +1,6 @@
 package net.trueHorse.wildToolAccess.mixin;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,8 +17,9 @@ import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
 @Mixin(PlayerInventory.class)
 public class PlayerInventoryMixin implements PlayerInventoryAccess{
 
+    @Final
     @Shadow
-    private List<DefaultedList<ItemStack>> combinedInventory;
+    public DefaultedList<ItemStack> main;
     @Shadow
     public int selectedSlot;
     @Final
@@ -34,29 +34,22 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     public ItemStack getMainHandStack(){return null;};
 
     @Override
-    public <T> ArrayList<ItemStack> getAllStacksOfType(Class<T> type){
+    public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for(int i=0;i<combinedInventory.size();i++){
-            DefaultedList<ItemStack> inv = combinedInventory.get(i);
-            for(int j=0;j<inv.size();j++){
-                if(type.isAssignableFrom(inv.get(j).getItem().getClass())){
-                    stacks.add(inv.get(j));
-                }
+        for(int j=0;j<main.size();j++){
+            if(type.isAssignableFrom(main.get(j).getItem().getClass())){
+                stacks.add(main.get(j));
             }
         }
         return stacks;
     }
 
     @Override
-    public ArrayList<ItemStack> getAllStacksWithTag(TagKey<Item> tag){
+    public ArrayList<ItemStack> getAllMainStacksWithTag(TagKey<Item> tag){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for(int i=0;i<combinedInventory.size();i++){
-            DefaultedList<ItemStack> inv = combinedInventory.get(i);
-            for(int j=0;j<inv.size();j++){
-                if(inv.get(j).isIn(tag)){
-                    stacks.add(inv.get(j));
-                    
-                }
+        for(int j=0;j<main.size();j++){
+            if(main.get(j).isIn(tag)){
+                stacks.add(main.get(j));
             }
         }
         return stacks;
