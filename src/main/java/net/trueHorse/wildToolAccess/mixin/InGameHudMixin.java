@@ -24,11 +24,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
-import net.minecraft.text.LiteralText;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.AccessBar;
@@ -61,7 +60,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     private void renderHotbarItem(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initAccessBar(MinecraftClient client, CallbackInfo ci){
+    private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
     
         accessbar1 = new AccessBar(1, client);
         accessbar2 = new AccessBar(2, client);
@@ -129,12 +128,12 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
         List<Text> tooltip;
         if(labConf.equals("all")){
             tooltip = selectedStack.getTooltip(client.player, this.client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL);
-            tooltip.remove(LiteralText.EMPTY);
-            tooltip.remove((new TranslatableText("item.modifiers.mainhand")).formatted(Formatting.GRAY));
+            tooltip.remove(ScreenTexts.EMPTY);
+            tooltip.remove((Text.translatable("item.modifiers.mainhand")).formatted(Formatting.GRAY));
         }else{
             tooltip = new ArrayList<Text>();
             if(labConf.equals("name")||labConf.equals("enchantments")){
-                MutableText name = (new LiteralText("")).append(selectedStack.getName()).formatted(selectedStack.getRarity().formatting);
+                MutableText name = (Text.literal("")).append(selectedStack.getName()).formatted(selectedStack.getRarity().formatting);
                 if (selectedStack.hasCustomName()) {
                     name.formatted(Formatting.ITALIC);
                 }
