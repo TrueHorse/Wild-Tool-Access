@@ -26,6 +26,7 @@ public abstract class MinecraftClientMixin {
     private void attackOrChoose(CallbackInfoReturnable<Boolean> info){
         if(((GameOptionsAccess)options).isAccessBarOpen()&&WildToolAccessConfig.getBoolValue("mouseSelect")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
+            options.attackKey.setPressed(false);
             info.cancel();
         }
     }
