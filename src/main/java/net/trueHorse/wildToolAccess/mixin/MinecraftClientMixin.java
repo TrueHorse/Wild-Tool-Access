@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -23,7 +24,7 @@ public abstract class MinecraftClientMixin {
     public InGameHud inGameHud;
     
     @Inject(method = "doAttack", at = @At(value = "HEAD"), cancellable = true)
-    private void attackOrChoose(MinecraftClient client, CallbackInfo info){
+    private void attackOrChoose(CallbackInfoReturnable<Boolean> info){
         if(((GameOptionsAccess)options).isAccessBarOpen()&&WildToolAccessConfig.getBoolValue("mouseSelect")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
             info.cancel();
