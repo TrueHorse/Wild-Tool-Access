@@ -9,7 +9,6 @@
   "client": [
     "GameOptionsMixin",
     "InGameHudMixin",
-    "MouseMixin",
     "MinecraftClientMixin"
   ],
   "injectors": {
