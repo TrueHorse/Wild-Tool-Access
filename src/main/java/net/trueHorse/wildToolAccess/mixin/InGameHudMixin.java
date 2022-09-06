@@ -46,8 +46,11 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     int scaledWidth;
     @Shadow
     int scaledHeight;
-    private static Identifier ACCESS_TEXTURE1 = new Identifier("wildtoolaccess","textures/gui/access_widgets"+WildToolAccessConfig.getIntValue("barTexture1")+".png");
-    private static Identifier ACCESS_TEXTURE2 = new Identifier("wildtoolaccess","textures/gui/access_widgets"+WildToolAccessConfig.getIntValue("barTexture2")+".png");
+    private final List<Identifier> accessBarTextures = List.of(
+        new Identifier("wildtoolaccess","textures/gui/access_widgets0"),
+        new Identifier("wildtoolaccess","textures/gui/access_widgets1"));
+    private Identifier accessBarTexture1;
+    private Identifier accessBarTexture2;
     @Final
     private AccessBar accessbar1;
     @Final
@@ -61,7 +64,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
-    
+        setAccessBarTexturesAsConfigured();
         accessbar1 = new AccessBar(1, client);
         accessbar2 = new AccessBar(2, client);
     }
@@ -79,9 +82,9 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 RenderSystem.defaultBlendFunc();
 
                 if(openAccessbar.getNumber()==1){
-                    RenderSystem.setShaderTexture(0, ACCESS_TEXTURE1);
+                    RenderSystem.setShaderTexture(0, accessBarTexture1);
                 }else{
-                    RenderSystem.setShaderTexture(0, ACCESS_TEXTURE2);
+                    RenderSystem.setShaderTexture(0, accessBarTexture2);
                 }
                 int i = scaledWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
                 int j = scaledHeight/2 -54+WildToolAccessConfig.getIntValue("yOffset");
@@ -163,6 +166,11 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 textRenderer.drawWithShadow(matrices, text, i+10+3-textRenderer.getWidth(text)/2, j+12+10*v, -1);
             }                    
         }
+    }
+
+    public void setAccessBarTexturesAsConfigured(){
+        accessBarTexture1 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1"));
+        accessBarTexture2 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture2"));
     }
 
     @Override

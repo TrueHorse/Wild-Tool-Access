@@ -5,8 +5,7 @@ import java.util.Properties;
 public class DefaultConfig {
     
     public static final Properties defaultConfigs = createDefaultConfigs();
-    private static final Properties configComments = createConfigComments();
-    private static final String[] configOrder = {"mouseSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","labels","lastSwapedOutFirst","moveIfNextEmpty","access1","access2"};
+    public static final Properties configComments = createConfigComments();
 
     private static Properties createDefaultConfigs(){
         Properties configs = new Properties();
@@ -21,7 +20,7 @@ public class DefaultConfig {
         configs.setProperty("spaceBetweenSlots", "0");
         configs.setProperty("labels", "enchantments");
         configs.setProperty("lastSwapedOutFirst", "true");
-        configs.setProperty("moveIfNextEmpty", "true");
+        configs.setProperty("moveIfNextEmpty", "false");
         configs.setProperty("access1", "tools");
         configs.setProperty("access2", "swords");
         return configs;
@@ -31,7 +30,7 @@ public class DefaultConfig {
         comments.setProperty("mouseSelect", "#This mods GitHib page: https://github.com/TrueHorse/Wild-Tool-Access \n"+
                                             "#if you want to be able to select an item in the access bar by leftclicking");
         comments.setProperty("escClose", "#if you want to be able to close the bar by pressing esc");
-        comments.setProperty("selectSound1", "#the Sound you want to play, when selecting an item in bar 1  0->non; 1->scroll; 2->equip; 3->select");
+        comments.setProperty("selectSound1", "#the Sound you want to play, when selecting an item in bar 1");
         comments.setProperty("selectSound2", "#see above, but for bar 2");
         comments.setProperty("barTexture1", "#texture of the bar  0->mine 1->my brothers (or use your own with a texture pack of cause)");
         comments.setProperty("barTexture2", "#see above, but for bar 2");
@@ -47,14 +46,5 @@ public class DefaultConfig {
                                                 "#By default it includes torch, ladder, bucket and cobblestone.");
         comments.setProperty("access2", "#see above, but for access 2");
         return comments;
-    }
-
-    public static String getConfigContentAsString(){
-        String configString = "";
-        for (String key : configOrder) {
-            configString = configString+configComments.getProperty((String)key)+'\n';
-            configString = configString+key+"="+defaultConfigs.getProperty(key)+'\n';
-        }
-        return configString;
     }
 }

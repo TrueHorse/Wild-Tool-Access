@@ -9,7 +9,6 @@
     "TrueHorse"
   ],
   "contact": {
-    "homepage": "",
     "sources": "https://github.com/TrueHorse/Wild-Tool-Access/tree/master"
   },
 
@@ -23,6 +22,9 @@
     ],
     "client": [
       "net.trueHorse.wildToolAccess.WildToolAccessClient"
+    ],
+    "modmenu": [
+      "net.trueHorse.wildToolAccess.compatibility.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -39,5 +41,13 @@
   },
   "suggests": {
     "another-mod": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "link.wildtoolaccess.curse_forge": "https://www.curseforge.com/minecraft/mc-mods/wta",
+        "link.Wildtoolaccess.modrinth": "https://modrinth.com/mod/wta"
+      }
+    }
   }
 }
