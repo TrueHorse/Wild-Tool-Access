@@ -11,7 +11,7 @@ public class WildToolAccessSoundEvents {
     public static SoundEvent selectInAccess1;
     public static SoundEvent selectInAccess2;
 
-    private static ArrayList<SoundEvent> soundEvents;
+    private static ArrayList<SoundEvent> soundEvents = new ArrayList<SoundEvent>();
 
     public static SoundEvent register(Identifier id){
         return Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));

@@ -13,8 +13,8 @@
 	"option.wildtoolaccess.y_offset": "vertical bar offset",
 	"option.wildtoolaccess.space_between_slots": "space between slots",
 	"option.wildtoolaccess.labels": "item information shown",
-	"option.wildtoolaccess.last_swapped_out_first": "last swapped out first",
-	"option.wildtoolaccess.move_if_next_empty": "move, if right slot empty",
+	"option.wildtoolaccess.last_swapped_out_first": "tool that got swapped out last time will be in first slot",
+	"option.wildtoolaccess.move_if_next_empty": "item to get swapped out will go in slot to the right, if it's empty",
 	"option.wildtoolaccess.access_1": "type of items in bar 1",
 	"option.wildtoolaccess.access_2": "type of items in bar 2",
 
@@ -27,7 +27,7 @@
 	"tooltip.wildtoolaccess.x_offset": "horizontal access bar offset",
 	"tooltip.wildtoolaccess.y_offset": "vertical access bar offset",
 	"tooltip.wildtoolaccess.space_between_slots": "space between access bar slots",
-	"tooltip.wildtoolaccess.item_information": "see config file for further info",
+	"tooltip.wildtoolaccess.labels": "see config file for further info",
 	"tooltip.wildtoolaccess.last_swapped_out_first": "see config file for further info",
 	"tooltip.wildtoolaccess.move_if_next_empty": "see config file for further info",
 	"tooltip.wildtoolaccess.access_1": "see config file for further info",
@@ -42,5 +42,8 @@
 	"option_val.wildtoolaccess.ranged_weapons": "ranged weapons",
 	"option_val.wildtoolaccess.potions": "potions",
 	"option_val.wildtoolaccess.buckets": "buckets",
-	"option_val.wildtoolaccess.stuff": "stuff"
+	"option_val.wildtoolaccess.stuff": "stuff",
+
+	"link.wildtoolaccess.curse_forge": "CurseForge",
+	"link.wildtoolaccess.modrinth": "Modrinth"
 }

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -55,6 +56,7 @@ public class WildToolAccessConfig {
                 boolean success = MOD_CONFIG_FILE.delete();
                 if(!success) {
                     WildToolAccess.LOGGER.error("Config file could not be deleted.");
+                    WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
                 }
         }
 
@@ -93,6 +95,7 @@ public class WildToolAccessConfig {
             return Boolean.parseBoolean(configs.getProperty(key));
         }else{
             WildToolAccess.LOGGER.error("Couldn't get boolean config option. Key "+key+" isn't present.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
             return false;
         }
     }
@@ -108,6 +111,7 @@ public class WildToolAccessConfig {
             case "stuff": return StuffPlaceholder.class;
             default:
             WildToolAccess.LOGGER.error("Configured access option for "+key+" does not exist.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
             return null;
         }
     }
@@ -117,6 +121,7 @@ public class WildToolAccessConfig {
             return configs.getProperty(key).toLowerCase();
         }else {
             WildToolAccess.LOGGER.error("Couldn't get string config option. Key "+key+" isn't present.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
             return "";
         }
     }
@@ -126,6 +131,7 @@ public class WildToolAccessConfig {
             configs.replace(key,val);
         }else{
             WildToolAccess.LOGGER.error("Couldn't set config option. Key "+key+" isn't present.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
         }
 
     }

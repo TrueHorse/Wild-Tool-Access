@@ -47,8 +47,8 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     @Shadow
     int scaledHeight;
     private final List<Identifier> accessBarTextures = List.of(
-        new Identifier("wildtoolaccess","textures/gui/access_widgets0"),
-        new Identifier("wildtoolaccess","textures/gui/access_widgets1"));
+        new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
+        new Identifier("wildtoolaccess","textures/gui/access_widgets1.png"));
     private Identifier accessBarTexture1;
     private Identifier accessBarTexture2;
     @Final
