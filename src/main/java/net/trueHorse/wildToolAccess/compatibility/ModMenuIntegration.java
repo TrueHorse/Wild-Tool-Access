@@ -1,4 +1,4 @@
-package net.trueHorse.wildToolAccess.compatibitity;
+package net.trueHorse.wildToolAccess.compatibility;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
