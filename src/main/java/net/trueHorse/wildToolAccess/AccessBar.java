@@ -73,10 +73,10 @@ public class AccessBar{
             SwapItemPacket.sendPacket(selectedToolPos, nextEmpty);
 
             if(this.number==1){
-                client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.SELECT_IN_ACCESS1,1.0F,1.0F));
+                client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.selectInAccess1,1.0F,1.0F));
 
             }else{
-                client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.SELECT_IN_ACCESS2,1.0F,1.0F));
+                client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.selectInAccess2,1.0F,1.0F));
             }
  
             if(classToAccess.isAssignableFrom(selectedStack.getItem().getClass())){

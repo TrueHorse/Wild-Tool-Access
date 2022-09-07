@@ -9,11 +9,11 @@
     "TrueHorse"
   ],
   "contact": {
-    "homepage": "",
-    "sources": "https://github.com/TrueHorse/Wild-Tool-Access/tree/master"
+    "sources": "https://github.com/TrueHorse/Wild-Tool-Access/tree/master",
+    "issues": "https://github.com/TrueHorse/Wild-Tool-Access/issues"
   },
 
-  "license": "https://github.com/TrueHorse/Wild-Tool-Access/blob/master/LICENCE",
+  "license": "MIT",
   "icon": "assets/wildtoolaccess/icon.png",
 
   "environment": "*",
@@ -23,6 +23,9 @@
     ],
     "client": [
       "net.trueHorse.wildToolAccess.WildToolAccessClient"
+    ],
+    "modmenu": [
+      "net.trueHorse.wildToolAccess.compatibility.ModMenuIntegration"
     ]
   },
   "mixins": [
@@ -39,5 +42,13 @@
   },
   "suggests": {
     "another-mod": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "link.wildtoolaccess.curse_forge": "https://www.curseforge.com/minecraft/mc-mods/wta",
+        "link.wildtoolaccess.modrinth": "https://modrinth.com/mod/wta"
+      }
+    }
   }
 }

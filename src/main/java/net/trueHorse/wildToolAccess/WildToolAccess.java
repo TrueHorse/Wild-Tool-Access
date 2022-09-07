@@ -13,7 +13,5 @@ public class WildToolAccess implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		SwapItemPacket.registerPacket();
-		WildToolAccessConfig.loadCofigs();
-		WildToolAccessSoundEvents.registerAll();
 	}
 }
