@@ -82,10 +82,16 @@ public class WildToolAccessConfig {
     }
 
     public static int getIntValue(String key){
-        try{
-            return Integer.parseInt(configs.getProperty(key));
-        }catch(NumberFormatException e){
-            e.printStackTrace();
+        if(configs.containsKey(key)){
+            try{
+                return Integer.parseInt(configs.getProperty(key));
+            }catch(NumberFormatException e){
+                e.printStackTrace();
+                return -1;
+            }
+        }else {
+            WildToolAccess.LOGGER.error("Couldn't get integer config option. Key "+key+" isn't present.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
             return -1;
         }
     }
