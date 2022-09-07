@@ -1,5 +1,6 @@
 package net.trueHorse.wildToolAccess;
 
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -16,6 +17,10 @@ public class WildToolAccessClient implements ClientModInitializer{
 
     @Override
     public void onInitializeClient() {
+        WildToolAccessConfig.loadCofigs();
+        WildToolAccessSoundEvents.registerAll();
+        WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
+
         access1Binding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.wildtoolaccess.access1",
             InputUtil.Type.KEYSYM,

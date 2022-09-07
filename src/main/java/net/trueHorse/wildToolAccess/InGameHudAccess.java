@@ -7,4 +7,6 @@ public interface InGameHudAccess {
     public void closeOpenAccessbar(boolean select);
 
     public void openAccessbar(int num);
+
+    public void setAccessBarTexturesAsConfigured();
 }

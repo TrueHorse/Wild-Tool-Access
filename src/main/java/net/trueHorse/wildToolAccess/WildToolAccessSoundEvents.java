@@ -5,12 +5,27 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
+import java.util.ArrayList;
+
 public class WildToolAccessSoundEvents {
-    public static SoundEvent SELECT_IN_ACCESS1 = register(new Identifier("wildtoolaccess","select1"+WildToolAccessConfig.getIntValue("selectSound1")));
-    public static SoundEvent SELECT_IN_ACCESS2 = register(new Identifier("wildtoolaccess","select2"+WildToolAccessConfig.getIntValue("selectSound2")));
+    public static SoundEvent selectInAccess1;
+    public static SoundEvent selectInAccess2;
+
+    private static ArrayList<SoundEvent> soundEvents = new ArrayList<SoundEvent>();
 
     public static SoundEvent register(Identifier id){
         return Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
     }
-    
+
+    public static void registerAll(){
+        soundEvents.add(register(new Identifier("wildtoolaccess","select0")));
+        soundEvents.add(register(new Identifier("wildtoolaccess","select1")));
+        soundEvents.add(register(new Identifier("wildtoolaccess","select2")));
+        soundEvents.add(register(new Identifier("wildtoolaccess","select3")));
+    }
+
+    public static void updateSoundEventsAsConfigured(){
+        selectInAccess1 = soundEvents.get(WildToolAccessConfig.getIntValue("selectSound1"));
+        selectInAccess2 = soundEvents.get(WildToolAccessConfig.getIntValue("selectSound2"));
+    }
 }
