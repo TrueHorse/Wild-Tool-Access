@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
 
 import net.fabricmc.fabric.api.tag.TagFactory;
@@ -22,17 +23,18 @@ import net.trueHorse.wildToolAccess.WildToolAccess;
 
 public class WildToolAccessConfig {
 
+    private static final String[] OPTION_ORDER = {"mouseSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","labels","lastSwapedOutFirst","moveIfNextEmpty","access1","access2"};
     private static Properties configs = new Properties();
     private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
+    private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
     public static Tag<Item> stuffTag = TagFactory.ITEM.create(new Identifier("wildtoolaccess","stuff"));
 
     public static void loadCofigs(){
         configs = DefaultConfig.defaultConfigs;
 
-        File confFile = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
-        if(confFile.exists()){
+        if(MOD_CONFIG_FILE.exists()){
             try {
-                configs.load(new FileReader(confFile));
+                configs.load(new FileReader(MOD_CONFIG_FILE));
             } catch (FileNotFoundException e) {
                 WildToolAccess.LOGGER.error("Config file was not found after existing. How?");
                 e.printStackTrace();
@@ -41,25 +43,42 @@ public class WildToolAccessConfig {
                 e.printStackTrace();
             }
         }else{
-            createConfigFromDefault(confFile);
+            createOrUpdateConfigFile();
         }
     }
 
-    private static void createConfigFromDefault(File confFile) {
-        if(!confFile.getParentFile().exists()){
-            confFile.getParentFile().mkdirs();
+    public static void createOrUpdateConfigFile() {
+        if(!MOD_CONFIG_FILE.getParentFile().exists()){
+            MOD_CONFIG_FILE.getParentFile().mkdirs();
         }
-        try {
-            confFile.createNewFile();
 
-            FileWriter confWriter = new FileWriter(confFile);
-            String defaultConfigContent = DefaultConfig.getConfigContentAsString();
-            confWriter.write(defaultConfigContent);
+        if(MOD_CONFIG_FILE.exists()){
+            boolean success = MOD_CONFIG_FILE.delete();
+            if(!success) {
+                WildToolAccess.LOGGER.error("Config file could not be deleted.");
+                WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+            }
+        }
+
+        try {
+            MOD_CONFIG_FILE.createNewFile();
+
+            FileWriter confWriter = new FileWriter(MOD_CONFIG_FILE);
+            confWriter.write(getConfigContentAsString(configs));
             confWriter.close();
         } catch (IOException e) {
             WildToolAccess.LOGGER.error("Creation of config file failed");
             e.printStackTrace();
         }
+    }
+
+    public static String getConfigContentAsString(Properties config){
+        String configString = "";
+        for (String key : OPTION_ORDER) {
+            configString = configString+ DefaultConfig.configComments.getProperty((String)key)+'\n';
+            configString = configString+key+"="+ config.getProperty(key)+'\n';
+        }
+        return configString;
     }
 
     public static int getIntValue(String key){
@@ -71,8 +90,14 @@ public class WildToolAccessConfig {
         }
     }
 
-    public static boolean getBoolValue(String key){
-        return Boolean.parseBoolean(configs.getProperty(key));
+    public static boolean getBoolValue(String key) {
+        if (configs.containsKey(key)) {
+            return Boolean.parseBoolean(configs.getProperty(key));
+        } else {
+            WildToolAccess.LOGGER.error("Couldn't get boolean config option. Key " + key + " isn't present.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+            return false;
+        }
     }
 
     public static Class<?> getClassValue(String key){
@@ -85,12 +110,28 @@ public class WildToolAccessConfig {
             case "buckets": return BucketItem.class;
             case "stuff": return StuffPlaceholder.class;
             default:
-            WildToolAccess.LOGGER.error("Configured access option does not exist.");
-            return null;
+                WildToolAccess.LOGGER.error("Configured access option for "+key+" does not exist.");
+                WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+                return null;
         }
     }
 
     public static String getStringValue(String key){
-        return configs.getProperty(key).toLowerCase();
+        if(configs.containsKey(key)){
+            return configs.getProperty(key).toLowerCase();
+        }else {
+            WildToolAccess.LOGGER.error("Couldn't get string config option. Key "+key+" isn't present.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+            return "";
+        }
+    }
+
+    public static void setValue(String key, String val){
+        if(configs.containsKey(key)){
+            configs.replace(key,val);
+        }else{
+            WildToolAccess.LOGGER.error("Couldn't set config option. Key "+key+" isn't present.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+        }
     }
 }
