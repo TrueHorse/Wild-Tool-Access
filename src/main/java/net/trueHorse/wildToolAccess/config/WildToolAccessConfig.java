@@ -18,6 +18,7 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.StuffPlaceholder;
+import net.trueHorse.wildToolAccess.WildToolAccess;
 
 public class WildToolAccessConfig {
 
@@ -33,10 +34,10 @@ public class WildToolAccessConfig {
             try {
                 configs.load(new FileReader(confFile));
             } catch (FileNotFoundException e) {
-                System.out.println("Config file was not found after existing. How?");
+                WildToolAccess.LOGGER.error("Config file was not found after existing. How?");
                 e.printStackTrace();
             } catch (IOException e) {
-                System.out.println("Failed to read the actual config file.");
+                WildToolAccess.LOGGER.error("Failed to read the actual config file.");
                 e.printStackTrace();
             }
         }else{
