@@ -33,11 +33,11 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     public PlayerEntity player;
 
     @Shadow
-    public ItemStack getStack(int slot){return null;};
+    public ItemStack getStack(int slot){return null;}
     @Shadow
-    public void setStack(int slot, ItemStack stack){};
+    public void setStack(int slot, ItemStack stack){}
     @Shadow
-    public ItemStack getMainHandStack(){return null;};
+    public ItemStack getMainHandStack(){return null;}
 
     @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
     private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {

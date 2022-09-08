@@ -8,12 +8,12 @@ import net.minecraft.tag.TagKey;
 
 public interface PlayerInventoryAccess {
     
-    public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type);
+    <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type);
 
-    public ArrayList<ItemStack> getAllMainStacksWithTag(TagKey<Item> tag);
+    ArrayList<ItemStack> getAllMainStacksWithTag(TagKey<Item> tag);
 
-    public void swapSlotWithSelected(int slot);
+    void swapSlotWithSelected(int slot);
 
-    public void moveSelectedAndSlot(int slot);
+    void moveSelectedAndSlot(int slot);
 
 }

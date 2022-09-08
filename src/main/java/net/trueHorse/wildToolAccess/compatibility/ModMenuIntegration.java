@@ -10,9 +10,7 @@ import net.minecraft.text.Text;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
-import net.trueHorse.wildToolAccess.mixin.InGameHudMixin;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ModMenuIntegration implements ModMenuApi {
@@ -83,10 +81,10 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("labels", newVal))
                     .setSelections(List.of("all", "enchantments", "name", "none"))
                     .build());
-            generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.last_swapped_out_first"), WildToolAccessConfig.getBoolValue("lastSwapedOutFirst"))
+            generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.last_swapped_out_first"), WildToolAccessConfig.getBoolValue("lastSwappedOutFirst"))
                     .setDefaultValue(true)
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.last_swapped_out_first"))
-                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("lastSwapedOutFirst", Boolean.toString(newVal)))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("lastSwappedOutFirst", Boolean.toString(newVal)))
                     .build());
             generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.move_if_next_empty"), WildToolAccessConfig.getBoolValue("moveIfNextEmpty"))
                     .setDefaultValue(false)

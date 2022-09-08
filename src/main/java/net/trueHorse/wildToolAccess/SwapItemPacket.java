@@ -14,7 +14,7 @@ public class SwapItemPacket {
     public static void registerPacket(){
         ServerPlayNetworking.registerGlobalReceiver(SWAP_PACKET_CHANNEL, (server, player, handler, buf, sender) -> {
             int itemSlot = buf.readInt();
-            Boolean nextEmpty = buf.readBoolean();
+            boolean nextEmpty = buf.readBoolean();
             server.execute(() -> {
                 if(nextEmpty&&WildToolAccessConfig.getBoolValue("moveIfNextEmpty")){
                     ((PlayerInventoryAccess)player.getInventory()).moveSelectedAndSlot(itemSlot);

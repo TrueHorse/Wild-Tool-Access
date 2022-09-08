@@ -5,5 +5,5 @@ public interface GameOptionsAccess {
 
     boolean isAccessBarOpen();
 
-    public void setAccessBarOpen(boolean toolAccessOpen);
+    void setAccessBarOpen(boolean toolAccessOpen);
 }
