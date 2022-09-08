@@ -81,10 +81,10 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("labels", newVal))
                     .setSelections(List.of("all", "enchantments", "name", "none"))
                     .build());
-            generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.last_swapped_out_first"), WildToolAccessConfig.getBoolValue("lastSwapedOutFirst"))
+            generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.last_swapped_out_first"), WildToolAccessConfig.getBoolValue("lastSwappedOutFirst"))
                     .setDefaultValue(true)
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.last_swapped_out_first"))
-                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("lastSwapedOutFirst", Boolean.toString(newVal)))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("lastSwappedOutFirst", Boolean.toString(newVal)))
                     .build());
             generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.move_if_next_empty"), WildToolAccessConfig.getBoolValue("moveIfNextEmpty"))
                     .setDefaultValue(false)

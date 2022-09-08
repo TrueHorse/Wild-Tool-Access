@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
-import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class WildToolAccess implements ModInitializer {
 
