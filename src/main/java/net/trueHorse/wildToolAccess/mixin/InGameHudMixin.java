@@ -44,9 +44,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     int scaledWidth;
     @Shadow
     int scaledHeight;
-    private final List<Identifier> accessBarTextures = Arrays.asList(
-            new Identifier("wildtoolaccess", "textures/gui/access_widgets0.png"),
-            new Identifier("wildtoolaccess", "textures/gui/access_widgets1.png"));
+    private List<Identifier> accessBarTextures;
     private static Identifier accessBarTexture1;
     private static Identifier accessBarTexture2;
     @Final
@@ -166,6 +164,9 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     }
 
     public void setAccessBarTexturesAsConfigured(){
+        accessBarTextures = Arrays.asList(
+                new Identifier("wildtoolaccess", "textures/gui/access_widgets0.png"),
+                new Identifier("wildtoolaccess", "textures/gui/access_widgets1.png"));
         accessBarTexture1 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1"));
         accessBarTexture2 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture2"));
     }
