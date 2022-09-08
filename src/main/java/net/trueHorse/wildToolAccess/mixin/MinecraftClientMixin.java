@@ -24,7 +24,7 @@ public abstract class MinecraftClientMixin {
     
     @Inject(method = "doAttack", at = @At(value = "HEAD"), cancellable = true)
     private void attackOrChoose(CallbackInfoReturnable<Boolean> info){
-        if(((GameOptionsAccess)options).isAccessBarOpen()&&WildToolAccessConfig.getBoolValue("mouseSelect")){
+        if(((GameOptionsAccess)options).isAccessBarOpen()&&WildToolAccessConfig.getBoolValue("leftClickSelect")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
             info.cancel();
         }
