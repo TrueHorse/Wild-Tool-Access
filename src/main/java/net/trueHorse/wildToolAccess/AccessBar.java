@@ -23,7 +23,7 @@ public class AccessBar{
         }
         this.client = client;
         this.number = number;
-        this.classToAccess = WildToolAccessConfig.getClassValue("access"+number);
+        this.classToAccess = WildToolAccessConfig.getClassValue("typeToAccess"+number);
     }
 
     public void updateAccessStacks(){
