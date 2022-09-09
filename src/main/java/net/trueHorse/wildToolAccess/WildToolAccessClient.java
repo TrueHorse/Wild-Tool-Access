@@ -17,6 +17,7 @@ public class WildToolAccessClient implements ClientModInitializer{
 
     @Override
     public void onInitializeClient() {
+        WildToolAccessConfig.loadCofigs();
         WildToolAccessSoundEvents.registerAll();
         WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
 
