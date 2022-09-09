@@ -22,7 +22,7 @@ public abstract class MinecraftClientMixin {
     public InGameHud inGameHud;
 
     @Shadow
-    private void doAttack(){};
+    private void doAttack(){}
     
     @Inject(method = "doAttack", at = @At(value = "HEAD"), cancellable = true)
     private void attackOrChoose(CallbackInfo info){

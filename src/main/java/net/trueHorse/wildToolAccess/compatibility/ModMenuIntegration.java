@@ -6,17 +6,12 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
-import net.trueHorse.wildToolAccess.mixin.InGameHudMixin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 public class ModMenuIntegration implements ModMenuApi {
 
@@ -86,10 +81,10 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("labels", newVal))
                     .setSelections(Arrays.asList("all", "enchantments", "name", "none"))
                     .build());
-            generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.last_swapped_out_first"), WildToolAccessConfig.getBoolValue("lastSwapedOutFirst"))
+            generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.last_swapped_out_first"), WildToolAccessConfig.getBoolValue("lastSwappedOutFirst"))
                     .setDefaultValue(true)
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.last_swapped_out_first"))
-                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("lastSwapedOutFirst", Boolean.toString(newVal)))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("lastSwappedOutFirst", Boolean.toString(newVal)))
                     .build());
             generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.move_if_next_empty"), WildToolAccessConfig.getBoolValue("moveIfNextEmpty"))
                     .setDefaultValue(false)

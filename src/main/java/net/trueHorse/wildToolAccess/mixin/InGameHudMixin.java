@@ -108,7 +108,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 j += 3;
                 for(k = 0; k < openAccessbar.getStacks().size(); ++k) {
                     l = i + k * distance + 3 - distance*(openAccessbar.getSelectedAccessSlot()-1);
-                    this.renderHotbarItem(l, j, tickDelta, playerEntity, (ItemStack)openAccessbar.getStacks().get(k));
+                    this.renderHotbarItem(l, j, tickDelta, playerEntity, openAccessbar.getStacks().get(k));
                 }
 
                 String labConf = WildToolAccessConfig.getStringValue("labels");

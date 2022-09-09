@@ -23,7 +23,7 @@ import net.trueHorse.wildToolAccess.WildToolAccess;
 
 public class WildToolAccessConfig {
 
-    private static final String[] OPTION_ORDER = {"mouseSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","labels","lastSwapedOutFirst","moveIfNextEmpty","access1","access2"};
+    private static final String[] OPTION_ORDER = {"mouseSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","labels","lastSwappedOutFirst","moveIfNextEmpty","access1","access2"};
     private static Properties configs = new Properties();
     private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
     private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
@@ -75,7 +75,7 @@ public class WildToolAccessConfig {
     public static String getConfigContentAsString(Properties config){
         String configString = "";
         for (String key : OPTION_ORDER) {
-            configString = configString+ DefaultConfig.configComments.getProperty((String)key)+'\n';
+            configString = configString+ DefaultConfig.configComments.getProperty(key)+'\n';
             configString = configString+key+"="+ config.getProperty(key)+'\n';
         }
         return configString;

@@ -10,12 +10,12 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class AccessBar{
     
-    private MinecraftClient client;
-    private int number;
+    private final MinecraftClient client;
+    private final int number;
     private final Class<?> classToAccess;
     private ArrayList<ItemStack> stacks;
     private int selectedAccessSlot = 0;
-    private ItemStack lastSwapedOutTool=ItemStack.EMPTY;
+    private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
 
     public AccessBar(int number, MinecraftClient client){
         if(number>2){
@@ -34,8 +34,8 @@ public class AccessBar{
         }else{
             stacks = ((PlayerInventoryAccess)inv).getAllMainStacksWithTag(WildToolAccessConfig.stuffTag);
         }
-        if(WildToolAccessConfig.getBoolValue("lastSwapedOutFirst")){
-            ItemStack prioStack = inv.getStack(inv.getSlotWithStack(lastSwapedOutTool)==-1? 1000:inv.getSlotWithStack(lastSwapedOutTool));
+        if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
+            ItemStack prioStack = inv.getStack(inv.getSlotWithStack(lastSwappedOutTool)==-1? 1000:inv.getSlotWithStack(lastSwappedOutTool));
             if(prioStack!=ItemStack.EMPTY && inv.contains(prioStack)){
                 ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
                 temp.add(prioStack);
@@ -65,7 +65,7 @@ public class AccessBar{
     }
 
     public void selectItem(){
-        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar().getSelectedAccessSlot()!=0){
+        if(selectedAccessSlot!=0){
             PlayerInventory inv = client.player.inventory;
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
             boolean nextEmpty = inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY;
@@ -80,7 +80,7 @@ public class AccessBar{
             }
  
             if(classToAccess.isAssignableFrom(selectedStack.getItem().getClass())){
-                lastSwapedOutTool = selectedStack.copy();
+                lastSwappedOutTool = selectedStack.copy();
             }
         }
     }
@@ -101,8 +101,8 @@ public class AccessBar{
         return this.number;
     }
 
-    public ItemStack getLastSwapedOutTool() {
-        return lastSwapedOutTool;
+    public ItemStack getLastSwappedOutTool() {
+        return lastSwappedOutTool;
     }
 
     public ArrayList<ItemStack> getStacks() {
