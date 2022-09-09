@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.collection.DefaultedList;
 import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
-import net.trueHorse.wildToolAccess.GameOptionsAccess;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 
 @Mixin(PlayerInventory.class)
@@ -42,7 +41,7 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
     private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if(((GameOptionsAccess)client.options).isAccessBarOpen()){
+        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar()!=null){
             ((InGameHudAccess)client.inGameHud).getOpenAccessBar().scrollInAccessBar(scrollAmount);
             info.cancel();
         }

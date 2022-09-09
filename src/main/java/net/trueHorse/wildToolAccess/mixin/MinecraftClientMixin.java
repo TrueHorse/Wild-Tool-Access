@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.option.GameOptions;
-import net.trueHorse.wildToolAccess.GameOptionsAccess;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
@@ -24,7 +23,7 @@ public abstract class MinecraftClientMixin {
     
     @Inject(method = "doAttack", at = @At(value = "HEAD"), cancellable = true)
     private void attackOrChoose(CallbackInfoReturnable<Boolean> info){
-        if(((GameOptionsAccess)options).isAccessBarOpen()&&WildToolAccessConfig.getBoolValue("leftClickSelect")){
+        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
             info.cancel();
         }
@@ -32,7 +31,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "openPauseMenu", at = @At("HEAD"),cancellable = true)
     public void pauseMenuOrCloseAccess(boolean bl, CallbackInfo info){
-        if(((GameOptionsAccess)options).isAccessBarOpen()&&WildToolAccessConfig.getBoolValue("escClose")){
+        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("escClose")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(false);
             info.cancel();
         }

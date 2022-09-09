@@ -7,7 +7,6 @@
     "PlayerInventoryMixin"
   ],
   "client": [
-    "GameOptionsMixin",
     "InGameHudMixin",
     "MinecraftClientMixin"
   ],
