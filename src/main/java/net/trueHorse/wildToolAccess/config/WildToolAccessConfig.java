@@ -23,7 +23,7 @@ import net.trueHorse.wildToolAccess.WildToolAccess;
 
 public class WildToolAccessConfig {
 
-    private static final String[] OPTION_ORDER = {"mouseSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","labels","lastSwappedOutFirst","moveIfNextEmpty","access1","access2"};
+    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
     private static Properties configs = new Properties();
     private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
     private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
@@ -35,6 +35,7 @@ public class WildToolAccessConfig {
         if(MOD_CONFIG_FILE.exists()){
             try {
                 configs.load(new FileReader(MOD_CONFIG_FILE));
+                renameDeprecatedProperties();
             } catch (FileNotFoundException e) {
                 WildToolAccess.LOGGER.error("Config file was not found after existing. How?");
                 e.printStackTrace();
@@ -79,6 +80,18 @@ public class WildToolAccessConfig {
             configString = configString+key+"="+ config.getProperty(key)+'\n';
         }
         return configString;
+    }
+
+    private static void renameDeprecatedProperties(){
+        String[] deprecatedKeys = {"labels","mouseSelect","moveIfNextEmpty","access1","access2"};
+        String[] replacements = {"itemInfoShown","leftClickSelect","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
+
+        for(int i=0;i<deprecatedKeys.length;i++){
+            if(configs.containsKey(deprecatedKeys[i])){
+                configs.put(replacements[i],configs.getProperty(deprecatedKeys[i]));
+                configs.remove(deprecatedKeys[i]);
+            }
+        }
     }
 
     public static int getIntValue(String key){

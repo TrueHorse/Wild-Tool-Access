@@ -23,7 +23,7 @@ public class AccessBar{
         }
         this.client = client;
         this.number = number;
-        this.classToAccess = WildToolAccessConfig.getClassValue("access"+number);
+        this.classToAccess = WildToolAccessConfig.getClassValue("typeToAccess"+number);
     }
 
     public void updateAccessStacks(){
@@ -65,7 +65,7 @@ public class AccessBar{
     }
 
     public void selectItem(){
-        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar().getSelectedAccessSlot()!=0){
+        if(selectedAccessSlot!=0){
             PlayerInventory inv = client.player.getInventory();
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
             boolean nextEmpty = inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY;
