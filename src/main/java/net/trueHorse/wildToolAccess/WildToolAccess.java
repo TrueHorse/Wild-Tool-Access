@@ -1,5 +1,6 @@
 package net.trueHorse.wildToolAccess;
 
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,6 +12,7 @@ public class WildToolAccess implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		WildToolAccessConfig.loadCofigs();
 		SwapItemPacket.registerPacket();
 	}
 }
