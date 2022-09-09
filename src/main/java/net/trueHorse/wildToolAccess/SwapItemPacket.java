@@ -16,7 +16,7 @@ public class SwapItemPacket {
             int itemSlot = buf.readInt();
             boolean nextEmpty = buf.readBoolean();
             server.execute(() -> {
-                if(nextEmpty&&WildToolAccessConfig.getBoolValue("moveIfNextEmpty")){
+                if(nextEmpty&&WildToolAccessConfig.getBoolValue("putToTheRightIfPossible")){
                     ((PlayerInventoryAccess)player.inventory).moveSelectedAndSlot(itemSlot);
                 }else{
                     ((PlayerInventoryAccess)player.inventory).swapSlotWithSelected(itemSlot);
