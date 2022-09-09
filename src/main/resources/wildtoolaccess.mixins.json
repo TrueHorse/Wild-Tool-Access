@@ -8,7 +8,8 @@
   ],
   "client": [
     "InGameHudMixin",
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "PlayerInventoryMixinClient"
   ],
   "injectors": {
     "defaultRequire": 1

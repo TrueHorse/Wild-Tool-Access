@@ -38,14 +38,6 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Shadow
     public ItemStack getMainHandStack(){return null;}
 
-    @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
-    private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar()!=null){
-            ((InGameHudAccess)client.inGameHud).getOpenAccessBar().scrollInAccessBar(scrollAmount);
-            info.cancel();
-        }
-    }
 
     @Override
     public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
