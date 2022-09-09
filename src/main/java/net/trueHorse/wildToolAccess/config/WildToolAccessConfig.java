@@ -83,25 +83,14 @@ public class WildToolAccessConfig {
     }
 
     private static void renameDeprecatedProperties(){
-        if(configs.containsKey("labels")){
-            configs.put("itemInfoShown",configs.getProperty("labels"));
-            configs.remove("labels");
-        }
-        if(configs.containsKey("mouseSelect")){
-            configs.put("leftClickSelect",configs.getProperty("mouseSelect"));
-            configs.remove("mouseSelect");
-        }
-        if(configs.containsKey("moveIfNextEmpty")){
-            configs.put("putToTheRightIfPossible",configs.getProperty("moveIfNextEmpty"));
-            configs.remove("moveIfNextEmpty");
-        }
-        if(configs.containsKey("access1")){
-            configs.put("typeToAccess1",configs.getProperty("access1"));
-            configs.remove("access1");
-        }
-        if(configs.containsKey("access2")){
-            configs.put("typeToAccess2",configs.getProperty("access2"));
-            configs.remove("access2");
+        String[] deprecatedKeys = {"labels","mouseSelect","moveIfNextEmpty","access1","access2"};
+        String[] replacements = {"itemInfoShown","leftClickSelect","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
+
+        for(int i=0;i<deprecatedKeys.length;i++){
+            if(configs.containsKey(deprecatedKeys[i])){
+                configs.put(replacements[i],configs.getProperty(deprecatedKeys[i]));
+                configs.remove(deprecatedKeys[i]);
+            }
         }
     }
 
