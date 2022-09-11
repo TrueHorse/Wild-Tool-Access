@@ -31,7 +31,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.AccessBar;
-import net.trueHorse.wildToolAccess.GameOptionsAccess;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
@@ -71,7 +70,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(F Lnet/minecraft/client/util/math/MatrixStack;)V",shift = At.Shift.AFTER))
     public void renderAccessBar(MatrixStack matrices, float tickDelta, CallbackInfo info){
-        if(((GameOptionsAccess)client.options).isAccessBarOpen()){
+        if(openAccessbar!=null){
             PlayerEntity playerEntity = this.getCameraPlayer();
             if (playerEntity != null) {
                 openAccessbar.updateAccessStacks();
@@ -178,7 +177,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
         if(select){
             this.openAccessbar.selectItem();
         }
-        ((GameOptionsAccess)client.options).setAccessBarOpen(false);
+        openAccessbar = null;
     }
 
     @Override
@@ -189,7 +188,6 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
             case(2):this.openAccessbar = this.accessbar2;
         }
         openAccessbar.resetSelection();
-        ((GameOptionsAccess)client.options).setAccessBarOpen(true);
     }
     @Override
     public AccessBar getOpenAccessBar() {

@@ -47,7 +47,7 @@ public class WildToolAccessClient implements ClientModInitializer{
     public void onAccessBindingPressed(int barNum, MinecraftClient client){
         InGameHudAccess hudAcc = ((InGameHudAccess)client.inGameHud);
 
-        if(((GameOptionsAccess)client.options).isAccessBarOpen()){
+        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar()!=null){
             if(hudAcc.getOpenAccessBar().getNumber()==barNum){
                 hudAcc.closeOpenAccessbar(true);
             }else{

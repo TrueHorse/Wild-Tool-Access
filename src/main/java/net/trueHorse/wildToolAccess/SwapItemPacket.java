@@ -14,9 +14,9 @@ public class SwapItemPacket {
     public static void registerPacket(){
         ServerPlayNetworking.registerGlobalReceiver(SWAP_PACKET_CHANNEL, (server, player, handler, buf, sender) -> {
             int itemSlot = buf.readInt();
-            boolean nextEmpty = buf.readBoolean();
+            boolean putToTheRight = buf.readBoolean();
             server.execute(() -> {
-                if(nextEmpty&&WildToolAccessConfig.getBoolValue("putToTheRightIfPossible")){
+                if(putToTheRight){
                     ((PlayerInventoryAccess)player.getInventory()).moveSelectedAndSlot(itemSlot);
                 }else{
                     ((PlayerInventoryAccess)player.getInventory()).swapSlotWithSelected(itemSlot);
@@ -25,10 +25,10 @@ public class SwapItemPacket {
         });
     }
 
-    public static void sendPacket(int selectedToolPos, boolean nextEmpty){
+    public static void sendPacket(int selectedToolPos, boolean putToTheRight){
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeInt(selectedToolPos);
-        buf.writeBoolean(nextEmpty);
+        buf.writeBoolean(putToTheRight);
         ClientPlayNetworking.send(SWAP_PACKET_CHANNEL, buf);
     }
     
