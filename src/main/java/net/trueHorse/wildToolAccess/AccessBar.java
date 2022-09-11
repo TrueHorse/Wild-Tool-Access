@@ -68,9 +68,9 @@ public class AccessBar{
         if(selectedAccessSlot!=0){
             PlayerInventory inv = client.player.inventory;
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
-            boolean nextEmpty = inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY;
+            boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY);
             ItemStack selectedStack = client.player.inventory.getStack(client.player.inventory.selectedSlot);
-            SwapItemPacket.sendPacket(selectedToolPos, nextEmpty);
+            SwapItemPacket.sendPacket(selectedToolPos, putToTheRight);
 
             if(this.number==1){
                 client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.selectInAccess1,1.0F,1.0F));

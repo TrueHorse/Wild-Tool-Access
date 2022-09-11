@@ -17,8 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.collection.DefaultedList;
 import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
-import net.trueHorse.wildToolAccess.GameOptionsAccess;
-import net.trueHorse.wildToolAccess.InGameHudAccess;
 
 @Mixin(PlayerInventory.class)
 public class PlayerInventoryMixin implements PlayerInventoryAccess{
@@ -38,15 +36,6 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     public void setStack(int slot, ItemStack stack){}
     @Shadow
     public ItemStack getMainHandStack(){return null;}
-
-    @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
-    private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if(((GameOptionsAccess)client.options).isAccessBarOpen()){
-            ((InGameHudAccess)client.inGameHud).getOpenAccessBar().scrollInAccessBar(scrollAmount);
-            info.cancel();
-        }
-    }
 
     @Override
     public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
