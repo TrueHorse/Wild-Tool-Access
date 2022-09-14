@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class SwapItemPacket {
 

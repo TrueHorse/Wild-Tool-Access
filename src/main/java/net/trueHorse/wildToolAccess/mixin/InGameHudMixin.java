@@ -19,7 +19,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -38,14 +37,12 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 @Mixin(InGameHud.class)
 public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
 
+    @Final @Shadow
+    private MinecraftClient client;
     @Shadow
-    MinecraftClient client;
+    private int scaledWidth;
     @Shadow
-    ItemRenderer itemRenderer;
-    @Shadow
-    int scaledWidth;
-    @Shadow
-    int scaledHeight;
+    private int scaledHeight;
     private final List<Identifier> accessBarTextures = List.of(
             new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
             new Identifier("wildtoolaccess","textures/gui/access_widgets1.png"));
