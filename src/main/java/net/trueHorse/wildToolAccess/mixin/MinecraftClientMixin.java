@@ -1,5 +1,6 @@
 package net.trueHorse.wildToolAccess.mixin;
 
+import net.minecraft.client.gui.screen.Screen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,6 +35,13 @@ public abstract class MinecraftClientMixin {
         if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("escClose")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(false);
             info.cancel();
+        }
+    }
+
+    @Inject(method = "setScreen", at=@At("HEAD"))
+    private void closeBarOnScreenSwitch(Screen screen, CallbackInfo info){
+        if(((InGameHudAccess)this.inGameHud).getOpenAccessBar()!=null){
+            ((InGameHudAccess)this.inGameHud).closeOpenAccessbar(false);
         }
     }
 }
