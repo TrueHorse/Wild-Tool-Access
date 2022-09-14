@@ -2,6 +2,8 @@ package net.trueHorse.wildToolAccess.mixin;
 
 import java.util.ArrayList;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,6 +39,16 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     public void setStack(int slot, ItemStack stack){}
     @Shadow
     public ItemStack getMainHandStack(){return null;}
+
+    @Environment(EnvType.CLIENT)
+    @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
+    private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar()!=null){
+            ((InGameHudAccess)client.inGameHud).getOpenAccessBar().scrollInAccessBar(scrollAmount);
+            info.cancel();
+        }
+    }
 
 
     @Override
