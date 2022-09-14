@@ -21,11 +21,10 @@ public abstract class MinecraftClientMixin {
     @Shadow
     public InGameHud inGameHud;
     
-    @Inject(method = "doAttack", at = @At(value = "HEAD"), cancellable = true)
-    private void attackOrChoose(CallbackInfoReturnable<Boolean> info){
-        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")){
+    @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
+    private void handleAccessbarSelectInput(CallbackInfo info){
+        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.attackKey.wasPressed()){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
-            info.cancel();
         }
     }
 
