@@ -1,5 +1,6 @@
 package net.trueHorse.wildToolAccess.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,9 +16,10 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 
+    @Final
     @Shadow
     public GameOptions options;
-    @Shadow
+    @Final @Shadow
     public InGameHud inGameHud;
     
     @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
