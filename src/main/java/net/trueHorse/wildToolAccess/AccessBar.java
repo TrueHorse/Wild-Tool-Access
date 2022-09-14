@@ -68,7 +68,7 @@ public class AccessBar{
         if(selectedAccessSlot!=0){
             PlayerInventory inv = client.player.inventory;
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
-            boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY);
+            boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(inv.selectedSlot+1) == ItemStack.EMPTY)&&!(ItemStack.areItemsEqual(inv.getStack(inv.selectedSlot), stacks.get(selectedAccessSlot-1)));
             ItemStack selectedStack = client.player.inventory.getStack(client.player.inventory.selectedSlot);
             SwapItemPacket.sendPacket(selectedToolPos, putToTheRight);
 
