@@ -37,13 +37,12 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 @Mixin(InGameHud.class)
 public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
 
+    @Final @Shadow
+    private MinecraftClient client;
     @Shadow
-    MinecraftClient client;
+    private int scaledWidth;
     @Shadow
-    int scaledWidth;
-    @Shadow
-    int scaledHeight;
-    private List<Identifier> accessBarTextures;
+    private int scaledHeight;
     private static Identifier accessBarTexture1;
     private static Identifier accessBarTexture2;
     @Final
@@ -163,7 +162,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     }
 
     public void setAccessBarTexturesAsConfigured(){
-        accessBarTextures = Arrays.asList(
+        List<Identifier> accessBarTextures = Arrays.asList(
                 new Identifier("wildtoolaccess", "textures/gui/access_widgets0.png"),
                 new Identifier("wildtoolaccess", "textures/gui/access_widgets1.png"));
         accessBarTexture1 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1"));

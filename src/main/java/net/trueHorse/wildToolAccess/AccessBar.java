@@ -93,16 +93,8 @@ public class AccessBar{
         return selectedAccessSlot;
     }
 
-    public Class<?> getClassToAccess(){
-        return this.classToAccess;
-    }
-
     public int getNumber(){
         return this.number;
-    }
-
-    public ItemStack getLastSwappedOutTool() {
-        return lastSwappedOutTool;
     }
 
     public ArrayList<ItemStack> getStacks() {
