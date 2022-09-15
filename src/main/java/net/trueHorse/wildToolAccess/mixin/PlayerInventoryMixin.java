@@ -2,8 +2,6 @@ package net.trueHorse.wildToolAccess.mixin;
 
 import java.util.ArrayList;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,20 +24,7 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Final
     @Shadow
     public DefaultedList<ItemStack> main;
-    @Shadow
-    public int selectedSlot;
-    @Final
-    @Shadow
-    public PlayerEntity player;
 
-    @Shadow
-    public ItemStack getStack(int slot){return null;}
-    @Shadow
-    public void setStack(int slot, ItemStack stack){}
-    @Shadow
-    public ItemStack getMainHandStack(){return null;}
-
-    @Environment(EnvType.CLIENT)
     @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
     private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -70,21 +54,5 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
                 }
             }
         return stacks;
-    }
-
-    @Override
-    public void swapSlotWithSelected(int slot){
-        ItemStack slotStack = getStack(slot).copy();
-        setStack(slot, getMainHandStack());
-        setStack(this.selectedSlot, slotStack);
-        player.currentScreenHandler.sendContentUpdates();
-    }
-    @Override
-    public void moveSelectedAndSlot(int slot) {
-        if(this.selectedSlot!=8){
-            setStack(this.selectedSlot+1, getStack(selectedSlot).copy());
-            setStack(this.selectedSlot, ItemStack.EMPTY);
-        }
-        swapSlotWithSelected(slot);
     }
 }

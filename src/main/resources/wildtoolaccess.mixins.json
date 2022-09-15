@@ -3,12 +3,10 @@
   "minVersion": "0.8",
   "package": "net.trueHorse.wildToolAccess.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "PlayerInventoryMixin"
-  ],
   "client": [
     "InGameHudMixin",
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "PlayerInventoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1
