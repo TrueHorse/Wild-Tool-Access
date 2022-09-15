@@ -18,9 +18,6 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "net.trueHorse.wildToolAccess.WildToolAccess"
-    ],
     "client": [
       "net.trueHorse.wildToolAccess.WildToolAccessClient"
     ],
