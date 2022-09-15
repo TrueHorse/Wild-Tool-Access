@@ -12,8 +12,4 @@ public interface PlayerInventoryAccess {
 
     public ArrayList<ItemStack> getAllMainStacksWithTag(Tag<Item> tag);
 
-    public void swapSlotWithSelected(int slot);
-
-    public void moveSelectedAndSlot(int slot);
-
 }
