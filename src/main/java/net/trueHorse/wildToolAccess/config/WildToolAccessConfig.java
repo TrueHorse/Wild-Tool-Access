@@ -74,12 +74,12 @@ public class WildToolAccessConfig {
     }
 
     public static String getConfigContentAsString(Properties config){
-        String configString = "";
+        StringBuilder configString = new StringBuilder();
         for (String key : OPTION_ORDER) {
-            configString = configString+ DefaultConfig.configComments.getProperty(key)+'\n';
-            configString = configString+key+"="+ config.getProperty(key)+'\n';
+            configString.append(DefaultConfig.configComments.getProperty(key)).append('\n');
+            configString.append(key).append("=").append(config.getProperty(key)).append('\n');
         }
-        return configString;
+        return configString.toString();
     }
 
     private static void renameDeprecatedProperties(){
