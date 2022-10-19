@@ -67,7 +67,7 @@ public class AccessBar{
 
     public void selectItem(){
         PlayerInventory inv = client.player.getInventory();
-        if(selectedAccessSlot!=0&&!(ItemStack.areItemsEqual(inv.getStack(inv.selectedSlot), stacks.get(selectedAccessSlot-1)))){
+        if(selectedAccessSlot!=0&&!(ItemStack.areEqual(inv.getStack(inv.selectedSlot), stacks.get(selectedAccessSlot-1)))){
 
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
             boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack((inv.selectedSlot+1)%9) == ItemStack.EMPTY);
