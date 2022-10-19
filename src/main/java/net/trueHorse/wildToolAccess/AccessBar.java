@@ -67,7 +67,8 @@ public class AccessBar{
 
     public void selectItem(){
         PlayerInventory inv = client.player.getInventory();
-        if(selectedAccessSlot!=0&&!(ItemStack.areItemsEqual(inv.getStack(inv.selectedSlot), stacks.get(selectedAccessSlot-1)))){
+        if(selectedAccessSlot!=0&&!(ItemStack.areEqual(inv.getStack(inv.selectedSlot), stacks.get(selectedAccessSlot-1)))){
+
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
             boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack((inv.selectedSlot+1)%9) == ItemStack.EMPTY);
             int slotToTheRight = (inv.selectedSlot+1)%9;
@@ -88,6 +89,7 @@ public class AccessBar{
                     client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,selectedToolPos,slotToTheRight, SlotActionType.SWAP,client.player);
                 }
             }
+
 
             if(this.number==1){
                 client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.selectInAccess1,1.0F,1.0F));
@@ -113,7 +115,6 @@ public class AccessBar{
     public int getNumber(){
         return this.number;
     }
-
 
     public ArrayList<ItemStack> getStacks() {
         return stacks;
