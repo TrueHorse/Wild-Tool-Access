@@ -1,25 +1,16 @@
 package net.trueHorse.wildToolAccess.config;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Properties;
-
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.PotionItem;
-import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolItem;
-import net.minecraft.tag.TagKey;
+import net.minecraft.item.*;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.trueHorse.wildToolAccess.StuffPlaceholder;
 import net.trueHorse.wildToolAccess.WildToolAccess;
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.Properties;
 
 public class WildToolAccessConfig {
 
@@ -27,7 +18,7 @@ public class WildToolAccessConfig {
     private static Properties configs = new Properties();
     private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
     private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
-    public static TagKey<Item> stuffTag = TagKey.of(Registry.ITEM_KEY, new Identifier("c","stuff"));
+    public static TagKey<Item> stuffTag = TagKey.of(RegistryKeys.ITEM, new Identifier("c","stuff"));
 
     public static void loadCofigs(){
         configs = DefaultConfig.defaultConfigs;

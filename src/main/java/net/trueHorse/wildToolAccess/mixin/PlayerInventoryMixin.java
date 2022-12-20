@@ -13,7 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.collection.DefaultedList;
 import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
 import net.trueHorse.wildToolAccess.InGameHudAccess;

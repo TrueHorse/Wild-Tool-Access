@@ -73,10 +73,8 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
             if (playerEntity != null) {
                 openAccessbar.updateAccessStacks();
 
-                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 
                 if(openAccessbar.getNumber()==1){
                     RenderSystem.setShaderTexture(0, accessBarTexture1);
@@ -127,7 +125,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
         ItemStack selectedStack = openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlot()-1);
         List<Text> tooltip;
         if(labConf.equals("all")){
-            tooltip = selectedStack.getTooltip(client.player, this.client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.NORMAL);
+            tooltip = selectedStack.getTooltip(client.player, this.client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.BASIC);
             tooltip.remove(ScreenTexts.EMPTY);
             tooltip.remove((Text.translatable("item.modifiers.mainhand")).formatted(Formatting.GRAY));
         }else{
