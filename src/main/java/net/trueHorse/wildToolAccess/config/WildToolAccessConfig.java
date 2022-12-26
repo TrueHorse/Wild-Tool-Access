@@ -1,12 +1,12 @@
 package net.trueHorse.wildToolAccess.config;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.trueHorse.wildToolAccess.StuffPlaceholder;
 import net.trueHorse.wildToolAccess.WildToolAccess;
+import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
 import java.io.*;
 import java.util.Arrays;
@@ -112,18 +112,12 @@ public class WildToolAccessConfig {
 
     public static Class<?> getClassValue(String key){
         String prop = configs.getProperty(key).toLowerCase();
-        switch(prop){
-            case "tools": return ToolItem.class;
-            case "swords": return SwordItem.class;
-            case "ranged weapons": return RangedWeaponItem.class;
-            case "potions": return PotionItem.class;
-            case "buckets": return BucketItem.class;
-            case "stuff": return StuffPlaceholder.class;
-            default:
+        Class<?> val = StringToTypeToAccessConverter.convert(prop);
+        if(val==null){
             WildToolAccess.LOGGER.error("Configured access option for "+key+" does not exist.");
             WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            return null;
         }
+        return val;
     }
 
     public static String getStringValue(String key){
