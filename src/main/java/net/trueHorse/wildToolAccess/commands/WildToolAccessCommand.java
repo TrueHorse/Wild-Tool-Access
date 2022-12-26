@@ -7,6 +7,7 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.item.*;
+import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgument;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgumentType;
 
@@ -23,11 +24,21 @@ public class WildToolAccessCommand {
                 .then(literal("stuffTag")
                         .then(literal("add")
                                 .then(argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.ADD, context.getSource())))
-                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.ADD, context.getSource())))
+                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).suggests((context,builder) -> {
+                                    for(AccessType enumType : AccessType.values()){
+                                        builder.suggest(enumType.name().toLowerCase());
+                                    }
+                                    return builder.buildFuture();
+                                }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.ADD, context.getSource())))
                                 .then(literal("inventory").executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromInventory(context),Operation.ADD, context.getSource()))))
                         .then(literal("remove")
                                 .then(argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.REMOVE, context.getSource())))
-                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.REMOVE, context.getSource())))
+                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).suggests((context,builder) -> {
+                                    for(AccessType enumType : AccessType.values()){
+                                        builder.suggest(enumType.name().toLowerCase());
+                                    }
+                                    return builder.buildFuture();
+                                }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.REMOVE, context.getSource())))
                                 .then(literal("inventory").executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromInventory(context),Operation.REMOVE, context.getSource())))
                                 .then(literal("all").executes(context->WildToolAccessCommand.executeClearStuff(context.getSource()))))
                         .then(literal("list").executes(context -> WildToolAccessCommand.executePrintStuff(context.getSource()))
