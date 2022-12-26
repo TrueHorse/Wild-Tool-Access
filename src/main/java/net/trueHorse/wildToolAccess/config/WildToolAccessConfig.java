@@ -91,7 +91,8 @@ public class WildToolAccessConfig {
                 return Integer.parseInt(configs.getProperty(key));
             }catch(NumberFormatException e){
                 e.printStackTrace();
-                return -1;
+                WildToolAccess.LOGGER.error(key+" is set to "+configs.getProperty(key)+", which is not a numerical value.");
+                return Integer.parseInt(DefaultConfig.defaultConfigs.getProperty(key));
             }
         }else {
             WildToolAccess.LOGGER.error("Couldn't get integer config option. Key "+key+" isn't present.");
@@ -112,10 +113,13 @@ public class WildToolAccessConfig {
 
     public static Class<?> getClassValue(String key){
         String prop = configs.getProperty(key).toLowerCase();
-        Class<?> val = StringToTypeToAccessConverter.convert(prop);
-        if(val==null){
-            WildToolAccess.LOGGER.error("Configured access option for "+key+" does not exist.");
+        Class<?> val;
+        try {
+            val = StringToTypeToAccessConverter.convert(prop);
+        }catch (IllegalArgumentException e){
+            WildToolAccess.LOGGER.error("Configured access option "+prop+" for "+key+" does not exist.");
             WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+            val = StringToTypeToAccessConverter.convert(DefaultConfig.defaultConfigs.getProperty(key));
         }
         return val;
     }

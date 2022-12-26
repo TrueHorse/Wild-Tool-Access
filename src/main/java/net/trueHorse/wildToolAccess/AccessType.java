@@ -2,10 +2,10 @@ package net.trueHorse.wildToolAccess;
 
 public enum AccessType {
 
-    TOOL(),
-    SWORD(),
-    RANGED_WEAPON(),
-    POTION(),
-    BUCKET(),
+    TOOLS(),
+    SWORDS(),
+    RANGED_WEAPONS(),
+    POTIONS(),
+    BUCKETS(),
     STUFF()
 }

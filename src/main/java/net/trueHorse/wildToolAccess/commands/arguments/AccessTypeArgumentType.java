@@ -28,8 +28,11 @@ public class AccessTypeArgumentType implements ArgumentType<AccessTypeArgument>{
             throw MISSING_TYPE.create();
         }
         String input = reader.readString();
-        Class<?> type = StringToTypeToAccessConverter.convert(input);
-        if(type==null){
+
+        Class<?> type;
+        try {
+            type = StringToTypeToAccessConverter.convert(input);
+        }catch (IllegalArgumentException e){
             throw TYPE_UNKNOWN.createWithContext(reader,input);
         }
         return new AccessTypeArgument(type);
