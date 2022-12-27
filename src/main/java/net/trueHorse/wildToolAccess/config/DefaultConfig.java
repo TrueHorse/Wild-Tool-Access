@@ -1,5 +1,13 @@
 package net.trueHorse.wildToolAccess.config;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class DefaultConfig {
@@ -56,5 +64,16 @@ public class DefaultConfig {
                                                 "#By default it includes torch, ladder, bucket and cobblestone.");
         comments.setProperty("typeToAccess2", "#see above, but for access 2");
         return comments;
+    }
+
+    public static ArrayList<Item> getDefaultStuffItems() {
+        ArrayList<Item> items = new ArrayList<Item>();
+        JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(defaultStuffJsonContent), "values");
+        for (JsonElement element : vals) {
+            if (element.isJsonPrimitive()) {
+                items.add(Registries.ITEM.get(new Identifier(element.getAsString())));
+            }
+        }
+        return items;
     }
 }
