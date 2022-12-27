@@ -33,7 +33,7 @@ public class AccessBar{
         if(!classToAccess.equals(StuffPlaceholder.class)){
             stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess);
         }else{
-            stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.stuffItems);
+            stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.getStuffItems());
         }
         if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
             ItemStack prioStack = inv.getStack(inv.getSlotWithStack(lastSwappedOutTool)==-1? 1000:inv.getSlotWithStack(lastSwappedOutTool));

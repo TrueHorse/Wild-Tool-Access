@@ -1,5 +1,6 @@
 package net.trueHorse.wildToolAccess.config;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import net.fabricmc.loader.api.FabricLoader;
@@ -11,16 +12,13 @@ import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 public class WildToolAccessConfig {
 
     private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
     private static Properties configs = new Properties();
-    public static final HashSet<Item> stuffItems = new HashSet<>();
+    private static ImmutableSet<Item> stuffItems = ImmutableSet.of();
     private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
     private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
     private static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
@@ -45,7 +43,7 @@ public class WildToolAccessConfig {
     }
 
     public static void loadStuffItems(){
-        stuffItems.clear();
+        ArrayList<Item> items = new ArrayList<Item>();
 
         if(STUFF_FILE.exists()){
             try {
@@ -58,12 +56,14 @@ public class WildToolAccessConfig {
                             WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
                             continue;
                         }
-                        stuffItems.add(item.get()) ;
+                        items.add(item.get()) ;
 
                     } else {
                         WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");
                     }
                 }
+
+                stuffItems = ImmutableSet.copyOf(items);
             } catch (FileNotFoundException e) {
                 WildToolAccess.LOGGER.error("Stuff file was not found after existing. How?");
                 e.printStackTrace();
@@ -179,5 +179,9 @@ public class WildToolAccessConfig {
             WildToolAccess.LOGGER.error("Couldn't set config option. Key "+key+" isn't present.");
             WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
         }
+    }
+
+    public static ImmutableSet<Item> getStuffItems() {
+        return stuffItems;
     }
 }
