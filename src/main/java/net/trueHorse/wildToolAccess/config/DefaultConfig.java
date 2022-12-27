@@ -6,6 +6,16 @@ public class DefaultConfig {
     
     public static final Properties defaultConfigs = createDefaultConfigs();
     public static final Properties configComments = createConfigComments();
+    public static final String defaultStuffJsonContent =
+                    """
+                    {
+                        "values":[
+                            "minecraft:torch",
+                            "minecraft:ladder",
+                            "minecraft:bucket",
+                            "minecraft:cobblestone"
+                        ]
+                    }""";
 
     private static Properties createDefaultConfigs(){
         Properties configs = new Properties();

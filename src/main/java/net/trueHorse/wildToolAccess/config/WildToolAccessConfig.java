@@ -1,24 +1,29 @@
 package net.trueHorse.wildToolAccess.config;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Properties;
 
 public class WildToolAccessConfig {
 
     private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
     private static Properties configs = new Properties();
+    public static final HashSet<Item> stuffItems = new HashSet<>();
     private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
     private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
-    public static TagKey<Item> stuffTag = TagKey.of(RegistryKeys.ITEM, new Identifier("c","stuff"));
+    private static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
 
     public static void loadCofigs(){
         configs = DefaultConfig.defaultConfigs;
@@ -39,27 +44,60 @@ public class WildToolAccessConfig {
         }
     }
 
-    public static void createOrUpdateConfigFile() {
-        if(!MOD_CONFIG_FILE.getParentFile().exists()){
-            MOD_CONFIG_FILE.getParentFile().mkdirs();
+    public static void loadStuffItems(){
+        stuffItems.clear();
+
+        if(STUFF_FILE.exists()){
+            try {
+                JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(STUFF_FILE)),"values");
+                for(JsonElement element:vals){
+                    if (element.isJsonPrimitive()) {
+                        Optional<Item> item = Registries.ITEM.getOrEmpty(new Identifier(element.getAsString()));
+
+                        if(item.isEmpty()){
+                            WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
+                            continue;
+                        }
+                        stuffItems.add(item.get()) ;
+
+                    } else {
+                        WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                WildToolAccess.LOGGER.error("Stuff file was not found after existing. How?");
+                e.printStackTrace();
+            }
+        }else{
+            createOrUpdateFile(STUFF_FILE,DefaultConfig.defaultStuffJsonContent);
+        }
+    }
+
+    public static void createOrUpdateConfigFile(){
+        createOrUpdateFile(MOD_CONFIG_FILE,getConfigContentAsString(configs));
+    }
+
+    public static void createOrUpdateFile(File file, String content) {
+        if(!file.getParentFile().exists()){
+            file.getParentFile().mkdirs();
         }
 
-        if(MOD_CONFIG_FILE.exists()){
-                boolean success = MOD_CONFIG_FILE.delete();
+        if(file.exists()){
+                boolean success = file.delete();
                 if(!success) {
-                    WildToolAccess.LOGGER.error("Config file could not be deleted.");
+                    WildToolAccess.LOGGER.error(file.getName()+ " could not be deleted.");
                     WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
                 }
         }
 
         try {
-            MOD_CONFIG_FILE.createNewFile();
+            file.createNewFile();
 
-            FileWriter confWriter = new FileWriter(MOD_CONFIG_FILE);
-            confWriter.write(getConfigContentAsString(configs));
+            FileWriter confWriter = new FileWriter(file);
+            confWriter.write(content);
             confWriter.close();
         } catch (IOException e) {
-            WildToolAccess.LOGGER.error("Creation of config file failed");
+            WildToolAccess.LOGGER.error("Creation of "+file.getName()+" failed");
             e.printStackTrace();
         }
     }
