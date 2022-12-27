@@ -12,7 +12,10 @@ import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Properties;
 
 public class WildToolAccessConfig {
 
