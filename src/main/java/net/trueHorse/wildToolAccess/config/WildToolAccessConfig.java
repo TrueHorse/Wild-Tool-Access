@@ -22,9 +22,9 @@ public class WildToolAccessConfig {
     private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
     private static Properties configs = new Properties();
     private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(DefaultConfig.getDefaultStuffItems());
-    private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
-    private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
-    private static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
+    public final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
+    public final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
+    public static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
 
     public static void loadCofigs(){
         configs = DefaultConfig.defaultConfigs;
