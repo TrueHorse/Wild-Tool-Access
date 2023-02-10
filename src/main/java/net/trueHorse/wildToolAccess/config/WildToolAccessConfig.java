@@ -70,6 +70,9 @@ public class WildToolAccessConfig {
             } catch (FileNotFoundException e) {
                 WildToolAccess.LOGGER.error("Stuff file was not found after existing. How?");
                 e.printStackTrace();
+            } catch (Exception e){
+                WildToolAccess.LOGGER.error("Stuff file could not be read as a .json file");
+                e.printStackTrace();
             }
         }else{
             createOrUpdateFile(STUFF_FILE,DefaultConfig.defaultStuffJsonContent);
@@ -80,17 +83,27 @@ public class WildToolAccessConfig {
         createOrUpdateFile(MOD_CONFIG_FILE,getConfigContentAsString(configs));
     }
 
+    public static void createStuffFileWithValuesEmpty(){
+        String content = """
+                    {
+                        "values":[
+                        
+                        ]
+                    }""";
+        createOrUpdateFile(STUFF_FILE,content);
+    }
+
     public static void createOrUpdateFile(File file, String content) {
         if(!file.getParentFile().exists()){
             file.getParentFile().mkdirs();
         }
 
         if(file.exists()){
-                boolean success = file.delete();
-                if(!success) {
-                    WildToolAccess.LOGGER.error(file.getName()+ " could not be deleted.");
-                    WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-                }
+            boolean success = file.delete();
+            if(!success) {
+                WildToolAccess.LOGGER.error(file.getName()+ " could not be deleted.");
+                WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+            }
         }
 
         try {
