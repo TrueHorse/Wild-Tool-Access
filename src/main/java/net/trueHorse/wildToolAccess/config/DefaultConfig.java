@@ -60,7 +60,7 @@ public class DefaultConfig {
         comments.setProperty("lastSwappedOutFirst", "#The tool swapped out last time should be shown in the first access bar slot next time.");
         comments.setProperty("putToTheRightIfPossible", "#The item that would be swapped out of your hotbar goes in the slot to the right instead, if that slot is empty");
         comments.setProperty("typeToAccess1", "#what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff\n"+
-                                                "#Stuff is a custom item tag, so you can use a data pack to define, what you want it to be.\n"+
+                                                "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.\n"+
                                                 "#By default it includes torch, ladder, bucket and cobblestone.");
         comments.setProperty("typeToAccess2", "#see above, but for access 2");
         return comments;
