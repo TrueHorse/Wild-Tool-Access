@@ -98,17 +98,7 @@ public class WildToolAccessConfig {
             file.getParentFile().mkdirs();
         }
 
-        if(file.exists()){
-            boolean success = file.delete();
-            if(!success) {
-                WildToolAccess.LOGGER.error(file.getName()+ " could not be deleted.");
-                WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            }
-        }
-
         try {
-            file.createNewFile();
-
             FileWriter confWriter = new FileWriter(file);
             confWriter.write(content);
             confWriter.close();
