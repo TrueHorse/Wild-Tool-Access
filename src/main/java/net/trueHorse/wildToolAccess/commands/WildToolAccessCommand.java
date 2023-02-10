@@ -21,6 +21,7 @@ import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.StuffPlaceholder;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgument;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgumentType;
+import net.trueHorse.wildToolAccess.config.DefaultConfig;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.io.*;
@@ -58,8 +59,9 @@ public class WildToolAccessCommand {
                                 }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context,registryAccess),Operation.REMOVE, context.getSource())))
                                 .then(literal("inventory").executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromInventory(context),Operation.REMOVE, context.getSource())))
                                 .then(literal("all").executes(context->WildToolAccessCommand.executeClearStuff(context.getSource()))))
-                        .then(literal("list").executes(context -> WildToolAccessCommand.executePrintStuff(context.getSource()))
-                        )));
+                        .then(literal("list").executes(context -> WildToolAccessCommand.executePrintStuff(context.getSource())))
+                        .then(literal("reset").executes(context -> WildToolAccessCommand.executeResetStuff(context.getSource())))
+                ));
     }
 
     private static int executeModifyStuff(ArrayList<Identifier> itemIds, Operation operation,FabricClientCommandSource source){
@@ -99,6 +101,12 @@ public class WildToolAccessCommand {
 
     private static int executeClearStuff(FabricClientCommandSource source){
         WildToolAccessConfig.createStuffFileWithValuesEmpty();
+        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.cleared"));
+        return 1;
+    }
+
+    private static int executeResetStuff(FabricClientCommandSource source){
+        WildToolAccessConfig.createOrUpdateFile(WildToolAccessConfig.STUFF_FILE, DefaultConfig.defaultStuffJsonContent);
         source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.cleared"));
         return 1;
     }

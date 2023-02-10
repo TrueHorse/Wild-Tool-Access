@@ -53,6 +53,7 @@
 	"command.wildtoolaccess.stuff.added": "Added %s to Stuff",
 	"command.wildtoolaccess.stuff.removed": "Removed %s from Stuff",
 	"command.wildtoolaccess.stuff.cleared": "Cleared Stuff",
+	"command.wildtoolaccess.stuff.reset": "Reset Stuff to default",
 	"command.wildtoolaccess.stuff.no_stuff": "No items in Stuff",
 	"command.wildtoolaccess.stuff.couldnt_write": "Couldn't write to stuff.json",
 	"command.wildtoolaccess.stuff.probably_couldnt_read": "An error occurred. Probably stuff.json couldn't be read as a .json file",
