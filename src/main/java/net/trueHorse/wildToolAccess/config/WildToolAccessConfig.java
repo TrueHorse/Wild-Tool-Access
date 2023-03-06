@@ -40,9 +40,9 @@ public class WildToolAccessConfig {
                 WildToolAccess.LOGGER.error("Failed to read the actual config file.");
                 e.printStackTrace();
             }
-        }else{
-            createOrUpdateConfigFile();
         }
+
+        createOrUpdateConfigFile();
     }
 
     public static void loadStuffItems(){
