@@ -83,27 +83,27 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 }
                 int i = scaledWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
                 int j = scaledHeight/2 -54+WildToolAccessConfig.getIntValue("yOffset");
-                matrices.push();
-                matrices.translate(0.0F, 0.0F, -90.0F);
+                int m = this.getZOffset();
+                this.setZOffset(-90);
                 int k;
                 int l;
                 int distance = 20+WildToolAccessConfig.getIntValue("spaceBetweenSlots");
                 
                 if(openAccessbar.getStacks().size()==0){
-                    drawTexture(matrices, i, j, 66, 0, 22, 22);
+                    this.drawTexture(matrices, i, j, 66, 0, 22, 22);
                 }else{
                     for(k = 1; k < openAccessbar.getStacks().size(); ++k) {
                         l = i + k * distance - distance*openAccessbar.getSelectedAccessSlot();
-                        drawTexture(matrices, l, j, 0, 0, 22, 22);
+                        this.drawTexture(matrices, l, j, 0, 0, 22, 22);
                     }
                     l = i - distance*openAccessbar.getSelectedAccessSlot();
-                    drawTexture(matrices, l, j, 22, 0, 22, 22);
+                    this.drawTexture(matrices, l, j, 22, 0, 22, 22);
                     l = i + k * distance - distance*openAccessbar.getSelectedAccessSlot();
-                    drawTexture(matrices, l, j, 44, 0, 22, 22);
+                    this.drawTexture(matrices, l, j, 44, 0, 22, 22);
                 }
-                drawTexture(matrices, i - 1, j - 1, 0, 22, 24, 22);
-
-                matrices.pop();
+                this.drawTexture(matrices, i - 1, j - 1, 0, 22, 24, 22);
+      
+                this.setZOffset(m);
 
                 j += 3;
                 int o =1;
