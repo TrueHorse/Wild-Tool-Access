@@ -67,29 +67,35 @@ public class AccessBar{
 
     public void selectItem(){
         PlayerInventory inv = client.player.getInventory();
-        if(selectedAccessSlot!=0&&!(ItemStack.areEqual(inv.getStack(inv.selectedSlot), stacks.get(selectedAccessSlot-1)))){
+        int slotSwapIsLockedTo = WildToolAccessConfig.getIntValue("lockSwappingToSlot");
+        int slotToSwap = !(slotSwapIsLockedTo<1||slotSwapIsLockedTo>PlayerInventory.getHotbarSize()) ? slotSwapIsLockedTo-1 : inv.selectedSlot;
 
+        if(selectedAccessSlot!=0&&!(ItemStack.areEqual(inv.getStack(slotToSwap), stacks.get(selectedAccessSlot-1)))){
             int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
-            boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack((inv.selectedSlot+1)%9) == ItemStack.EMPTY);
-            int slotToTheRight = (inv.selectedSlot+1)%9;
-            ItemStack selectedHotbarSlotStack = inv.getStack(inv.selectedSlot);
+            int slotToTheRight = (slotToSwap+1)%9;
+            boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(slotToTheRight) == ItemStack.EMPTY);
+            ItemStack selectedHotbarSlotStack = inv.getStack(slotToSwap);
 
             if(selectedToolPos<9){
-                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,inv.selectedSlot, SlotActionType.SWAP,client.player);
+                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,slotToSwap, SlotActionType.SWAP,client.player);
 
                 if(putToTheRight){
                     client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,slotToTheRight, SlotActionType.SWAP,client.player);
                 }
                 client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,selectedToolPos, SlotActionType.SWAP,client.player);
-                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,inv.selectedSlot, SlotActionType.SWAP,client.player);
+                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,slotToSwap, SlotActionType.SWAP,client.player);
             }else{
-                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,selectedToolPos,inv.selectedSlot, SlotActionType.SWAP,client.player);
+                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,selectedToolPos,slotToSwap, SlotActionType.SWAP,client.player);
 
                 if(putToTheRight){
                     client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,selectedToolPos,slotToTheRight, SlotActionType.SWAP,client.player);
                 }
             }
 
+            int hotbarSlotToSelect = WildToolAccessConfig.getIntValue("hotbarSlotAfterSwap");
+            if(!(hotbarSlotToSelect<1||hotbarSlotToSelect>PlayerInventory.getHotbarSize())){
+                inv.selectedSlot = hotbarSlotToSelect-1;
+            }
 
             if(this.number==1){
                 client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.selectInAccess1,1.0F,1.0F));

@@ -39,6 +39,8 @@ public class DefaultConfig {
         configs.setProperty("itemInfoShown", "enchantments");
         configs.setProperty("lastSwappedOutFirst", "true");
         configs.setProperty("putToTheRightIfPossible", "false");
+        configs.setProperty("lockSwappingToSlot","0");
+        configs.setProperty("hotbarSlotAfterSwap","0");
         configs.setProperty("typeToAccess1", "tools");
         configs.setProperty("typeToAccess2", "swords");
         return configs;
@@ -59,6 +61,8 @@ public class DefaultConfig {
                                         "#name->name; non->non");
         comments.setProperty("lastSwappedOutFirst", "#The tool swapped out last time should be shown in the first access bar slot next time.");
         comments.setProperty("putToTheRightIfPossible", "#The item that would be swapped out of your hotbar goes in the slot to the right instead, if that slot is empty");
+        comments.setProperty("lockSwappingToSlot","#Locks swapping to that hotbar slot. Values <1 and >hotbar size disable this option.");
+        comments.setProperty("hotbarSlotAfterSwap","#After swapping your selected hotbar slot will be set to this slot. Values <1 and >hotbar size disable this option.");
         comments.setProperty("typeToAccess1", "#what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff\n"+
                                                 "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.\n"+
                                                 "#By default it includes torch, ladder, bucket and cobblestone.");

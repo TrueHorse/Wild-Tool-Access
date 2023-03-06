@@ -15,6 +15,8 @@
 	"option.wildtoolaccess.item_info_shown": "item information shown",
 	"option.wildtoolaccess.last_swapped_out_first": "tool that got swapped out last time will be in first slot",
 	"option.wildtoolaccess.put_to_the_right_if_possible": "item to get swapped out will go in slot to the right, if it's empty",
+	"option.wildtoolaccess.lock_swapping_to_slot": "slot swapping is locked to",
+	"option.wildtoolaccess.hotbar_slot_after_swap": "hotbar slot after swap",
 	"option.wildtoolaccess.type_to_access_1": "type of items in bar 1",
 	"option.wildtoolaccess.type_to_access_2": "type of items in bar 2",
 
@@ -30,6 +32,8 @@
 	"tooltip.wildtoolaccess.item_info_shown": "see config file for further info",
 	"tooltip.wildtoolaccess.last_swapped_out_first": "see config file for further info",
 	"tooltip.wildtoolaccess.put_to_the_right_if_possible": "see config file for further info",
+	"tooltip.wildtoolaccess.lock_swapping_to_slot": "Locks swapping to that hotbar slot. 0 to disable.",
+	"tooltip.wildtoolaccess.hotbar_slot_after_swap": "Slot get auto selected after swap. 0 to disable.",
 	"tooltip.wildtoolaccess.type_to_access_1": "see config file for further info",
 	"tooltip.wildtoolaccess.type_to_access_2": "see config file for further info",
 
