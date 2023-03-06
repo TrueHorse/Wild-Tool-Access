@@ -1,10 +1,8 @@
 package net.trueHorse.wildToolAccess;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
+import net.minecraft.util.registry.Registry;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ public class WildToolAccessSoundEvents {
     private static final ArrayList<SoundEvent> soundEvents = new ArrayList<SoundEvent>();
 
     public static SoundEvent register(Identifier id){
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
+        return Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
     }
 
     public static void registerAll(){

@@ -3,9 +3,9 @@ package net.trueHorse.wildToolAccess.config;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -76,7 +76,7 @@ public class DefaultConfig {
         JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(defaultConfigs.getProperty("defaultStuffJsonContent")), "values");
         for (JsonElement element : vals) {
             if (element.isJsonPrimitive()) {
-                items.add(Registries.ITEM.get(new Identifier(element.getAsString())));
+                items.add(Registry.ITEM.get(new Identifier(element.getAsString())));
             }
         }
         return items;

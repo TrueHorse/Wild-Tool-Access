@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.trueHorse.wildToolAccess.WildToolAccess;
@@ -53,7 +53,7 @@ public class WildToolAccessConfig {
                 JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(STUFF_FILE)),"values");
                 for(JsonElement element:vals){
                     if (element.isJsonPrimitive()) {
-                        Optional<Item> item = Registries.ITEM.getOrEmpty(new Identifier(element.getAsString()));
+                        Optional<Item> item = Registry.ITEM.getOrEmpty(new Identifier(element.getAsString()));
 
                         if(item.isEmpty()){
                             WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
@@ -75,7 +75,7 @@ public class WildToolAccessConfig {
                 e.printStackTrace();
             }
         }else{
-            createOrUpdateFile(STUFF_FILE,DefaultConfig.defaultConfigs.getProperty("defaultStuffJsonContent"));
+            createOrUpdateConfigFile();
         }
     }
 
