@@ -20,7 +20,8 @@ public abstract class MinecraftClientMixin {
     @Final
     @Shadow
     public GameOptions options;
-    @Final @Shadow
+    @Final
+    @Shadow
     public InGameHud inGameHud;
     
     @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))

@@ -1,33 +1,30 @@
 package net.trueHorse.wildToolAccess.config;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Properties;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.PotionItem;
-import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolItem;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.trueHorse.wildToolAccess.StuffPlaceholder;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.trueHorse.wildToolAccess.WildToolAccess;
+import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Properties;
 
 public class WildToolAccessConfig {
 
-    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
+    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
     private static Properties configs = new Properties();
-    private final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
-    private final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
-    public static TagKey<Item> stuffTag = TagKey.of(Registry.ITEM_KEY, new Identifier("c","stuff"));
+    private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(DefaultConfig.getDefaultStuffItems());
+    public final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
+    public final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
+    public static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
 
     public static void loadCofigs(){
         configs = DefaultConfig.defaultConfigs;
@@ -43,32 +40,70 @@ public class WildToolAccessConfig {
                 WildToolAccess.LOGGER.error("Failed to read the actual config file.");
                 e.printStackTrace();
             }
+        }
+
+        createOrUpdateConfigFile();
+    }
+
+    public static void loadStuffItems(){
+        ArrayList<Item> items = new ArrayList<Item>();
+
+        if(STUFF_FILE.exists()){
+            try {
+                JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(STUFF_FILE)),"values");
+                for(JsonElement element:vals){
+                    if (element.isJsonPrimitive()) {
+                        Optional<Item> item = Registry.ITEM.getOrEmpty(new Identifier(element.getAsString()));
+
+                        if(item.isEmpty()){
+                            WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
+                            continue;
+                        }
+                        items.add(item.get()) ;
+
+                    } else {
+                        WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");
+                    }
+                }
+
+                stuffItems = ImmutableSet.copyOf(items);
+            } catch (FileNotFoundException e) {
+                WildToolAccess.LOGGER.error("Stuff file was not found after existing. How?");
+                e.printStackTrace();
+            } catch (Exception e){
+                WildToolAccess.LOGGER.error("Stuff file could not be read as a .json file");
+                e.printStackTrace();
+            }
         }else{
-            createOrUpdateConfigFile();
+            createOrUpdateFile(STUFF_FILE,DefaultConfig.defaultConfigs.getProperty("defaultStuffJsonContent"));
         }
     }
 
-    public static void createOrUpdateConfigFile() {
-        if(!MOD_CONFIG_FILE.getParentFile().exists()){
-            MOD_CONFIG_FILE.getParentFile().mkdirs();
-        }
+    public static void createOrUpdateConfigFile(){
+        createOrUpdateFile(MOD_CONFIG_FILE,getConfigContentAsString(configs));
+    }
 
-        if(MOD_CONFIG_FILE.exists()){
-            boolean success = MOD_CONFIG_FILE.delete();
-            if(!success) {
-                WildToolAccess.LOGGER.error("Config file could not be deleted.");
-                WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            }
+    public static void createStuffFileWithValuesEmpty(){
+        String content = """
+                    {
+                        "values":[
+                        
+                        ]
+                    }""";
+        createOrUpdateFile(STUFF_FILE,content);
+    }
+
+    public static void createOrUpdateFile(File file, String content) {
+        if(!file.getParentFile().exists()){
+            file.getParentFile().mkdirs();
         }
 
         try {
-            MOD_CONFIG_FILE.createNewFile();
-
-            FileWriter confWriter = new FileWriter(MOD_CONFIG_FILE);
-            confWriter.write(getConfigContentAsString(configs));
+            FileWriter confWriter = new FileWriter(file);
+            confWriter.write(content);
             confWriter.close();
         } catch (IOException e) {
-            WildToolAccess.LOGGER.error("Creation of config file failed");
+            WildToolAccess.LOGGER.error("Creation of "+file.getName()+" failed");
             e.printStackTrace();
         }
     }
@@ -100,7 +135,8 @@ public class WildToolAccessConfig {
                 return Integer.parseInt(configs.getProperty(key));
             }catch(NumberFormatException e){
                 e.printStackTrace();
-                return -1;
+                WildToolAccess.LOGGER.error(key+" is set to "+configs.getProperty(key)+", which is not a numerical value.");
+                return Integer.parseInt(DefaultConfig.defaultConfigs.getProperty(key));
             }
         }else {
             WildToolAccess.LOGGER.error("Couldn't get integer config option. Key "+key+" isn't present.");
@@ -121,22 +157,18 @@ public class WildToolAccessConfig {
 
     public static Class<?> getClassValue(String key){
         String prop = configs.getProperty(key).toLowerCase();
-        switch(prop){
-            case "tools": return ToolItem.class;
-            case "swords": return SwordItem.class;
-            case "ranged weapons": return RangedWeaponItem.class;
-            case "potions": return PotionItem.class;
-            case "buckets": return BucketItem.class;
-            case "stuff": return StuffPlaceholder.class;
-            default:
-                WildToolAccess.LOGGER.error("Configured access option for "+key+" does not exist.");
-                WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-                return null;
+        Class<?> val;
+        try {
+            val = StringToTypeToAccessConverter.convert(prop);
+        }catch (IllegalArgumentException e){
+            WildToolAccess.LOGGER.error("Configured access option "+prop+" for "+key+" does not exist.");
+            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
+            val = StringToTypeToAccessConverter.convert(DefaultConfig.defaultConfigs.getProperty(key));
         }
+        return val;
     }
 
     public static String getStringValue(String key){
-
         if(configs.containsKey(key)){
             return configs.getProperty(key).toLowerCase();
         }else {
@@ -146,12 +178,16 @@ public class WildToolAccessConfig {
         }
     }
 
-    public static void setValue(String key, String val) {
-        if (configs.containsKey(key)) {
-            configs.replace(key, val);
-        } else {
-            WildToolAccess.LOGGER.error("Couldn't set config option. Key " + key + " isn't present.");
+    public static void setValue(String key, String val){
+        if(configs.containsKey(key)){
+            configs.replace(key,val);
+        }else{
+            WildToolAccess.LOGGER.error("Couldn't set config option. Key "+key+" isn't present.");
             WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
         }
+    }
+
+    public static ImmutableSet<Item> getStuffItems() {
+        return stuffItems;
     }
 }

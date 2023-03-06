@@ -6,6 +6,8 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
@@ -90,6 +92,16 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setDefaultValue(false)
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.put_to_the_right_if_possible"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("putToTheRightIfPossible", Boolean.toString(newVal)))
+                    .build());
+            generalCat.addEntry(eb.startIntSlider(new TranslatableText("option.wildtoolaccess.lock_swapping_to_slot"), WildToolAccessConfig.getIntValue("lockSwappingToSlot"),0, PlayerInventory.getHotbarSize())
+                    .setDefaultValue(0)
+                    .setTooltip(new TranslatableText("tooltip.wildtoolaccess.lock_swapping_to_slot"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("lockSwappingToSlot", Integer.toString(newVal)))
+                    .build());
+            generalCat.addEntry(eb.startIntSlider(new TranslatableText("option.wildtoolaccess.hotbar_slot_after_swap"), WildToolAccessConfig.getIntValue("hotbarSlotAfterSwap"),0, PlayerInventory.getHotbarSize())
+                    .setDefaultValue(0)
+                    .setTooltip(new TranslatableText("tooltip.wildtoolaccess.hotbar_slot_after_swap"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("hotbarSlotAfterSwap", Integer.toString(newVal)))
                     .build());
             generalCat.addEntry(eb.startStringDropdownMenu(new TranslatableText("option.wildtoolaccess.type_to_access_1"), WildToolAccessConfig.getStringValue("typeToAccess1"), string -> new TranslatableText("option_val.wildtoolaccess."+string))
                     .setDefaultValue("tools")

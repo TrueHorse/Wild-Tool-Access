@@ -12,9 +12,11 @@
 	"option.wildtoolaccess.x_offset": "horizontal bar offset",
 	"option.wildtoolaccess.y_offset": "vertical bar offset",
 	"option.wildtoolaccess.space_between_slots": "space between slots",
-	"option.wildtoolaccess.itemInfoShown": "item information shown",
+	"option.wildtoolaccess.item_info_shown": "item information shown",
 	"option.wildtoolaccess.last_swapped_out_first": "tool that got swapped out last time will be in first slot",
 	"option.wildtoolaccess.put_to_the_right_if_possible": "item to get swapped out will go in slot to the right, if it's empty",
+	"option.wildtoolaccess.lock_swapping_to_slot": "slot swapping is locked to",
+	"option.wildtoolaccess.hotbar_slot_after_swap": "hotbar slot after swap",
 	"option.wildtoolaccess.type_to_access_1": "type of items in bar 1",
 	"option.wildtoolaccess.type_to_access_2": "type of items in bar 2",
 
@@ -27,9 +29,11 @@
 	"tooltip.wildtoolaccess.x_offset": "horizontal access bar offset",
 	"tooltip.wildtoolaccess.y_offset": "vertical access bar offset",
 	"tooltip.wildtoolaccess.space_between_slots": "space between access bar slots",
-	"tooltip.wildtoolaccess.itemInfoShown": "see config file for further info",
+	"tooltip.wildtoolaccess.item_info_shown": "see config file for further info",
 	"tooltip.wildtoolaccess.last_swapped_out_first": "see config file for further info",
 	"tooltip.wildtoolaccess.put_to_the_right_if_possible": "see config file for further info",
+	"tooltip.wildtoolaccess.lock_swapping_to_slot": "Locks swapping to that hotbar slot. 0 to disable.",
+	"tooltip.wildtoolaccess.hotbar_slot_after_swap": "Slot get auto selected after swap. 0 to disable.",
 	"tooltip.wildtoolaccess.type_to_access_1": "see config file for further info",
 	"tooltip.wildtoolaccess.type_to_access_2": "see config file for further info",
 
@@ -43,6 +47,20 @@
 	"option_val.wildtoolaccess.potions": "potions",
 	"option_val.wildtoolaccess.buckets": "buckets",
 	"option_val.wildtoolaccess.stuff": "stuff",
+
+	"argument.wildtoolaccess.type_to_access.missing": "No item type entered.",
+	"argument.wildtoolaccess.type_to_access.unknown": "%s is not implemented as a \"TypeToAccess\"",
+
+	"command.wildtoolaccess.stuff.file_not_found": "Stuff file could not be found, even though it should.",
+	"command.wildtoolaccess.stuff.already_contains": "%s is already in Stuff",
+	"command.wildtoolaccess.stuff.does_not_contain": "%s is not in Stuff",
+	"command.wildtoolaccess.stuff.added": "Added %s to Stuff",
+	"command.wildtoolaccess.stuff.removed": "Removed %s from Stuff",
+	"command.wildtoolaccess.stuff.cleared": "Cleared Stuff",
+	"command.wildtoolaccess.stuff.reset": "Reset Stuff to default",
+	"command.wildtoolaccess.stuff.no_stuff": "No items in Stuff",
+	"command.wildtoolaccess.stuff.couldnt_write": "Couldn't write to stuff.json",
+	"command.wildtoolaccess.stuff.probably_couldnt_read": "An error occurred. Probably stuff.json couldn't be read as a .json file",
 
 	"link.wildtoolaccess.curse_forge": "CurseForge",
 	"link.wildtoolaccess.modrinth": "Modrinth"
