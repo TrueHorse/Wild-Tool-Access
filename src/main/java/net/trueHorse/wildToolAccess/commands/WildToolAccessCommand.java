@@ -11,12 +11,11 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.StuffPlaceholder;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgument;
@@ -132,7 +131,7 @@ public class WildToolAccessCommand {
 
     private static ArrayList<Identifier> getItemListFromItemArgument(CommandContext<FabricClientCommandSource> context){
         ArrayList<Identifier> list = new ArrayList<Identifier>();
-        list.add(Registries.ITEM.getId(context.getArgument("item",ItemStackArgument.class).getItem()));
+        list.add(Registry.ITEM.getId(context.getArgument("item",ItemStackArgument.class).getItem()));
         return list;
     }
 
@@ -141,11 +140,11 @@ public class WildToolAccessCommand {
         Class<?> type = context.getArgument("type", AccessTypeArgument.class).getType();
 
         if(type == StuffPlaceholder.class){
-            itemIdsOfType.addAll(WildToolAccessConfig.getStuffItems().stream().map(Registries.ITEM::getId).toList());
+            itemIdsOfType.addAll(WildToolAccessConfig.getStuffItems().stream().map(Registry.ITEM::getId).toList());
         }else{
-            List<Identifier> allItemIds = registryAccess.createWrapper(RegistryKeys.ITEM).streamKeys().map(RegistryKey::getValue).toList();
+            List<Identifier> allItemIds = registryAccess.createWrapper(Registry.ITEM_KEY).streamKeys().map(RegistryKey::getValue).toList();
             for(Identifier id:allItemIds){
-                Item item = Registries.ITEM.get(id);
+                Item item = Registry.ITEM.get(id);
                 if(type.isAssignableFrom(item.getClass())){
                     itemIdsOfType.add(id);
                 }
@@ -159,7 +158,7 @@ public class WildToolAccessCommand {
         ArrayList<Identifier> ids = new ArrayList<Identifier>();
         context.getSource().getClient().player.getInventory().main.forEach(stack-> {
             if(!stack.isEmpty()){
-                ids.add(Registries.ITEM.getId(stack.getItem()));
+                ids.add(Registry.ITEM.getId(stack.getItem()));
             }
         } );
         return ids;
