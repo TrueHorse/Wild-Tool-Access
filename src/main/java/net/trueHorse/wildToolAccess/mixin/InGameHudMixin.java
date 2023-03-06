@@ -57,7 +57,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     @Shadow
     private PlayerEntity getCameraPlayer(){return null;}
     @Shadow
-    private void renderHotbarItem(MatrixStack matrices, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){}
+    private void renderHotbarItem(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
@@ -109,7 +109,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 int o =1;
                 for(k = 0; k < openAccessbar.getStacks().size(); ++k) {
                     l = i + k * distance + 3 - distance*(openAccessbar.getSelectedAccessSlot()-1);
-                    this.renderHotbarItem(matrices, l, j, tickDelta, playerEntity, openAccessbar.getStacks().get(k),o++);
+                    this.renderHotbarItem(l, j, tickDelta, playerEntity, openAccessbar.getStacks().get(k),o++);
                 }
 
                 String labConf = WildToolAccessConfig.getStringValue("itemInfoShown");
