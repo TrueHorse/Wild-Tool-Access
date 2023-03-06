@@ -14,16 +14,6 @@ public class DefaultConfig {
     
     public static final Properties defaultConfigs = createDefaultConfigs();
     public static final Properties configComments = createConfigComments();
-    public static final String defaultStuffJsonContent =
-                    """
-                    {
-                        "values":[
-                            "minecraft:torch",
-                            "minecraft:ladder",
-                            "minecraft:bucket",
-                            "minecraft:cobblestone"
-                        ]
-                    }""";
 
     private static Properties createDefaultConfigs(){
         Properties configs = new Properties();
@@ -43,6 +33,17 @@ public class DefaultConfig {
         configs.setProperty("hotbarSlotAfterSwap","0");
         configs.setProperty("typeToAccess1", "tools");
         configs.setProperty("typeToAccess2", "swords");
+        configs.setProperty("defaultStuffJsonContent",
+                    """
+                    {
+                        "values":[
+                            "minecraft:torch",
+                            "minecraft:ladder",
+                            "minecraft:bucket",
+                            "minecraft:cobblestone"
+                        ]
+                    }""");
+
         return configs;
     }
     private static Properties createConfigComments(){
@@ -72,7 +73,7 @@ public class DefaultConfig {
 
     public static ArrayList<Item> getDefaultStuffItems() {
         ArrayList<Item> items = new ArrayList<Item>();
-        JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(defaultStuffJsonContent), "values");
+        JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(defaultConfigs.getProperty("defaultStuffJsonContent")), "values");
         for (JsonElement element : vals) {
             if (element.isJsonPrimitive()) {
                 items.add(Registries.ITEM.get(new Identifier(element.getAsString())));

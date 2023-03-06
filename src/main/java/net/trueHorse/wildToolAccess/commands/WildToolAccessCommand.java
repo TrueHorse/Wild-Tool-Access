@@ -106,7 +106,7 @@ public class WildToolAccessCommand {
     }
 
     private static int executeResetStuff(FabricClientCommandSource source){
-        WildToolAccessConfig.createOrUpdateFile(WildToolAccessConfig.STUFF_FILE, DefaultConfig.defaultStuffJsonContent);
+        WildToolAccessConfig.createOrUpdateFile(WildToolAccessConfig.STUFF_FILE, DefaultConfig.defaultConfigs.getProperty("defaultStuffJsonContent"));
         source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.cleared"));
         return 1;
     }

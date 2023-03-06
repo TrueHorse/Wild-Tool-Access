@@ -75,7 +75,7 @@ public class WildToolAccessConfig {
                 e.printStackTrace();
             }
         }else{
-            createOrUpdateFile(STUFF_FILE,DefaultConfig.defaultStuffJsonContent);
+            createOrUpdateFile(STUFF_FILE,DefaultConfig.defaultConfigs.getProperty("defaultStuffJsonContent"));
         }
     }
 
