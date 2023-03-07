@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Wild Tool Access",
-  "description": "Lets you access your tools similar to how you access them in Zelda Breath of the Wild.",
+  "description": "Lets you access your tools similar to how you can access them in Zelda Breath of the Wild.",
   "authors": [
     "TrueHorse"
   ],
@@ -30,10 +30,12 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.7.4",
+    "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": "1.16.x",
-    "fabric-key-binding-api-v1": "*"
+    "minecraft": "1.18.x",
+    "java": ">=17",
+    "fabric-key-binding-api-v1": "*",
+    "fabric-registry-sync-v0": "*"
   },
   "suggests": {
     "another-mod": "*"

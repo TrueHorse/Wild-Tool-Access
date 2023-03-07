@@ -1,6 +1,7 @@
 package net.trueHorse.wildToolAccess.mixin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import org.spongepowered.asm.mixin.Final;
@@ -34,12 +35,13 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
         }
     }
 
+
     @Override
     public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for(int j=0;j<main.size();j++){
-            if(type.isAssignableFrom(main.get(j).getItem().getClass())){
-                stacks.add(main.get(j));
+        for (ItemStack itemStack : main) {
+            if (type.isAssignableFrom(itemStack.getItem().getClass())) {
+                stacks.add(itemStack);
             }
         }
         return stacks;
@@ -48,11 +50,22 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Override
     public ArrayList<ItemStack> getAllMainStacksWithTag(Tag<Item> tag){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-            for(int j=0;j<main.size();j++){
-                if(tag.contains(main.get(j).getItem())){
-                    stacks.add(main.get(j));
-                }
+        for (ItemStack itemStack : main) {
+            if (tag.contains(itemStack.getItem())) {
+                stacks.add(itemStack);
             }
+        }
+        return stacks;
+    }
+
+    @Override
+    public ArrayList<ItemStack> getAllMainStacksOf(Collection<Item> items) {
+        ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+        for (ItemStack itemStack : main) {
+            if (items.contains(itemStack.getItem())) {
+                stacks.add(itemStack);
+            }
+        }
         return stacks;
     }
 }

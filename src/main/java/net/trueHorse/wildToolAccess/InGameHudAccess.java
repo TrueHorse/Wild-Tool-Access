@@ -2,11 +2,11 @@ package net.trueHorse.wildToolAccess;
 
 public interface InGameHudAccess {
 
-    public AccessBar getOpenAccessBar();
+    AccessBar getOpenAccessBar();
 
-    public void closeOpenAccessbar(boolean select);
+    void closeOpenAccessbar(boolean select);
 
-    public void openAccessbar(int num);
+    void openAccessbar(int num);
 
-    public void setAccessBarTexturesAsConfigured();
+    void setAccessBarTexturesAsConfigured();
 }

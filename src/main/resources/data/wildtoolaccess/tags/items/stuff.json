@@ -1,9 +1,0 @@
-{
-    "replace":false,
-    "values":[
-        "minecraft:torch",
-        "minecraft:ladder",
-        "minecraft:bucket",
-        "minecraft:cobblestone"
-    ]
-}

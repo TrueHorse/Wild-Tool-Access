@@ -1,7 +1,6 @@
 package net.trueHorse.wildToolAccess.mixin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -43,6 +42,9 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     private int scaledWidth;
     @Shadow
     private int scaledHeight;
+    private final List<Identifier> accessBarTextures = List.of(
+            new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
+            new Identifier("wildtoolaccess","textures/gui/access_widgets1.png"));
     private static Identifier accessBarTexture1;
     private static Identifier accessBarTexture2;
     @Final
@@ -162,9 +164,6 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     }
 
     public void setAccessBarTexturesAsConfigured(){
-        List<Identifier> accessBarTextures = Arrays.asList(
-                new Identifier("wildtoolaccess", "textures/gui/access_widgets0.png"),
-                new Identifier("wildtoolaccess", "textures/gui/access_widgets1.png"));
         accessBarTexture1 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1"));
         accessBarTexture2 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture2"));
     }
