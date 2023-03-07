@@ -34,15 +34,15 @@ public class DefaultConfig {
         configs.setProperty("typeToAccess1", "tools");
         configs.setProperty("typeToAccess2", "swords");
         configs.setProperty("defaultStuffJsonContent",
-                    """
-                    {
-                        "values":[
-                            "minecraft:torch",
-                            "minecraft:ladder",
-                            "minecraft:bucket",
-                            "minecraft:cobblestone"
-                        ]
-                    }""");
+                    "\n"+
+                    "{\n"+
+                    "    \"values\":[\n"+
+                    "        \"minecraft:torch\",\n"+
+                    "        \"minecraft:ladder\",\n"+
+                    "        \"minecraft:bucket\",\n"+
+                    "        \"minecraft:cobblestone\"\n"+
+                    "    ]\n"+
+                    "}");
 
         return configs;
     }

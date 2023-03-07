@@ -26,7 +26,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
     private void handleAccessbarSelectInput(CallbackInfo info){
-        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.attackKey.wasPressed()){
+        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.keyAttack.wasPressed()){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
         }
     }

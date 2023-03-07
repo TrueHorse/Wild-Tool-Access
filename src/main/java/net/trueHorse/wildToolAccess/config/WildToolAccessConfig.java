@@ -55,7 +55,7 @@ public class WildToolAccessConfig {
                     if (element.isJsonPrimitive()) {
                         Optional<Item> item = Registry.ITEM.getOrEmpty(new Identifier(element.getAsString()));
 
-                        if(item.isEmpty()){
+                        if(!item.isPresent()){
                             WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
                             continue;
                         }
@@ -84,12 +84,12 @@ public class WildToolAccessConfig {
     }
 
     public static void createStuffFileWithValuesEmpty(){
-        String content = """
-                    {
-                        "values":[
-                        
-                        ]
-                    }""";
+        String content =
+                    "{\n"+
+                    "    \"values\":[\n"+
+                    "\n"+
+                    "    ]\n"+
+                    "}";
         createOrUpdateFile(STUFF_FILE,content);
     }
 

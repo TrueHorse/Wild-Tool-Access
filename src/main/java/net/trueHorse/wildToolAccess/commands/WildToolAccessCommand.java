@@ -25,6 +25,7 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
@@ -116,7 +117,7 @@ public class WildToolAccessCommand {
             try {
                 JsonObject obj = JsonHelper.deserialize(new FileReader(WildToolAccessConfig.STUFF_FILE));
                 JsonArray vals = JsonHelper.getArray(obj, "values");
-                if(vals.isEmpty()){
+                if(vals.size()==0){
                     source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.no_stuff"));
                 }
 
@@ -139,9 +140,9 @@ public class WildToolAccessCommand {
         Class<?> type = context.getArgument("type", AccessTypeArgument.class).getType();
 
         if(type == StuffPlaceholder.class){
-            itemIdsOfType.addAll(WildToolAccessConfig.getStuffItems().stream().map(Registry.ITEM::getId).toList());
+            itemIdsOfType.addAll(WildToolAccessConfig.getStuffItems().stream().map(Registry.ITEM::getId).collect(Collectors.toList()));
         }else{
-            List<Item> allItems = Registry.ITEM.stream().toList();
+            List<Item> allItems = Registry.ITEM.stream().collect(Collectors.toList());
             for(Item item:allItems){
                 if(type.isAssignableFrom(item.getClass())){
                     itemIdsOfType.add(Registry.ITEM.getId(item));
@@ -154,7 +155,7 @@ public class WildToolAccessCommand {
 
     private static ArrayList<Identifier> getItemListFromInventory(CommandContext<FabricClientCommandSource> context){
         ArrayList<Identifier> ids = new ArrayList<Identifier>();
-        context.getSource().getClient().player.getInventory().main.forEach(stack-> {
+        context.getSource().getClient().player.inventory.main.forEach(stack-> {
             if(!stack.isEmpty()){
                 ids.add(Registry.ITEM.getId(stack.getItem()));
             }

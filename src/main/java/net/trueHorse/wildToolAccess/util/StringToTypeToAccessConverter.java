@@ -7,13 +7,14 @@ import net.trueHorse.wildToolAccess.StuffPlaceholder;
 public class StringToTypeToAccessConverter {
 
     public static Class<?> convert(String string) throws IllegalArgumentException{
-            return switch (Enum.valueOf(AccessType.class,string.toUpperCase())) {
-                case TOOLS -> ToolItem.class;
-                case SWORDS -> SwordItem.class;
-                case RANGED_WEAPONS -> RangedWeaponItem.class;
-                case POTIONS -> PotionItem.class;
-                case BUCKETS -> BucketItem.class;
-                case STUFF -> StuffPlaceholder.class;
-            };
+            switch (Enum.valueOf(AccessType.class,string.toUpperCase())) {
+                case TOOLS: return ToolItem.class;
+                case SWORDS: return SwordItem.class;
+                case RANGED_WEAPONS: return RangedWeaponItem.class;
+                case POTIONS: return PotionItem.class;
+                case BUCKETS: return BucketItem.class;
+                case STUFF: return StuffPlaceholder.class;
+                default: throw new IllegalArgumentException();
+            }
     }
 }
