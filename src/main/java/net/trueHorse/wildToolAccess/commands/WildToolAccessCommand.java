@@ -5,17 +5,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.StuffPlaceholder;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgument;
@@ -27,35 +26,35 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
 public class WildToolAccessCommand {
 
-    private static final CommandException STUFF_FILE_NOT_FOUND = new CommandException(Text.translatable("command.wildtoolaccess.stuff.file_not_found"));
-    private static final CommandException COULDNT_WRITE_TO_STUFF = new CommandException(Text.translatable("command.wildtoolaccess.stuff.couldnt_write"));
-    private static final CommandException PROB_COULDNT_READ_STUFF = new CommandException(Text.translatable("command.wildtoolaccess.stuff.probably_couldnt_read"));
+    private static final CommandException STUFF_FILE_NOT_FOUND = new CommandException(new TranslatableText("command.wildtoolaccess.stuff.file_not_found"));
+    private static final CommandException COULDNT_WRITE_TO_STUFF = new CommandException(new TranslatableText("command.wildtoolaccess.stuff.couldnt_write"));
+    private static final CommandException PROB_COULDNT_READ_STUFF = new CommandException(new TranslatableText("command.wildtoolaccess.stuff.probably_couldnt_read"));
 
-    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess){
+    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher){
         dispatcher.register(literal("wta")
                 .then(literal("stuff")
                         .then(literal("add")
-                                .then(argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.ADD, context.getSource())))
-                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).suggests((context,builder) -> {
+                                .then(argument("item", ItemStackArgumentType.itemStack()).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.ADD, context.getSource())))
+                                .then(argument("type", new AccessTypeArgumentType()).suggests((context,builder) -> {
                                     for(AccessType enumType : AccessType.values()){
                                         builder.suggest(enumType.name().toLowerCase());
                                     }
                                     return builder.buildFuture();
-                                }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context,registryAccess),Operation.ADD, context.getSource())))
+                                }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.ADD, context.getSource())))
                                 .then(literal("inventory").executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromInventory(context),Operation.ADD, context.getSource()))))
                         .then(literal("remove")
-                                .then(argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.REMOVE, context.getSource())))
-                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).suggests((context,builder) -> {
+                                .then(argument("item", ItemStackArgumentType.itemStack()).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.REMOVE, context.getSource())))
+                                .then(argument("type", new AccessTypeArgumentType()).suggests((context,builder) -> {
                                     for(AccessType enumType : AccessType.values()){
                                         builder.suggest(enumType.name().toLowerCase());
                                     }
                                     return builder.buildFuture();
-                                }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context,registryAccess),Operation.REMOVE, context.getSource())))
+                                }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.REMOVE, context.getSource())))
                                 .then(literal("inventory").executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromInventory(context),Operation.REMOVE, context.getSource())))
                                 .then(literal("all").executes(context->WildToolAccessCommand.executeClearStuff(context.getSource()))))
                         .then(literal("list").executes(context -> WildToolAccessCommand.executePrintStuff(context.getSource())))
@@ -100,25 +99,25 @@ public class WildToolAccessCommand {
 
     private static int executeClearStuff(FabricClientCommandSource source){
         WildToolAccessConfig.createStuffFileWithValuesEmpty();
-        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.cleared"));
+        source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.cleared"));
         return 1;
     }
 
     private static int executeResetStuff(FabricClientCommandSource source){
         WildToolAccessConfig.createOrUpdateFile(WildToolAccessConfig.STUFF_FILE, DefaultConfig.defaultConfigs.getProperty("defaultStuffJsonContent"));
-        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.cleared"));
+        source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.cleared"));
         return 1;
     }
 
     private static int executePrintStuff(FabricClientCommandSource source){
         if(!WildToolAccessConfig.STUFF_FILE.exists()){
-            source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.no_stuff"));
+            source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.no_stuff"));
         }else{
             try {
                 JsonObject obj = JsonHelper.deserialize(new FileReader(WildToolAccessConfig.STUFF_FILE));
                 JsonArray vals = JsonHelper.getArray(obj, "values");
                 if(vals.isEmpty()){
-                    source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.no_stuff"));
+                    source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.no_stuff"));
                 }
 
                 vals.forEach(val->source.sendFeedback(Text.of(val.getAsString())));
@@ -135,18 +134,17 @@ public class WildToolAccessCommand {
         return list;
     }
 
-    private static ArrayList<Identifier> getItemListFromAccessTypeArgument(CommandContext<FabricClientCommandSource> context, CommandRegistryAccess registryAccess){
+    private static ArrayList<Identifier> getItemListFromAccessTypeArgument(CommandContext<FabricClientCommandSource> context){
         ArrayList<Identifier> itemIdsOfType = new ArrayList<Identifier>();
         Class<?> type = context.getArgument("type", AccessTypeArgument.class).getType();
 
         if(type == StuffPlaceholder.class){
             itemIdsOfType.addAll(WildToolAccessConfig.getStuffItems().stream().map(Registry.ITEM::getId).toList());
         }else{
-            List<Identifier> allItemIds = registryAccess.createWrapper(Registry.ITEM_KEY).streamKeys().map(RegistryKey::getValue).toList();
-            for(Identifier id:allItemIds){
-                Item item = Registry.ITEM.get(id);
+            List<Item> allItems = Registry.ITEM.stream().toList();
+            for(Item item:allItems){
                 if(type.isAssignableFrom(item.getClass())){
-                    itemIdsOfType.add(id);
+                    itemIdsOfType.add(Registry.ITEM.getId(item));
                 }
             }
         }
@@ -172,13 +170,13 @@ public class WildToolAccessCommand {
 
                 ids.forEach(id->{
                     if (vals.remove(new JsonPrimitive(id.toString()))) {
-                        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.already_contains", id.toString()));
+                        source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.already_contains", id.toString()));
                         addedIds.remove(id);
                     }
                     vals.add(new JsonPrimitive(id.toString()));
                 });
 
-                return Text.translatable("command.wildtoolaccess.stuff.added",addedIds);
+                return new TranslatableText("command.wildtoolaccess.stuff.added",addedIds);
             }
         },
         REMOVE{
@@ -188,12 +186,12 @@ public class WildToolAccessCommand {
 
                 ids.forEach(id->{
                     if(!vals.remove(new JsonPrimitive(id.toString()))){
-                        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString()));
+                        source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.does_not_contain",id.toString()));
                         removedIds.remove(id);
                     }
                 });
 
-                return Text.translatable("command.wildtoolaccess.stuff.removed",removedIds);
+                return new TranslatableText("command.wildtoolaccess.stuff.removed",removedIds);
             }
         };
 

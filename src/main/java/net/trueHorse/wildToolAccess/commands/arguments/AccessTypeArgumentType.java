@@ -5,21 +5,15 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandRegistryWrapper;
-import net.minecraft.item.Item;
-import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.text.TranslatableText;
 import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
 public class AccessTypeArgumentType implements ArgumentType<AccessTypeArgument>{
 
-    private static final SimpleCommandExceptionType MISSING_TYPE = new SimpleCommandExceptionType(Text.translatable("arguments.wildtoolaccess.type_to_access.missing"));
-    private static final DynamicCommandExceptionType TYPE_UNKNOWN = new DynamicCommandExceptionType(input -> Text.translatable("arguments.wildtoolaccess.type_to_access.unknown",input));
-    private final CommandRegistryWrapper<Item> registryWrapper;
+    private static final SimpleCommandExceptionType MISSING_TYPE = new SimpleCommandExceptionType(new TranslatableText("arguments.wildtoolaccess.type_to_access.missing"));
+    private static final DynamicCommandExceptionType TYPE_UNKNOWN = new DynamicCommandExceptionType(input -> new TranslatableText("arguments.wildtoolaccess.type_to_access.unknown",input));
 
-    public AccessTypeArgumentType(CommandRegistryAccess commandRegistryAccess) {
-        this.registryWrapper = commandRegistryAccess.createWrapper(Registry.ITEM_KEY);
+    public AccessTypeArgumentType() {
     }
 
     @Override
