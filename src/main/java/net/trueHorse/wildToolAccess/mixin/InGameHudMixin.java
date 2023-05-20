@@ -144,6 +144,10 @@ public class InGameHudMixin implements InGameHudAccess{
             }
         }
 
+        if(tooltip.isEmpty()){
+            return;
+        }
+
         TextRenderer textRenderer = client.textRenderer;
         List<OrderedText>orderedToolTip = Lists.transform(tooltip, Text::asOrderedText);
         OrderedText name = orderedToolTip.get(0);
