@@ -39,7 +39,7 @@ public class AccessBar{
         if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
             int prioStackSlot = inv.getSlotWithStack(lastSwappedOutTool);
             ItemStack prioStack = prioStackSlot == -1 ? ItemStack.EMPTY : inv.getStack(prioStackSlot);
-            if(prioStack!=ItemStack.EMPTY && inv.contains(prioStack)){
+            if(prioStack!=ItemStack.EMPTY){
                 ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
                 temp.add(prioStack);
                 stacks.remove(prioStack);
