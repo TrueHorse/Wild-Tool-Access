@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class AccessBar{
@@ -20,10 +21,11 @@ public class AccessBar{
     private int selectedAccessSlot = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
 
-    public AccessBar(MinecraftClient client){
+    public AccessBar(Class<?> classToAccess, SoundEvent selectionSoundEvent, Identifier textures, MinecraftClient client){
         this.client = client;
         this.inv = client.player.getInventory();
-        this.classToAccess = WildToolAccessConfig.getClassValue("typeToAccess"+number);
+        this.classToAccess = classToAccess;
+        this.selectionSoundEvent = selectionSoundEvent;
     }
 
     public void updateAccessStacks(){

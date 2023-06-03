@@ -18,6 +18,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.AccessBar;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -55,8 +56,14 @@ public class InGameHudMixin implements InGameHudAccess{
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
         setAccessBarTexturesAsConfigured();
-        accessbar1 = new AccessBar(1, client);
-        accessbar2 = new AccessBar(2, client);
+        accessbar1 = new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
+                WildToolAccessSoundEvents.selectInAccess1,
+                accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1")),
+                client);
+        accessbar2 = new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
+                WildToolAccessSoundEvents.selectInAccess1,
+                accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1")),
+                client);
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/gui/DrawContext;)V",shift = At.Shift.AFTER))
