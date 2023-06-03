@@ -51,20 +51,9 @@ public class AccessBar{
 
     public void scrollInAccessBar(double scrollAmount) {
         int barSize = stacks.size()+1;
-        if (scrollAmount > 0.0D) {
-           scrollAmount = 1.0D;
-        }
+        int slotsToScroll = (int)Math.signum(scrollAmount);
   
-        if (scrollAmount < 0.0D) {
-           scrollAmount = -1.0D;
-        }
-  
-        for(this.selectedAccessSlot = (int)((double)this.selectedAccessSlot - scrollAmount); this.selectedAccessSlot < 0; this.selectedAccessSlot += barSize) {
-        }
-  
-        while(this.selectedAccessSlot >= barSize) {
-           this.selectedAccessSlot -= barSize;
-        }
+        selectedAccessSlot = (selectedAccessSlot+slotsToScroll)%barSize;
     }
 
     public void selectItem(){
