@@ -37,7 +37,8 @@ public class AccessBar{
             stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.getStuffItems());
         }
         if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
-            ItemStack prioStack = inv.getStack(inv.getSlotWithStack(lastSwappedOutTool)==-1? 1000:inv.getSlotWithStack(lastSwappedOutTool));
+            int prioStackSlot = inv.getSlotWithStack(lastSwappedOutTool);
+            ItemStack prioStack = prioStackSlot == -1 ? ItemStack.EMPTY : inv.getStack(prioStackSlot);
             if(prioStack!=ItemStack.EMPTY && inv.contains(prioStack)){
                 ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
                 temp.add(prioStack);
