@@ -44,10 +44,7 @@ public class InGameHudMixin implements InGameHudAccess{
         new Identifier("wildtoolaccess","textures/gui/access_widgets1.png"));
     private Identifier accessBarTexture1;
     private Identifier accessBarTexture2;
-    @Final
-    private AccessBar accessbar1;
-    @Final
-    private AccessBar accessbar2;
+    private final List<AccessBar> accessBars;
     private AccessBar openAccessbar;
 
     @Shadow
@@ -70,11 +67,8 @@ public class InGameHudMixin implements InGameHudAccess{
                 openAccessbar.updateAccessStacks();
 
                 Identifier barTextures;
-                if(openAccessbar.getNumber()==1){
-                    barTextures = accessBarTexture1;
-                }else{
-                    barTextures = accessBarTexture2;
-                }
+                barTextures = openAccessbar.getTexture();
+
                 int i = scaledWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
                 int j = scaledHeight/2 -54+WildToolAccessConfig.getIntValue("yOffset");
                 context.getMatrices().push();

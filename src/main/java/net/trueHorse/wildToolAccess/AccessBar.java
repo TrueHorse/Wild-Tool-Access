@@ -7,14 +7,15 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.sound.SoundEvent;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class AccessBar{
     
     private final PlayerInventory inv;
     private final MinecraftClient client;
-    private final int number;
     private final Class<?> classToAccess;
+    private final SoundEvent selectionSoundEvent;
     private ArrayList<ItemStack> stacks;
     private int selectedAccessSlot = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
@@ -25,7 +26,6 @@ public class AccessBar{
         }
         this.client = client;
         this.inv = client.player.getInventory();
-        this.number = number;
         this.classToAccess = WildToolAccessConfig.getClassValue("typeToAccess"+number);
     }
 
@@ -96,12 +96,7 @@ public class AccessBar{
                 inv.selectedSlot = hotbarSlotToSelect-1;
             }
 
-            if(this.number==1){
-                client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.selectInAccess1,1.0F,1.0F));
-
-            }else{
-                client.getSoundManager().play(PositionedSoundInstance.master(WildToolAccessSoundEvents.selectInAccess2,1.0F,1.0F));
-            }
+            client.getSoundManager().play(PositionedSoundInstance.master(selectionSoundEvent,1.0F,1.0F));
  
             if(classToAccess.isAssignableFrom(selectedHotbarSlotStack.getItem().getClass())){
                 lastSwappedOutTool = selectedHotbarSlotStack.copy();
@@ -115,10 +110,6 @@ public class AccessBar{
 
     public int getSelectedAccessSlot() {
         return selectedAccessSlot;
-    }
-
-    public int getNumber(){
-        return this.number;
     }
 
     public ArrayList<ItemStack> getStacks() {
