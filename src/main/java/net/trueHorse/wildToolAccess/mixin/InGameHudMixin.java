@@ -43,25 +43,22 @@ public class InGameHudMixin implements InGameHudAccess{
     private final List<Identifier> accessBarTextures = List.of(
         new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
         new Identifier("wildtoolaccess","textures/gui/access_widgets1.png"));
-    private final List<AccessBar> accessBars;
+    private final AccessBar[] accessBars = {
+            new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
+                    WildToolAccessSoundEvents.selectInAccess1,
+                    accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1")),
+                    client),
+            new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
+                    WildToolAccessSoundEvents.selectInAccess2,
+                    accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture2")),
+                    client)
+    };
     private AccessBar openAccessbar;
 
     @Shadow
     private PlayerEntity getCameraPlayer(){return null;}
     @Shadow
     private void renderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){}
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
-        accessbar1 = new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
-                WildToolAccessSoundEvents.selectInAccess1,
-                accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1")),
-                client);
-        accessbar2 = new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
-                WildToolAccessSoundEvents.selectInAccess1,
-                accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1")),
-                client);
-    }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/gui/DrawContext;)V",shift = At.Shift.AFTER))
     public void renderAccessBar(DrawContext context, float tickDelta, CallbackInfo ci){
@@ -169,11 +166,7 @@ public class InGameHudMixin implements InGameHudAccess{
 
     @Override
     public void openAccessbar(int num){
-        switch(num){
-            case(1):this.openAccessbar = this.accessbar1;
-            break;
-            case(2):this.openAccessbar = this.accessbar2;
-        }
+        openAccessbar = accessBars[num-1];
         openAccessbar.resetSelection();
     }
     @Override
