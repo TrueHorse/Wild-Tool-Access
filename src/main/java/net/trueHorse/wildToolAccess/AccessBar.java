@@ -11,6 +11,7 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class AccessBar{
     
+    private final PlayerInventory inv;
     private final MinecraftClient client;
     private final int number;
     private final Class<?> classToAccess;
@@ -23,13 +24,12 @@ public class AccessBar{
             throw new IllegalArgumentException();
         }
         this.client = client;
+        this.inv = client.player.getInventory();
         this.number = number;
         this.classToAccess = WildToolAccessConfig.getClassValue("typeToAccess"+number);
     }
 
     public void updateAccessStacks(){
-        PlayerInventory inv = client.player.getInventory();
-
         if(!classToAccess.equals(StuffPlaceholder.class)){
             stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess);
         }else{
@@ -66,7 +66,6 @@ public class AccessBar{
     }
 
     public void selectItem(){
-        PlayerInventory inv = client.player.getInventory();
         int slotSwapIsLockedTo = WildToolAccessConfig.getIntValue("lockSwappingToSlot");
         int slotToSwap = !(slotSwapIsLockedTo<1||slotSwapIsLockedTo>PlayerInventory.getHotbarSize()) ? slotSwapIsLockedTo-1 : inv.selectedSlot;
 
