@@ -43,8 +43,6 @@ public class InGameHudMixin implements InGameHudAccess{
     private final List<Identifier> accessBarTextures = List.of(
         new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
         new Identifier("wildtoolaccess","textures/gui/access_widgets1.png"));
-    private Identifier accessBarTexture1;
-    private Identifier accessBarTexture2;
     private final List<AccessBar> accessBars;
     private AccessBar openAccessbar;
 
@@ -55,7 +53,6 @@ public class InGameHudMixin implements InGameHudAccess{
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
-        setAccessBarTexturesAsConfigured();
         accessbar1 = new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
                 WildToolAccessSoundEvents.selectInAccess1,
                 accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1")),
@@ -160,11 +157,6 @@ public class InGameHudMixin implements InGameHudAccess{
                 context.drawTextWithShadow(textRenderer, text, i + 10 + 3 - textRenderer.getWidth(text) / 2, j + 12 + 10 * v, -1);
             }
         }
-    }
-
-    public void setAccessBarTexturesAsConfigured(){
-        accessBarTexture1 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1"));
-        accessBarTexture2 = accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture2"));
     }
 
     @Override
