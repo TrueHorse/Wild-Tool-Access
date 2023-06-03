@@ -20,12 +20,14 @@ public class AccessBar{
     private ArrayList<ItemStack> stacks;
     private int selectedAccessSlot = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
+    private Identifier textures;
 
     public AccessBar(Class<?> classToAccess, SoundEvent selectionSoundEvent, Identifier textures, MinecraftClient client){
         this.client = client;
         this.inv = client.player.getInventory();
         this.classToAccess = classToAccess;
         this.selectionSoundEvent = selectionSoundEvent;
+        this.textures = textures;
     }
 
     public void updateAccessStacks(){
