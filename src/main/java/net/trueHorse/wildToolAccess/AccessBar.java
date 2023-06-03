@@ -20,10 +20,7 @@ public class AccessBar{
     private int selectedAccessSlot = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
 
-    public AccessBar(int number, MinecraftClient client){
-        if(number>2){
-            throw new IllegalArgumentException();
-        }
+    public AccessBar(MinecraftClient client){
         this.client = client;
         this.inv = client.player.getInventory();
         this.classToAccess = WildToolAccessConfig.getClassValue("typeToAccess"+number);
