@@ -39,17 +39,17 @@ public class InGameHudMixin implements InGameHudAccess{
     private int scaledWidth;
     @Shadow
     private int scaledHeight;
-    private final List<Identifier> accessBarTextures = List.of(
+    private final Identifier[] accessBarTextureSheets = {
         new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
-        new Identifier("wildtoolaccess","textures/gui/access_widgets1.png"));
+        new Identifier("wildtoolaccess","textures/gui/access_widgets1.png")};
     private final AccessBar[] accessBars = {
             new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
                     WildToolAccessSoundEvents.selectInAccess1,
-                    accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture1")),
+                    accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture1")],
                     client),
             new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
                     WildToolAccessSoundEvents.selectInAccess2,
-                    accessBarTextures.get(WildToolAccessConfig.getIntValue("barTexture2")),
+                    accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture2")],
                     client)
     };
     private AccessBar openAccessbar;
@@ -67,7 +67,7 @@ public class InGameHudMixin implements InGameHudAccess{
                 openAccessbar.updateAccessStacks();
 
                 Identifier barTextures;
-                barTextures = openAccessbar.getTexture();
+                barTextures = openAccessbar.getTextures();
 
                 int firstSlotXCoordinate = scaledWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
                 int yCoordinate = scaledHeight/2 -54+WildToolAccessConfig.getIntValue("yOffset");

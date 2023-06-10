@@ -112,4 +112,8 @@ public class AccessBar{
     public ArrayList<ItemStack> getStacks() {
         return stacks;
     }
+
+    public Identifier getTextures() {
+        return textures;
+    }
 }
