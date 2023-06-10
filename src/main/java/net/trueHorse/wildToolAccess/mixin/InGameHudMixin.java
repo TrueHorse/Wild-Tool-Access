@@ -42,16 +42,7 @@ public class InGameHudMixin implements InGameHudAccess{
     private final Identifier[] accessBarTextureSheets = {
         new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
         new Identifier("wildtoolaccess","textures/gui/access_widgets1.png")};
-    private final AccessBar[] accessBars = {
-            new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
-                    WildToolAccessSoundEvents.selectInAccess1,
-                    accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture1")],
-                    client),
-            new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
-                    WildToolAccessSoundEvents.selectInAccess2,
-                    accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture2")],
-                    client)
-    };
+    private AccessBar[] accessBars = getAccessBarArray();
     private AccessBar openAccessbar;
 
     @Shadow
@@ -176,5 +167,23 @@ public class InGameHudMixin implements InGameHudAccess{
     @Override
     public boolean isBarWithNumberOpen(int number){
         return openAccessbar == accessBars[number-1];
+    }
+
+    @Override
+    public void refreshAccessbars() {
+        accessBars = getAccessBarArray();
+    }
+
+    private AccessBar[] getAccessBarArray(){
+        return new AccessBar[]{
+                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
+                        WildToolAccessSoundEvents.selectInAccess1,
+                        accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture1")],
+                        client),
+                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
+                        WildToolAccessSoundEvents.selectInAccess2,
+                        accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture2")],
+                        client)
+        };
     }
 }

@@ -26,7 +26,7 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSavingRunnable(()->{
                         WildToolAccessConfig.createOrUpdateConfigFile();
                         WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
-                        ((InGameHudAccess)client.inGameHud).setAccessBarTexturesAsConfigured();
+                        ((InGameHudAccess)client.inGameHud).refreshAccessbars();
                     });
             ConfigCategory generalCat = confBuilder.getOrCreateCategory(Text.translatable("config_category.wildtoolaccess.general"));
             ConfigEntryBuilder eb = confBuilder.entryBuilder();

@@ -9,4 +9,6 @@ public interface InGameHudAccess {
     void openAccessbar(int num);
 
     boolean isBarWithNumberOpen(int number);
+
+    void refreshAccessbars();
 }
