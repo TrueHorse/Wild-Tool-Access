@@ -1,9 +1,8 @@
 package net.trueHorse.wildToolAccess;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -21,7 +20,7 @@ public class AccessBar{
     private final Class<?> classToAccess;
     private final SoundEvent selectionSoundEvent;
     private ArrayList<ItemStack> stacks;
-    private int selectedAccessSlot = 0;
+    private int selectedAccessSlotIndex = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
     private Identifier textures;
 
@@ -34,10 +33,12 @@ public class AccessBar{
     }
 
     public void updateAccessStacks(){
+        stacks = new ArrayList<>(List.of(ItemStack.EMPTY));
+
         if(!classToAccess.equals(StuffPlaceholder.class)){
-            stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess);
+            stacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess));
         }else{
-            stacks = ((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.getStuffItems());
+            stacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
         }
         if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
             int prioStackSlot = inv.getSlotWithStack(lastSwappedOutTool);
@@ -53,19 +54,19 @@ public class AccessBar{
     }
 
     public void scrollInAccessBar(double scrollAmount) {
-        int barSize = stacks.size()+1;
+        int barSize = stacks.size();
         int slotsToScroll = (int)Math.signum(scrollAmount);
   
-        selectedAccessSlot = (selectedAccessSlot+slotsToScroll)%barSize;
+        selectedAccessSlotIndex = (selectedAccessSlotIndex +slotsToScroll)%(barSize+1);
     }
 
     public void selectItem(){
         int slotSwapIsLockedTo = WildToolAccessConfig.getIntValue("lockSwappingToSlot");
         int slotToSwap = !(slotSwapIsLockedTo<1||slotSwapIsLockedTo>PlayerInventory.getHotbarSize()) ? slotSwapIsLockedTo-1 : inv.selectedSlot;
         ItemStack selectedHotbarSlotStack = inv.getStack(slotToSwap);
-        ItemStack selectedAccessbarStack = stacks.get(selectedAccessSlot-1);
+        ItemStack selectedAccessbarStack = stacks.get(selectedAccessSlotIndex);
 
-        if(selectedAccessSlot!=0&&!(ItemStack.areEqual(selectedHotbarSlotStack, selectedAccessbarStack))){
+        if(selectedAccessSlotIndex !=0&&!(ItemStack.areEqual(selectedHotbarSlotStack, selectedAccessbarStack))){
             int accessbarStackPos = inv.main.indexOf(selectedAccessbarStack);
             int slotToTheRight = (slotToSwap+1)%9;
             boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(slotToTheRight) == ItemStack.EMPTY);
@@ -101,11 +102,11 @@ public class AccessBar{
     }
 
     public void resetSelection(){
-        selectedAccessSlot = 0;
+        selectedAccessSlotIndex = 0;
     }
 
-    public int getSelectedAccessSlot() {
-        return selectedAccessSlot;
+    public int getSelectedAccessSlotIndex() {
+        return selectedAccessSlotIndex;
     }
 
     public ArrayList<ItemStack> getStacks() {
