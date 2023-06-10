@@ -62,12 +62,14 @@ public class AccessBar{
     public void selectItem(){
         int slotSwapIsLockedTo = WildToolAccessConfig.getIntValue("lockSwappingToSlot");
         int slotToSwap = !(slotSwapIsLockedTo<1||slotSwapIsLockedTo>PlayerInventory.getHotbarSize()) ? slotSwapIsLockedTo-1 : inv.selectedSlot;
+        ItemStack selectedHotbarSlotStack = inv.getStack(slotToSwap);
+        ItemStack selectedAccessbarStack = stacks.get(selectedAccessSlot-1);
 
-        if(selectedAccessSlot!=0&&!(ItemStack.areEqual(inv.getStack(slotToSwap), stacks.get(selectedAccessSlot-1)))){
-            int selectedToolPos = inv.main.indexOf(stacks.get(selectedAccessSlot-1));
+        if(selectedAccessSlot!=0&&!(ItemStack.areEqual(selectedHotbarSlotStack, selectedAccessbarStack))){
+            int selectedToolPos = inv.main.indexOf(selectedAccessbarStack);
             int slotToTheRight = (slotToSwap+1)%9;
             boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(slotToTheRight) == ItemStack.EMPTY);
-            ItemStack selectedHotbarSlotStack = inv.getStack(slotToSwap);
+
             BiConsumer<Integer, Integer> swapSlots = ((slot1, slot2)->client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,slot1, slot2, SlotActionType.SWAP,client.player));
 
             if(selectedToolPos<9){
