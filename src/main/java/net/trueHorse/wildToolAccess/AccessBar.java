@@ -22,7 +22,7 @@ public class AccessBar{
     private ArrayList<ItemStack> stacks;
     private int selectedAccessSlotIndex = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
-    private Identifier textures;
+    private final Identifier textures;
 
     public AccessBar(Class<?> classToAccess, SoundEvent selectionSoundEvent, Identifier textures, MinecraftClient client){
         this.client = client;
