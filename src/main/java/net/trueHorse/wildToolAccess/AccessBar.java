@@ -1,6 +1,9 @@
 package net.trueHorse.wildToolAccess;
 
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -65,20 +68,21 @@ public class AccessBar{
             int slotToTheRight = (slotToSwap+1)%9;
             boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(slotToTheRight) == ItemStack.EMPTY);
             ItemStack selectedHotbarSlotStack = inv.getStack(slotToSwap);
+            BiConsumer<Integer, Integer> swapSlots = ((slot1, slot2)->client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,slot1, slot2, SlotActionType.SWAP,client.player));
 
             if(selectedToolPos<9){
-                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,slotToSwap, SlotActionType.SWAP,client.player);
+                swapSlots.accept(9,slotToSwap);
 
                 if(putToTheRight){
-                    client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,slotToTheRight, SlotActionType.SWAP,client.player);
+                    swapSlots.accept(9,slotToTheRight);
                 }
-                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,selectedToolPos, SlotActionType.SWAP,client.player);
-                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,9,slotToSwap, SlotActionType.SWAP,client.player);
+                swapSlots.accept(9,selectedToolPos);
+                swapSlots.accept(9,slotToSwap);
             }else{
-                client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,selectedToolPos,slotToSwap, SlotActionType.SWAP,client.player);
+                swapSlots.accept(selectedToolPos,slotToSwap);
 
                 if(putToTheRight){
-                    client.interactionManager.clickSlot(client.player.currentScreenHandler.syncId,selectedToolPos,slotToTheRight, SlotActionType.SWAP,client.player);
+                    swapSlots.accept(selectedToolPos,slotToTheRight);
                 }
             }
 
