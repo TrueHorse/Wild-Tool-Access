@@ -172,4 +172,9 @@ public class InGameHudMixin implements InGameHudAccess{
     public AccessBar getOpenAccessBar() {
         return this.openAccessbar;
     }
+
+    @Override
+    public boolean isBarWithNumberOpen(int number){
+        return openAccessbar == accessBars[number-1];
+    }
 }
