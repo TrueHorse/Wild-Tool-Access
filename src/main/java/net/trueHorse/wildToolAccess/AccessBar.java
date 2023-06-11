@@ -56,7 +56,7 @@ public class AccessBar{
         int barSize = stacks.size();
         int slotsToScroll = (int)Math.signum(scrollAmount);
   
-        selectedAccessSlotIndex = Math.floorMod(selectedAccessSlotIndex +slotsToScroll, barSize);
+        selectedAccessSlotIndex = Math.floorMod(selectedAccessSlotIndex -slotsToScroll, barSize);
     }
 
     public void selectItem(){
