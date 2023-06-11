@@ -34,22 +34,25 @@ public class AccessBar{
         PlayerInventory inv = client.player.getInventory();
         stacks = new ArrayList<>(List.of(ItemStack.EMPTY));
 
+
+        ArrayList<ItemStack> itemStacks = new ArrayList<>();
         if(!classToAccess.equals(StuffPlaceholder.class)){
-            stacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess));
+            itemStacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess));
         }else{
-            stacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
+            itemStacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
         }
+
         if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
             int prioStackSlot = inv.getSlotWithStack(lastSwappedOutTool);
             ItemStack prioStack = prioStackSlot == -1 ? ItemStack.EMPTY : inv.getStack(prioStackSlot);
             if(prioStack!=ItemStack.EMPTY){
-                ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
-                temp.add(prioStack);
-                stacks.remove(prioStack);
-                temp.addAll(stacks);
-                stacks = temp;
+                stacks.add(prioStack);
+                itemStacks.remove(prioStack);
             }
         }
+
+
+        stacks.addAll(itemStacks);
     }
 
     public void scrollInAccessBar(double scrollAmount) {
