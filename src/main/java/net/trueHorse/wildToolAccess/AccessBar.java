@@ -14,8 +14,7 @@ import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 public class AccessBar{
-    
-    private final PlayerInventory inv;
+
     private final MinecraftClient client;
     private final Class<?> classToAccess;
     private final SoundEvent selectionSoundEvent;
@@ -26,13 +25,13 @@ public class AccessBar{
 
     public AccessBar(Class<?> classToAccess, SoundEvent selectionSoundEvent, Identifier textures, MinecraftClient client){
         this.client = client;
-        this.inv = client.player.getInventory();
         this.classToAccess = classToAccess;
         this.selectionSoundEvent = selectionSoundEvent;
         this.textures = textures;
     }
 
     public void updateAccessStacks(){
+        PlayerInventory inv = client.player.getInventory();
         stacks = new ArrayList<>(List.of(ItemStack.EMPTY));
 
         if(!classToAccess.equals(StuffPlaceholder.class)){
@@ -61,6 +60,7 @@ public class AccessBar{
     }
 
     public void selectItem(){
+        PlayerInventory inv = client.player.getInventory();
         int slotSwapIsLockedTo = WildToolAccessConfig.getIntValue("lockSwappingToSlot");
         int slotToSwap = !(slotSwapIsLockedTo<1||slotSwapIsLockedTo>PlayerInventory.getHotbarSize()) ? slotSwapIsLockedTo-1 : inv.selectedSlot;
         ItemStack selectedHotbarSlotStack = inv.getStack(slotToSwap);
