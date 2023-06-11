@@ -6,6 +6,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
@@ -42,13 +43,18 @@ public class InGameHudMixin implements InGameHudAccess{
     private final Identifier[] accessBarTextureSheets = {
         new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
         new Identifier("wildtoolaccess","textures/gui/access_widgets1.png")};
-    private AccessBar[] accessBars = getAccessBarArray();
+    private AccessBar[] accessBars;
     private AccessBar openAccessbar;
 
     @Shadow
     private PlayerEntity getCameraPlayer(){return null;}
     @Shadow
     private void renderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){}
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
+        accessBars = getAccessBarArray();
+    }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/gui/DrawContext;)V",shift = At.Shift.AFTER))
     public void renderAccessBar(DrawContext context, float tickDelta, CallbackInfo ci){
