@@ -16,7 +16,7 @@ import java.util.*;
 
 public class WildToolAccessConfig {
 
-    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
+    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
     private static final Map<String,ConfigOption> configs = new HashMap<>();
     private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
     public final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
@@ -77,7 +77,10 @@ public class WildToolAccessConfig {
                 "vertical offset of the bar from the default position"));
         configs.put("spaceBetweenSlots",new ConfigOption("0",
                 "space left between bar slots"));
-        configs.put("leadingEmptySlot", new ConfigOption("true","The first slot of the bars is empty."));
+        configs.put("leadingEmptySlot", new ConfigOption("true",
+                "The first slot of the bars is empty."));
+        configs.put("heldItemSelected",new ConfigOption("false",
+                "When opening a bar your currently held item is selected, if it is contained in the bar."));
         configs.put("itemInfoShown",new ConfigOption("enchantments",
                 "what information should be shown about the items  all->all; enchantments-> enchantments/potion effect and name;\n" +
                         "#name->name; non->non"));

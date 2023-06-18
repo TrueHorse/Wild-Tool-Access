@@ -105,7 +105,13 @@ public class AccessBar{
     }
 
     public void resetSelection(){
-        selectedAccessSlotIndex = 0;
+        PlayerInventory inv = client.player.getInventory();
+        if(WildToolAccessConfig.getBoolValue("heldItemSelected")&&classToAccess.isAssignableFrom(inv.getStack(inv.selectedSlot).getItem().getClass())){
+            updateAccessStacks();
+            selectedAccessSlotIndex = stacks.indexOf(inv.getStack(inv.selectedSlot));
+        }else{
+            selectedAccessSlotIndex = 0;
+        }
     }
 
     public int getSelectedAccessSlotIndex() {
