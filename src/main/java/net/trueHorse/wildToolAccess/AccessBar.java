@@ -32,7 +32,7 @@ public class AccessBar{
 
     public void updateAccessStacks(){
         PlayerInventory inv = client.player.getInventory();
-        stacks = new ArrayList<>(List.of(ItemStack.EMPTY));
+        stacks = WildToolAccessConfig.getBoolValue("leadingEmptySlot") ? new ArrayList<>(List.of(ItemStack.EMPTY)) : new ArrayList<>();
 
 
         ArrayList<ItemStack> itemStacks = new ArrayList<>();
