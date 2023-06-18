@@ -41,6 +41,11 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.esc_close"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("escClose", Boolean.toString(newVal)))
                     .build());
+            generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.scroll_with_number_keys"), WildToolAccessConfig.getBoolValue("scrollWithNumberKeys"))
+                    .setDefaultValue(true)
+                    .setTooltip(Text.translatable("tooltip.wildtoolaccess.scroll_with_number_keys"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("scrollWithNumberKeys", Boolean.toString(newVal)))
+                    .build());
             generalCat.addEntry(eb.startIntSlider(Text.translatable("option.wildtoolaccess.select_sound_1"), WildToolAccessConfig.getIntValue("selectSound1"),0,3)
                     .setDefaultValue(1)
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.select_sound_1"))
@@ -75,6 +80,16 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setDefaultValue(0)
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.space_between_slots"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("spaceBetweenSlots", Integer.toString(newVal)))
+                    .build());
+            generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.leading_empty_slot"), WildToolAccessConfig.getBoolValue("leadingEmptySlot"))
+                    .setDefaultValue(true)
+                    .setTooltip(Text.translatable("tooltip.wildtoolaccess.leading_empty_slot"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("leadingEmptySlot", Boolean.toString(newVal)))
+                    .build());
+            generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.held_item_selected"), WildToolAccessConfig.getBoolValue("heldItemSelected"))
+                    .setDefaultValue(false)
+                    .setTooltip(Text.translatable("tooltip.wildtoolaccess.held_item_selected"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("heldItemSelected", Boolean.toString(newVal)))
                     .build());
             generalCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.item_info_shown"), WildToolAccessConfig.getStringValue("itemInfoShown"), string -> Text.translatable("option_val.wildtoolaccess."+string))
                     .setDefaultValue("enchantments")
