@@ -122,14 +122,12 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.type_to_access_1"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess1", newVal))
                     .setSelections(List.of("tools","swords","ranged weapons","potions","buckets","stuff"))
-                    .requireRestart()
                     .build());
             generalCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_2"), WildToolAccessConfig.getStringValue("typeToAccess2"), string -> Text.translatable("option_val.wildtoolaccess."+string))
                     .setDefaultValue("swords")
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.type_to_access_2"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess2", newVal))
                     .setSelections(List.of("tools","swords","ranged weapons","potions","buckets","stuff"))
-                    .requireRestart()
                     .build());
 
             return confBuilder.build();
