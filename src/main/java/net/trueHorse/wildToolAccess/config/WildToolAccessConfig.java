@@ -16,7 +16,7 @@ import java.util.*;
 
 public class WildToolAccessConfig {
 
-    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
+    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
     private static final Map<String,ConfigOption> configs = new HashMap<>();
     private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
     public final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
@@ -63,6 +63,8 @@ public class WildToolAccessConfig {
                 "Left clicking will select current item."));
         configs.put("escClose",new ConfigOption("true",
                 "Pressing esc will close the access bar without selecting an item."));
+        configs.put("scrollWithNumberKeys",new ConfigOption("true",
+                "You can use number keys to select items in access bars like you can in your hotbar."));
         configs.put("selectSound1",new ConfigOption("1",
                 "the Sound you want to play, when selecting an item in bar 1 (0-3)"));
         configs.put("selectSound2",new ConfigOption("1",

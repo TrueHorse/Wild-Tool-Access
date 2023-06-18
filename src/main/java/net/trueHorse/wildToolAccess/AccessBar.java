@@ -118,6 +118,10 @@ public class AccessBar{
         return selectedAccessSlotIndex;
     }
 
+    public void setSelectedAccessSlotIndex(int selectedAccessSlotIndex) {
+        this.selectedAccessSlotIndex = selectedAccessSlotIndex;
+    }
+
     public ArrayList<ItemStack> getStacks() {
         return stacks;
     }
