@@ -59,40 +59,40 @@ public class WildToolAccessConfig {
 
     private static void resetConfigsToDefault(){
         configs.clear();
-        configs.put("leftClickSelect",new ConfigOption("true","true",
+        configs.put("leftClickSelect",new ConfigOption("true",
                 "Left clicking will select current item."));
-        configs.put("escClose",new ConfigOption("true","true",
+        configs.put("escClose",new ConfigOption("true",
                 "Pressing esc will close the access bar without selecting an item."));
-        configs.put("selectSound1",new ConfigOption("1","1",
+        configs.put("selectSound1",new ConfigOption("1",
                 "the Sound you want to play, when selecting an item in bar 1 (0-3)"));
-        configs.put("selectSound2",new ConfigOption("1","1",
+        configs.put("selectSound2",new ConfigOption("1",
                 "see above, but for bar 2"));
-        configs.put("barTexture1",new ConfigOption("0","0",
+        configs.put("barTexture1",new ConfigOption("0",
                 "texture of the access bar 1  0->mine 1->my brothers (or use your own with a texture pack of cause)"));
-        configs.put("barTexture2",new ConfigOption("0","0",
+        configs.put("barTexture2",new ConfigOption("0",
                 "see above, but for bar 2"));
-        configs.put("xOffset",new ConfigOption("0","0",
+        configs.put("xOffset",new ConfigOption("0",
                 "horizontal offset of the bar from the default position"));
-        configs.put("yOffset",new ConfigOption("0","0",
+        configs.put("yOffset",new ConfigOption("0",
                 "vertical offset of the bar from the default position"));
-        configs.put("spaceBetweenSlots",new ConfigOption("0", "0",
+        configs.put("spaceBetweenSlots",new ConfigOption("0",
                 "space left between bar slots"));
-        configs.put("itemInfoShown",new ConfigOption("enchantments","enchantments",
+        configs.put("itemInfoShown",new ConfigOption("enchantments",
                 "what information should be shown about the items  all->all; enchantments-> enchantments/potion effect and name;\n" +
                         "#name->name; non->non"));
-        configs.put("lastSwappedOutFirst",new ConfigOption("true","true",
+        configs.put("lastSwappedOutFirst",new ConfigOption("true",
                 "The tool swapped out last time should be shown in the first access bar slot next time."));
-        configs.put("putToTheRightIfPossible",new ConfigOption("false","false",
+        configs.put("putToTheRightIfPossible",new ConfigOption("false",
                 "The item that would be swapped out of your hotbar goes in the slot to the right instead, if that slot is empty"));
-        configs.put("lockSwappingToSlot",new ConfigOption("0","0",
+        configs.put("lockSwappingToSlot",new ConfigOption("0",
                 "Locks swapping to that hotbar slot. Values <1 and >hotbar size disable this option."));
-        configs.put("hotbarSlotAfterSwap",new ConfigOption("0","0",
+        configs.put("hotbarSlotAfterSwap",new ConfigOption("0",
                 "After swapping your selected hotbar slot will be set to this slot. Values <1 and >hotbar size disable this option."));
-        configs.put("typeToAccess1",new ConfigOption("tools","tools",
+        configs.put("typeToAccess1",new ConfigOption("tools",
                 "what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff\n"+
                         "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.\n"+
                         "#By default it includes torch, ladder, bucket and cobblestone."));
-        configs.put("typeToAccess2",new ConfigOption("swords","swords",
+        configs.put("typeToAccess2",new ConfigOption("swords",
                 "see above, but for access 2"));
     }
 

@@ -5,9 +5,9 @@ public class ConfigOption {
     private String val;
     private final String description;
 
-    public ConfigOption(String defaultVal, String val, String description){
+    public ConfigOption(String defaultVal, String description){
         this.defaultVal = defaultVal;
-        this.val = val;
+        this.val = defaultVal;
         this.description = description;
     }
 
