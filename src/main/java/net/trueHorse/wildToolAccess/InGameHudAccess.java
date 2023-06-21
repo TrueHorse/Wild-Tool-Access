@@ -8,5 +8,7 @@ public interface InGameHudAccess {
 
     void openAccessbar(int num);
 
-    void setAccessBarTexturesAsConfigured();
+    boolean isBarWithNumberOpen(int number);
+
+    void refreshAccessbars();
 }
