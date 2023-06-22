@@ -19,7 +19,6 @@ import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.StuffPlaceholder;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgument;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgumentType;
-import net.trueHorse.wildToolAccess.config.DefaultConfig;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.io.*;
@@ -104,7 +103,7 @@ public class WildToolAccessCommand {
     }
 
     private static int executeResetStuff(FabricClientCommandSource source){
-        WildToolAccessConfig.createOrUpdateFile(WildToolAccessConfig.STUFF_FILE, DefaultConfig.defaultConfigs.getProperty("defaultStuffJsonContent"));
+        WildToolAccessConfig.resetStuffFile();
         source.sendFeedback(new TranslatableText("command.wildtoolaccess.stuff.cleared"));
         return 1;
     }
