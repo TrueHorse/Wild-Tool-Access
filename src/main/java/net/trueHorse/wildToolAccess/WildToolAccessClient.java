@@ -50,7 +50,7 @@ public class WildToolAccessClient implements ClientModInitializer{
         InGameHudAccess hudAcc = ((InGameHudAccess)client.inGameHud);
 
         if(((InGameHudAccess)client.inGameHud).getOpenAccessBar()!=null){
-            if(hudAcc.getOpenAccessBar().getNumber()==barNum){
+            if(hudAcc.isBarWithNumberOpen(barNum)){
                 hudAcc.closeOpenAccessbar(true);
             }else{
                 hudAcc.openAccessbar(barNum);
