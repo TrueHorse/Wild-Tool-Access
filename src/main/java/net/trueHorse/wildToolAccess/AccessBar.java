@@ -69,7 +69,7 @@ public class AccessBar{
         ItemStack selectedHotbarSlotStack = inv.getStack(slotToSwap);
         ItemStack selectedAccessbarStack = stacks.get(selectedAccessSlotIndex);
 
-        if(selectedAccessSlotIndex !=0&&!(ItemStack.areEqual(selectedHotbarSlotStack, selectedAccessbarStack))){
+        if(selectedAccessbarStack!=ItemStack.EMPTY&&!(ItemStack.areEqual(selectedHotbarSlotStack, selectedAccessbarStack))){
             int accessbarStackPos = inv.main.indexOf(selectedAccessbarStack);
             int slotToTheRight = (slotToSwap+1)%9;
             boolean putToTheRight = (WildToolAccessConfig.getBoolValue("putToTheRightIfPossible"))&&(inv.getStack(slotToTheRight) == ItemStack.EMPTY);
