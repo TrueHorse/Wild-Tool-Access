@@ -80,11 +80,11 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 int xCoordinate;
                 int spaceBetweenSlots = 20+WildToolAccessConfig.getIntValue("spaceBetweenSlots");
                 
-                if(openAccessbar.getStacks().size()==0){
+                if(openAccessbar.getStacks().size()==1){
                     drawTexture(matrices, firstSlotXCoordinate, yCoordinate, 66, 0, 22, 22);
                 }else{
                     int k;
-                    for(k = 1; k < openAccessbar.getStacks().size(); ++k) {
+                    for(k = 1; k < openAccessbar.getStacks().size()-1; ++k) {
                         xCoordinate = firstSlotXCoordinate + k * spaceBetweenSlots - spaceBetweenSlots*openAccessbar.getSelectedAccessSlotIndex();
                         drawTexture(matrices, xCoordinate, yCoordinate, 0, 0, 22, 22);
                     }
@@ -100,7 +100,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 int seed =1;
                 for(int i = 0; i < openAccessbar.getStacks().size(); ++i) {
                     xCoordinate = firstSlotXCoordinate + i * spaceBetweenSlots + 3 - spaceBetweenSlots*(openAccessbar.getSelectedAccessSlotIndex());
-                    this.renderHotbarItem(matrices, xCoordinate, yCoordinate, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
+                    this.renderHotbarItem(matrices, xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
                 }
 
                 String labConf = WildToolAccessConfig.getStringValue("itemInfoShown");
