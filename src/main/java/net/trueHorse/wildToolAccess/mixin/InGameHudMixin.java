@@ -7,7 +7,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -38,9 +37,12 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     private int scaledWidth;
     @Shadow
     private int scaledHeight;
-    private final Identifier[] accessBarTextureSheets = {
-            new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
-            new Identifier("wildtoolaccess","textures/gui/access_widgets1.png")};
+    private final Identifier[] accessBarTextureSheets = accessBarTextureSheets();
+    private Identifier[] accessBarTextureSheets(){
+        return new Identifier[]{
+                new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
+                new Identifier("wildtoolaccess","textures/gui/access_widgets1.png")};
+    }
     private AccessBar[] accessBars;
     private AccessBar openAccessbar;
 
@@ -50,7 +52,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
     private void renderHotbarItem(int x, int y, float tickDelta, PlayerEntity player, ItemStack stack){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
+    private void initAccessBar(MinecraftClient client, CallbackInfo ci){
         accessBars = getAccessBarArray();
     }
 
