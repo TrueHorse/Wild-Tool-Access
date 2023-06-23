@@ -103,7 +103,7 @@ public class InGameHudMixin extends DrawableHelper implements InGameHudAccess{
                 }
 
                 String labConf = WildToolAccessConfig.getStringValue("itemInfoShown");
-                if(!labConf.equals("non")&&openAccessbar.getSelectedAccessSlotIndex()!=0){
+                if(!labConf.equals("non")&&openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlotIndex())!=ItemStack.EMPTY){
                     renderLabels(matrices, labConf, firstSlotXCoordinate, yCoordinate);
                 }
                 RenderSystem.disableBlend();
