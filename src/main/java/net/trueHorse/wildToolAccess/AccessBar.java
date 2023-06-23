@@ -51,6 +51,9 @@ public class AccessBar{
             }
         }
 
+        if(itemStacks.isEmpty()){
+            stacks.add(ItemStack.EMPTY);
+        }
 
         stacks.addAll(itemStacks);
     }
