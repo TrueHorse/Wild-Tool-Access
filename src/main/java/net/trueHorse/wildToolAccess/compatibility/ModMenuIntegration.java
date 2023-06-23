@@ -26,7 +26,7 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSavingRunnable(()->{
                         WildToolAccessConfig.createOrUpdateConfigFile();
                         WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
-                        ((InGameHudAccess)client.inGameHud).setAccessBarTexturesAsConfigured();
+                        ((InGameHudAccess)client.inGameHud).refreshAccessbars();
                     });
             ConfigCategory generalCat = confBuilder.getOrCreateCategory(new TranslatableText("config_category.wildtoolaccess.general"));
             ConfigEntryBuilder eb = confBuilder.entryBuilder();
@@ -40,6 +40,11 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setDefaultValue(true)
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.esc_close"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("escClose", Boolean.toString(newVal)))
+                    .build());
+            generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.scroll_with_number_keys"), WildToolAccessConfig.getBoolValue("scrollWithNumberKeys"))
+                    .setDefaultValue(true)
+                    .setTooltip(new TranslatableText("tooltip.wildtoolaccess.scroll_with_number_keys"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("scrollWithNumberKeys", Boolean.toString(newVal)))
                     .build());
             generalCat.addEntry(eb.startIntSlider(new TranslatableText("option.wildtoolaccess.select_sound_1"), WildToolAccessConfig.getIntValue("selectSound1"),0,3)
                     .setDefaultValue(1)
@@ -76,6 +81,16 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.space_between_slots"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("spaceBetweenSlots", Integer.toString(newVal)))
                     .build());
+            generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.leading_empty_slot"), WildToolAccessConfig.getBoolValue("leadingEmptySlot"))
+                    .setDefaultValue(true)
+                    .setTooltip(new TranslatableText("tooltip.wildtoolaccess.leading_empty_slot"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("leadingEmptySlot", Boolean.toString(newVal)))
+                    .build());
+            generalCat.addEntry(eb.startBooleanToggle(new TranslatableText("option.wildtoolaccess.held_item_selected"), WildToolAccessConfig.getBoolValue("heldItemSelected"))
+                    .setDefaultValue(false)
+                    .setTooltip(new TranslatableText("tooltip.wildtoolaccess.held_item_selected"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("heldItemSelected", Boolean.toString(newVal)))
+                    .build());
             generalCat.addEntry(eb.startStringDropdownMenu(new TranslatableText("option.wildtoolaccess.item_info_shown"), WildToolAccessConfig.getStringValue("itemInfoShown"), string -> new TranslatableText("option_val.wildtoolaccess."+string))
                     .setDefaultValue("enchantments")
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.item_info_shown"))
@@ -107,14 +122,12 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.type_to_access_1"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess1", newVal))
                     .setSelections(Arrays.asList("tools","swords","ranged weapons","potions","buckets","stuff"))
-                    .requireRestart()
                     .build());
             generalCat.addEntry(eb.startStringDropdownMenu(new TranslatableText("option.wildtoolaccess.type_to_access_2"), WildToolAccessConfig.getStringValue("typeToAccess2"), string -> new TranslatableText("option_val.wildtoolaccess."+string))
                     .setDefaultValue("swords")
                     .setTooltip(new TranslatableText("tooltip.wildtoolaccess.type_to_access_2"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess2", newVal))
                     .setSelections(Arrays.asList("tools","swords","ranged weapons","potions","buckets","stuff"))
-                    .requireRestart()
                     .build());
 
             return confBuilder.build();

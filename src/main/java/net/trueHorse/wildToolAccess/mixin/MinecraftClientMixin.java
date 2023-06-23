@@ -1,18 +1,18 @@
 package net.trueHorse.wildToolAccess.mixin;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.option.GameOptions;
+import net.trueHorse.wildToolAccess.AccessBar;
+import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.option.GameOptions;
-import net.trueHorse.wildToolAccess.InGameHudAccess;
-import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -28,6 +28,7 @@ public abstract class MinecraftClientMixin {
     private void handleAccessbarSelectInput(CallbackInfo info){
         if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.keyAttack.wasPressed()){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
+            ((KeyBindingAccess)options.keyAttack).setTimesPressed(0);
         }
     }
 
@@ -43,6 +44,19 @@ public abstract class MinecraftClientMixin {
     private void closeBarOnScreenSwitch(Screen screen, CallbackInfo info){
         if(((InGameHudAccess)this.inGameHud).getOpenAccessBar()!=null){
             ((InGameHudAccess)this.inGameHud).closeOpenAccessbar(false);
+        }
+    }
+
+    @Inject(method = "handleInputEvents",at = @At("HEAD"))
+    private void handleAccessbarNumberKeySelection(CallbackInfo ci){
+        AccessBar openAccessbar = ((InGameHudAccess)inGameHud).getOpenAccessBar();
+        if(!WildToolAccessConfig.getBoolValue("scrollWithNumberKeys")||openAccessbar==null) return;
+
+        for(int i = 0; i < 9; ++i) {
+            if (options.keysHotbar[i].wasPressed()) {
+                openAccessbar.setSelectedAccessSlotIndex(Math.min(i,openAccessbar.getStacks().size()-1));
+                ((KeyBindingAccess)options.keysHotbar[i]).setTimesPressed(0);
+            }
         }
     }
 }
