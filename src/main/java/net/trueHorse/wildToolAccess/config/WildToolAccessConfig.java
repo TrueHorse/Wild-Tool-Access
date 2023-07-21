@@ -59,6 +59,8 @@ public class WildToolAccessConfig {
 
     private static void resetConfigsToDefault(){
         configs.clear();
+        configs.put("toggleMode",new ConfigOption("true",
+                "If enabled, you don't need to hold down the key to keep the access bar open."));
         configs.put("leftClickSelect",new ConfigOption("true",
                 "Left clicking will select current item."));
         configs.put("escClose",new ConfigOption("true",

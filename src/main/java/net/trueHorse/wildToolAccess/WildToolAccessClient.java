@@ -14,6 +14,8 @@ public class WildToolAccessClient implements ClientModInitializer{
 
     private static KeyBinding access1Binding;
     private static KeyBinding access2Binding;
+    private static boolean access1WasPressed;
+    private static boolean access2WasPressed;
 
     @Override
     public void onInitializeClient() {
@@ -24,24 +26,36 @@ public class WildToolAccessClient implements ClientModInitializer{
         WildToolAccessCommands.registerCommands();
 
         access1Binding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.wildtoolaccess.access1",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
-            "key.categories.inventory"
+                "key.wildtoolaccess.access1",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_R,
+                "key.categories.inventory"
         ));
         access2Binding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.wildtoolaccess.access2",
-            InputUtil.Type.KEYSYM,
-            -1,
-            "key.categories.inventory"
+                "key.wildtoolaccess.access2",
+                InputUtil.Type.KEYSYM,
+                -1,
+                "key.categories.inventory"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (access1Binding.wasPressed()) {
-                onAccessBindingPressed(1, client);
-            }
-            while(access2Binding.wasPressed()){
-                onAccessBindingPressed(2, client);
+            if(!WildToolAccessConfig.getBoolValue("toggleMode")){
+                if(access1Binding.isPressed()!=access1WasPressed){
+                    onAccessBindingPressed(1, client);
+                }
+                if(access2Binding.isPressed()!=access2WasPressed){
+                    onAccessBindingPressed(2, client);
+                }
+
+                access1WasPressed = access1Binding.isPressed();
+                access2WasPressed = access2Binding.isPressed();
+            }else{
+                while (access1Binding.wasPressed()) {
+                    onAccessBindingPressed(1, client);
+                }
+                while(access2Binding.wasPressed()){
+                    onAccessBindingPressed(2, client);
+                }
             }
         });
     }

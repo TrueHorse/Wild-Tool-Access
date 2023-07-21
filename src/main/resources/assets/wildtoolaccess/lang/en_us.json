@@ -2,7 +2,11 @@
 	"key.wildtoolaccess.access1": "Open Access Bar 1",
 	"key.wildtoolaccess.access2": "Open Access Bar 2",
 	"screen.wildtoolaccess.config_screen": "Wild Tool Access Cofig",
-	"config_category.wildtoolaccess.general": "General",
+	"config_category.wildtoolaccess.controls": "Controls",
+	"config_category.wildtoolaccess.audioVisual": "Appearance and Audio",
+	"config_category.wildtoolaccess.functionality": "Functionality",
+
+	"option.wildtoolaccess.toggle_mode": "Toggle Mode",
 	"option.wildtoolaccess.left_click_select": "left click to select",
 	"option.wildtoolaccess.esc_close": "esc to close bar",
 	"option.wildtoolaccess.scroll_with_number_keys": "scroll with number keys",
@@ -23,6 +27,7 @@
 	"option.wildtoolaccess.type_to_access_1": "type of items in bar 1",
 	"option.wildtoolaccess.type_to_access_2": "type of items in bar 2",
 
+	"tooltip.wildtoolaccess.toggle_mode": "You don't need to hold down the key to keep the access bar open.",
 	"tooltip.wildtoolaccess.left_click_select": "Left clicking selects the current item.",
 	"tooltip.wildtoolaccess.esc_close": "Esc closes open access bar.",
 	"tooltip.wildtoolaccess.scroll_with_number_keys": "select items in bars with number keys",
