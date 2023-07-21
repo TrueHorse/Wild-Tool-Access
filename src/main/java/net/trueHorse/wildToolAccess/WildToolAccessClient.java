@@ -14,6 +14,8 @@ public class WildToolAccessClient implements ClientModInitializer{
 
     private static KeyBinding access1Binding;
     private static KeyBinding access2Binding;
+    private static boolean access1WasPressed;
+    private static boolean access2WasPressed;
 
     @Override
     public void onInitializeClient() {
@@ -37,11 +39,33 @@ public class WildToolAccessClient implements ClientModInitializer{
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (access1Binding.wasPressed()) {
-                onAccessBindingPressed(1, client);
-            }
-            while(access2Binding.wasPressed()){
-                onAccessBindingPressed(2, client);
+            if(!WildToolAccessConfig.getBoolValue("toggleMode")){
+                boolean access1IsPressed = false;
+                boolean access2IsPressed = false;
+
+                while (access1Binding.wasPressed()) {
+                    access1IsPressed = true;
+                }
+                while(access2Binding.wasPressed()){
+                    access2IsPressed = true;
+                }
+
+                if(access1IsPressed!=access1WasPressed){
+                    onAccessBindingPressed(1, client);
+                }
+                if(access2IsPressed!=access2WasPressed){
+                    onAccessBindingPressed(2, client);
+                }
+
+                access1WasPressed = access1IsPressed;
+                access2WasPressed = access2IsPressed;
+            }else{
+                while (access1Binding.wasPressed()) {
+                    onAccessBindingPressed(1, client);
+                }
+                while(access2Binding.wasPressed()){
+                    onAccessBindingPressed(2, client);
+                }
             }
         });
     }
