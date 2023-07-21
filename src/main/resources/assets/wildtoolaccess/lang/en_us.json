@@ -2,7 +2,9 @@
 	"key.wildtoolaccess.access1": "Open Access Bar 1",
 	"key.wildtoolaccess.access2": "Open Access Bar 2",
 	"screen.wildtoolaccess.config_screen": "Wild Tool Access Cofig",
-	"config_category.wildtoolaccess.general": "General",
+	"config_category.wildtoolaccess.controls": "Controls",
+	"config_category.wildtoolaccess.audioVisual": "Appearance and Audio",
+	"config_category.wildtoolaccess.functionality": "Functionality",
 
 	"option.wildtoolaccess.toggle_mode": "Toggle Mode",
 	"option.wildtoolaccess.left_click_select": "left click to select",
