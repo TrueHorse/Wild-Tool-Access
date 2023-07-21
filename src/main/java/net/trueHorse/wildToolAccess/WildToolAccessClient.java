@@ -40,25 +40,15 @@ public class WildToolAccessClient implements ClientModInitializer{
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if(!WildToolAccessConfig.getBoolValue("toggleMode")){
-                boolean access1IsPressed = false;
-                boolean access2IsPressed = false;
-
-                while (access1Binding.wasPressed()) {
-                    access1IsPressed = true;
-                }
-                while(access2Binding.wasPressed()){
-                    access2IsPressed = true;
-                }
-
-                if(access1IsPressed!=access1WasPressed){
+                if(access1Binding.isPressed()!=access1WasPressed){
                     onAccessBindingPressed(1, client);
                 }
-                if(access2IsPressed!=access2WasPressed){
+                if(access2Binding.isPressed()!=access2WasPressed){
                     onAccessBindingPressed(2, client);
                 }
 
-                access1WasPressed = access1IsPressed;
-                access2WasPressed = access2IsPressed;
+                access1WasPressed = access1Binding.isPressed();
+                access2WasPressed = access2Binding.isPressed();
             }else{
                 while (access1Binding.wasPressed()) {
                     onAccessBindingPressed(1, client);
