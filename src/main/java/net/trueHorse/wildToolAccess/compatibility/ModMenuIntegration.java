@@ -31,6 +31,11 @@ public class ModMenuIntegration implements ModMenuApi {
             ConfigCategory generalCat = confBuilder.getOrCreateCategory(Text.translatable("config_category.wildtoolaccess.general"));
             ConfigEntryBuilder eb = confBuilder.entryBuilder();
 
+            generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.toggle_mode"), WildToolAccessConfig.getBoolValue("toggleMode"))
+                    .setDefaultValue(true)
+                    .setTooltip(Text.translatable("tooltip.wildtoolaccess.toggle_mode"))
+                    .setSaveConsumer(newVal->WildToolAccessConfig.setValue("toggleMode", Boolean.toString(newVal)))
+                    .build());
             generalCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.left_click_select"), WildToolAccessConfig.getBoolValue("leftClickSelect"))
                     .setDefaultValue(true)
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.left_click_select"))
