@@ -15,6 +15,7 @@ public class WildToolAccessClient implements ClientModInitializer{
     private static KeyBinding access2Binding;
     private static boolean access1WasPressed;
     private static boolean access2WasPressed;
+    private static boolean bothWerePressed;
 
     @Override
     public void onInitializeClient() {
@@ -41,19 +42,21 @@ public class WildToolAccessClient implements ClientModInitializer{
             InGameHudAccess hudAcc = ((InGameHudAccess)client.inGameHud);
 
             if(!WildToolAccessConfig.getBoolValue("toggleMode")){
-                if(access1Binding.isPressed()&&access2Binding.isPressed()){
+                if(access1Binding.isPressed()&&access2Binding.isPressed()) {
+                    bothWerePressed = true;
                     return;
                 }
 
-                if(access1Binding.isPressed()!=access1WasPressed){
-                    onAccessBindingHeldStatusChanged(access1Binding,hudAcc);
+                if(access1Binding.isPressed()!=access1WasPressed) {
+                    onAccessBindingHeldStatusChanged(access1Binding, hudAcc);
                 }
-                if(access2Binding.isPressed()!=access2WasPressed){
-                    onAccessBindingHeldStatusChanged(access2Binding,hudAcc);
+                if(access2Binding.isPressed()!=access2WasPressed) {
+                    onAccessBindingHeldStatusChanged(access2Binding, hudAcc);
                 }
 
                 access1WasPressed = access1Binding.isPressed();
                 access2WasPressed = access2Binding.isPressed();
+                bothWerePressed = false;
             }else{
                 while (access1Binding.wasPressed()) {
                     onToggleBarBindingPressed(1, hudAcc);
@@ -69,7 +72,9 @@ public class WildToolAccessClient implements ClientModInitializer{
         if (accessBinding.isPressed()) {
             hudAcc.openAccessbar(1);
         } else {
-            hudAcc.closeOpenAccessbar(true);
+            if(!bothWerePressed) {
+                hudAcc.closeOpenAccessbar(true);
+            }
         }
     }
     
