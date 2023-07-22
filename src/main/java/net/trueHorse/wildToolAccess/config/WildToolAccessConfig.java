@@ -16,7 +16,7 @@ import java.util.*;
 
 public class WildToolAccessConfig {
 
-    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
+    private static final String[] OPTION_ORDER = {"toggleMode", "leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
     private static final Map<String,ConfigOption> configs = new HashMap<>();
     private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
     public final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
