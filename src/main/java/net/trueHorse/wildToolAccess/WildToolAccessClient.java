@@ -3,7 +3,6 @@ package net.trueHorse.wildToolAccess;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
@@ -39,31 +38,43 @@ public class WildToolAccessClient implements ClientModInitializer{
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            InGameHudAccess hudAcc = ((InGameHudAccess)client.inGameHud);
+
             if(!WildToolAccessConfig.getBoolValue("toggleMode")){
+                if(access1Binding.isPressed()&&access2Binding.isPressed()){
+                    return;
+                }
+
                 if(access1Binding.isPressed()!=access1WasPressed){
-                    onAccessBindingPressed(1, client);
+                    onAccessBindingHeldStatusChanged(access1Binding,hudAcc);
                 }
                 if(access2Binding.isPressed()!=access2WasPressed){
-                    onAccessBindingPressed(2, client);
+                    onAccessBindingHeldStatusChanged(access2Binding,hudAcc);
                 }
 
                 access1WasPressed = access1Binding.isPressed();
                 access2WasPressed = access2Binding.isPressed();
             }else{
                 while (access1Binding.wasPressed()) {
-                    onAccessBindingPressed(1, client);
+                    onToggleBarBindingPressed(1, hudAcc);
                 }
                 while(access2Binding.wasPressed()){
-                    onAccessBindingPressed(2, client);
+                    onToggleBarBindingPressed(2, hudAcc);
                 }
             }
         });
     }
-    
-    public void onAccessBindingPressed(int barNum, MinecraftClient client){
-        InGameHudAccess hudAcc = ((InGameHudAccess)client.inGameHud);
 
-        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar()!=null){
+    private void onAccessBindingHeldStatusChanged(KeyBinding accessBinding, InGameHudAccess hudAcc){
+        if (accessBinding.isPressed()) {
+            hudAcc.openAccessbar(1);
+        } else {
+            hudAcc.closeOpenAccessbar(true);
+        }
+    }
+    
+    private void onToggleBarBindingPressed(int barNum, InGameHudAccess hudAcc){
+        if(hudAcc.getOpenAccessBar()!=null){
             if(hudAcc.isBarWithNumberOpen(barNum)){
                 hudAcc.closeOpenAccessbar(true);
             }else{
