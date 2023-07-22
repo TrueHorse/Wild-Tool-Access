@@ -70,7 +70,7 @@ public class WildToolAccessClient implements ClientModInitializer{
 
     private void onAccessBindingHeldStatusChanged(KeyBinding accessBinding, InGameHudAccess hudAcc){
         if (accessBinding.isPressed()) {
-            hudAcc.openAccessbar(1);
+            hudAcc.openAccessbar(accessBinding==access1Binding?1:2);
         } else {
             if(!bothWerePressed) {
                 hudAcc.closeOpenAccessbar(true);
