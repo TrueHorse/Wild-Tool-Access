@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Lazy;
@@ -11,6 +12,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.trueHorse.wildToolAccess.commands.WildToolAccessCommand;
 import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.apache.logging.log4j.LogManager;
@@ -64,7 +66,6 @@ public class WildToolAccess
             WildToolAccessConfig.loadStuffItems();
             WildToolAccessSoundEvents.registerAll();
             WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
-            WildToolAccessCommands.registerCommands();
         }
 
         @SubscribeEvent
@@ -120,5 +121,15 @@ public class WildToolAccess
                 hudAcc.openAccessbar(barNum);
             }
         }
+    }
+
+    @Mod.EventBusSubscriber(modid = MODID,bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ClientForgeEvent{
+
+        @SubscribeEvent
+        public static void onCommandsRegister(RegisterClientCommandsEvent event){
+            WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
+        }
+
     }
 }
