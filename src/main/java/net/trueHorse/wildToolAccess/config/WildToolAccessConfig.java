@@ -3,11 +3,12 @@ package net.trueHorse.wildToolAccess.config;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
@@ -19,7 +20,7 @@ public class WildToolAccessConfig {
     private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
     private static final Map<String,ConfigOption> configs = new HashMap<>();
     private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
-    public final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
+    public final static String MOD_CONFIG_DIR_NAME = Minecraft.getInstance().gameDirectory.getAbsolutePath() + "/config/wild_tool_access";
     public final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
     public static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
     private static final String DEFAULT_STUFF_CONTENT = """
@@ -107,16 +108,17 @@ public class WildToolAccessConfig {
 
         if(STUFF_FILE.exists()){
             try {
-                JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(STUFF_FILE)),"values");
+                JsonArray vals = GsonHelper.getAsJsonArray(GsonHelper.parse(new FileReader(STUFF_FILE)),"values");
                 for(JsonElement element:vals){
                     if (element.isJsonPrimitive()) {
-                        Optional<Item> item = Registries.ITEM.getOrEmpty(new Identifier(element.getAsString()));
 
-                        if(item.isEmpty()){
+                        Optional<Holder<Item>> itemHolder = ForgeRegistries.ITEMS.getHolder(new ResourceLocation(element.getAsString()));
+
+                        if(itemHolder.isEmpty()){
                             WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
                             continue;
                         }
-                        items.add(item.get()) ;
+                        items.add(itemHolder.get().get()) ;
 
                     } else {
                         WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");
@@ -138,10 +140,10 @@ public class WildToolAccessConfig {
 
     public static ArrayList<Item> getDefaultStuffItems() {
         ArrayList<Item> items = new ArrayList<Item>();
-        JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(DEFAULT_STUFF_CONTENT), "values");
+        JsonArray vals = GsonHelper.getAsJsonArray(GsonHelper.parse(DEFAULT_STUFF_CONTENT), "values");
         for (JsonElement element : vals) {
             if (element.isJsonPrimitive()) {
-                items.add(Registries.ITEM.get(new Identifier(element.getAsString())));
+                items.add(ForgeRegistries.ITEMS.getValue(new ResourceLocation(element.getAsString())));
             }
         }
         return items;
