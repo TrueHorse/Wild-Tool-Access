@@ -50,24 +50,13 @@ public class WildToolAccess
         event.register(ACCESS_2_BINDING.get());
     }
 
-    public static void onAccessBindingPressed(int barNum, Minecraft client){
-        InGameHudAccess hudAcc = ((InGameHudAccess)client.gui);
-
-        if(((InGameHudAccess)client.gui).getOpenAccessBar()!=null){
-            if(hudAcc.isBarWithNumberOpen(barNum)){
-                hudAcc.closeOpenAccessbar(true);
-            }else{
-                hudAcc.openAccessbar(barNum);
-            }
-        }else{
-            hudAcc.openAccessbar(barNum);
-        }
-    }
-
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
+        private static boolean access1WasPressed;
+        private static boolean access2WasPressed;
+        private static boolean bothWerePressed;
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
@@ -81,12 +70,54 @@ public class WildToolAccess
         @SubscribeEvent
         public void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase == TickEvent.Phase.END) { // Only call code once as the tick event is called twice every tick
-                while (ACCESS_1_BINDING.get().consumeClick()) {
-                    onAccessBindingPressed(1, Minecraft.getInstance());
+                InGameHudAccess hudAcc = ((InGameHudAccess)Minecraft.getInstance().gui);
+
+                if(!WildToolAccessConfig.getBoolValue("toggleMode")){
+                    if(ACCESS_1_BINDING.get().isDown()&&ACCESS_2_BINDING.get().isDown()) {
+                        bothWerePressed = true;
+                        return;
+                    }
+
+                    if(ACCESS_1_BINDING.get().isDown()!=access1WasPressed) {
+                        onAccessBindingHeldStatusChanged(ACCESS_1_BINDING, hudAcc);
+                    }
+                    if(ACCESS_2_BINDING.get().isDown()!=access2WasPressed) {
+                        onAccessBindingHeldStatusChanged(ACCESS_2_BINDING, hudAcc);
+                    }
+
+                    access1WasPressed = ACCESS_1_BINDING.get().isDown();
+                    access2WasPressed = ACCESS_2_BINDING.get().isDown();
+                    bothWerePressed = false;
+                }else {
+                    while (ACCESS_1_BINDING.get().consumeClick()) {
+                        onToggleBarBindingPressed(1, hudAcc);
+                    }
+                    while (ACCESS_2_BINDING.get().consumeClick()) {
+                        onToggleBarBindingPressed(2, hudAcc);
+                    }
                 }
-                while (ACCESS_2_BINDING.get().consumeClick()) {
-                    onAccessBindingPressed(2, Minecraft.getInstance());
+            }
+        }
+        
+        private void onAccessBindingHeldStatusChanged(Lazy<KeyMapping> accessBinding, InGameHudAccess hudAcc){
+            if (accessBinding.get().isDown()) {
+                hudAcc.openAccessbar(accessBinding==ACCESS_1_BINDING?1:2);
+            } else {
+                if(!bothWerePressed) {
+                    hudAcc.closeOpenAccessbar(true);
                 }
+            }
+        }
+
+        private void onToggleBarBindingPressed(int barNum, InGameHudAccess hudAcc){
+            if(hudAcc.getOpenAccessBar()!=null){
+                if(hudAcc.isBarWithNumberOpen(barNum)){
+                    hudAcc.closeOpenAccessbar(true);
+                }else{
+                    hudAcc.openAccessbar(barNum);
+                }
+            }else{
+                hudAcc.openAccessbar(barNum);
             }
         }
     }
