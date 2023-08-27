@@ -50,9 +50,6 @@ public class WildToolAccess
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
-        private static boolean access1WasPressed;
-        private static boolean access2WasPressed;
-        private static boolean bothWerePressed;
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
@@ -60,7 +57,26 @@ public class WildToolAccess
         }
 
         @SubscribeEvent
-        public void onClientTick(TickEvent.ClientTickEvent event) {
+        public static void registerBindings(RegisterKeyMappingsEvent event) {
+            event.register(ACCESS_1_BINDING.get());
+            event.register(ACCESS_2_BINDING.get());
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = MODID,bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ClientForgeEvent{
+
+        private static boolean access1WasPressed;
+        private static boolean access2WasPressed;
+        private static boolean bothWerePressed;
+
+        @SubscribeEvent
+        public static void onCommandsRegister(RegisterClientCommandsEvent event){
+            //WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
+        }
+
+        @SubscribeEvent
+        public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase == TickEvent.Phase.END) { // Only call code once as the tick event is called twice every tick
                 InGameHudAccess hudAcc = ((InGameHudAccess)Minecraft.getInstance().gui);
 
@@ -90,8 +106,8 @@ public class WildToolAccess
                 }
             }
         }
-        
-        private void onAccessBindingHeldStatusChanged(Lazy<KeyMapping> accessBinding, InGameHudAccess hudAcc){
+
+        private static void onAccessBindingHeldStatusChanged(Lazy<KeyMapping> accessBinding, InGameHudAccess hudAcc){
             if (accessBinding.get().isDown()) {
                 hudAcc.openAccessbar(accessBinding==ACCESS_1_BINDING?1:2);
             } else {
@@ -101,7 +117,7 @@ public class WildToolAccess
             }
         }
 
-        private void onToggleBarBindingPressed(int barNum, InGameHudAccess hudAcc){
+        private static void onToggleBarBindingPressed(int barNum, InGameHudAccess hudAcc){
             if(hudAcc.getOpenAccessBar()!=null){
                 if(hudAcc.isBarWithNumberOpen(barNum)){
                     hudAcc.closeOpenAccessbar(true);
@@ -111,21 +127,6 @@ public class WildToolAccess
             }else{
                 hudAcc.openAccessbar(barNum);
             }
-        }
-
-        @SubscribeEvent
-        public static void registerBindings(RegisterKeyMappingsEvent event) {
-            event.register(ACCESS_1_BINDING.get());
-            event.register(ACCESS_2_BINDING.get());
-        }
-    }
-
-    @Mod.EventBusSubscriber(modid = MODID,bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public static class ClientForgeEvent{
-
-        @SubscribeEvent
-        public static void onCommandsRegister(RegisterClientCommandsEvent event){
-            //WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
         }
 
     }
