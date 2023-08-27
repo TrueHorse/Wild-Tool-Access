@@ -25,7 +25,7 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Shadow
     public NonNullList<ItemStack> items;
 
-    @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "swapPaint", at = @At("HEAD"), cancellable = true)
     private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {
         Minecraft client = Minecraft.getInstance();
         if(((InGameHudAccess)client.gui).getOpenAccessBar()!=null){

@@ -24,6 +24,7 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,28 +36,32 @@ import java.util.List;
 public class InGameHudMixin implements InGameHudAccess{
 
     @Final @Shadow
-    private Minecraft client;
+    protected Minecraft minecraft;
     @Shadow
-    private int scaledWidth;
+    protected int screenWidth;
     @Shadow
-    private int scaledHeight;
-    private final ResourceLocation[] accessBarTextureSheets = {
-        new ResourceLocation("wildtoolaccess","textures/gui/access_widgets0.png"),
-        new ResourceLocation("wildtoolaccess","textures/gui/access_widgets1.png")};
+    protected int screenHeight;
+    private final ResourceLocation[] accessBarTextureSheets = accessBarTextureSheets();
+    @Unique
+    private ResourceLocation[] accessBarTextureSheets(){
+        return new ResourceLocation[]{
+                new ResourceLocation("wildtoolaccess", "textures/gui/access_widgets0.png"),
+                new ResourceLocation("wildtoolaccess", "textures/gui/access_widgets1.png")};
+    }
     private AccessBar[] accessBars;
     private AccessBar openAccessbar;
 
     @Shadow
     private Player getCameraPlayer(){return null;}
     @Shadow
-    private void renderHotbarItem(GuiGraphics context, int x, int y, float tickDelta, Player player, ItemStack stack, int seed){}
+    private void renderSlot(GuiGraphics context, int x, int y, float tickDelta, Player player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initAccessBar(Minecraft client, ItemRenderer itemRenderer, CallbackInfo ci){
         accessBars = getAccessBarArray();
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/Gui;renderHotbar(FLnet/minecraft/client/gui/GuiGraphics;)V",shift = At.Shift.AFTER))
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHotbar(FLnet/minecraft/client/gui/GuiGraphics;)V",shift = At.Shift.AFTER))
     public void renderAccessBar(GuiGraphics context, float tickDelta, CallbackInfo ci){
         if(openAccessbar!=null){
             Player playerEntity = this.getCameraPlayer();
@@ -66,8 +71,8 @@ public class InGameHudMixin implements InGameHudAccess{
                 ResourceLocation barTextures;
                 barTextures = openAccessbar.getTextures();
 
-                int firstSlotXCoordinate = scaledWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
-                int yCoordinate = scaledHeight/2 -54+WildToolAccessConfig.getIntValue("yOffset");
+                int firstSlotXCoordinate = screenWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
+                int yCoordinate = screenHeight /2 -54+WildToolAccessConfig.getIntValue("yOffset");
                 context.pose().pushPose();
                 context.pose().translate(0.0F, 0.0F, -90.0F);
 
@@ -94,7 +99,7 @@ public class InGameHudMixin implements InGameHudAccess{
                 int seed =1;
                 for(int i = 0; i < openAccessbar.getStacks().size(); ++i) {
                     xCoordinate = firstSlotXCoordinate + i * spaceBetweenSlots + 3 - spaceBetweenSlots*(openAccessbar.getSelectedAccessSlotIndex());
-                    this.renderHotbarItem(context, xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
+                    this.renderSlot(context, xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
                 }
 
                 String labConf = WildToolAccessConfig.getStringValue("itemInfoShown");
@@ -110,7 +115,7 @@ public class InGameHudMixin implements InGameHudAccess{
         ItemStack selectedStack = openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlotIndex());
         List<Component> tooltip;
         if(labConf.equals("all")){
-            tooltip = selectedStack.getTooltipLines(client.player, this.client.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
+            tooltip = selectedStack.getTooltipLines(minecraft.player, this.minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
             tooltip.remove(CommonComponents.EMPTY);
             tooltip.remove((Component.translatable("item.modifiers.mainhand")).withStyle(ChatFormatting.GRAY));
         }else{
@@ -129,7 +134,7 @@ public class InGameHudMixin implements InGameHudAccess{
                 }
                 if (selectedStack.getItem() instanceof PotionItem){
                     List<Component> temp = new ArrayList<Component>();
-                    selectedStack.getItem().appendHoverText(selectedStack, client.player == null ? null : client.player.level(), temp, TooltipFlag.Default.ADVANCED);
+                    selectedStack.getItem().appendHoverText(selectedStack, minecraft.player == null ? null : minecraft.player.level(), temp, TooltipFlag.Default.ADVANCED);
                     tooltip.add(temp.get(0));
                 }
             }
@@ -139,7 +144,7 @@ public class InGameHudMixin implements InGameHudAccess{
             return;
         }
 
-        Font textRenderer = client.font;
+        Font textRenderer = minecraft.font;
         List<FormattedCharSequence>orderedToolTip = Lists.transform(tooltip, Component::getVisualOrderText);
         FormattedCharSequence name = orderedToolTip.get(0);
 
@@ -185,11 +190,11 @@ public class InGameHudMixin implements InGameHudAccess{
                 new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
                         WildToolAccessSoundEvents.selectInAccess1,
                         accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture1")],
-                        client),
+                        minecraft),
                 new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
                         WildToolAccessSoundEvents.selectInAccess2,
                         accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture2")],
-                        client)
+                        minecraft)
         };
     }
 }

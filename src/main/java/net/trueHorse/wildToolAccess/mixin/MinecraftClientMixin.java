@@ -22,40 +22,40 @@ public abstract class MinecraftClientMixin {
     public Options options;
     @Final
     @Shadow
-    public Gui inGameHud;
+    public Gui gui;
     
-    @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
+    @Inject(method = "handleKeybinds", at = @At(value = "HEAD"))
     private void handleAccessbarSelectInput(CallbackInfo info){
-        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.keyAttack.consumeClick()){
-            ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
-            ((KeyBindingAccess)options.keyAttack).setTimesPressed(0);
+        if(((InGameHudAccess) gui).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.keyAttack.consumeClick()){
+            ((InGameHudAccess) gui).closeOpenAccessbar(true);
+            ((KeyBindingAccess)options.keyAttack).setClickCount(0);
         }
     }
 
-    @Inject(method = "openPauseMenu", at = @At("HEAD"),cancellable = true)
+    @Inject(method = "pauseGame", at = @At("HEAD"),cancellable = true)
     public void pauseMenuOrCloseAccess(boolean bl, CallbackInfo info){
-        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("escClose")){
-            ((InGameHudAccess)inGameHud).closeOpenAccessbar(false);
+        if(((InGameHudAccess) gui).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("escClose")){
+            ((InGameHudAccess) gui).closeOpenAccessbar(false);
             info.cancel();
         }
     }
 
     @Inject(method = "setScreen", at = @At("HEAD"))
     private void closeBarOnScreenSwitch(Screen screen, CallbackInfo info){
-        if(((InGameHudAccess)this.inGameHud).getOpenAccessBar()!=null){
-            ((InGameHudAccess)this.inGameHud).closeOpenAccessbar(false);
+        if(((InGameHudAccess)this.gui).getOpenAccessBar()!=null){
+            ((InGameHudAccess)this.gui).closeOpenAccessbar(false);
         }
     }
 
-    @Inject(method = "handleInputEvents",at = @At("HEAD"))
+    @Inject(method = "handleKeybinds",at = @At("HEAD"))
     private void handleAccessbarNumberKeySelection(CallbackInfo ci){
-        AccessBar openAccessbar = ((InGameHudAccess)inGameHud).getOpenAccessBar();
+        AccessBar openAccessbar = ((InGameHudAccess) gui).getOpenAccessBar();
         if(!WildToolAccessConfig.getBoolValue("scrollWithNumberKeys")||openAccessbar==null) return;
 
         for(int i = 0; i < 9; ++i) {
             if (options.keyHotbarSlots[i].consumeClick()) {
                 openAccessbar.setSelectedAccessSlotIndex(Math.min(i,openAccessbar.getStacks().size()-1));
-                ((KeyBindingAccess)options.keyHotbarSlots[i]).setTimesPressed(0);
+                ((KeyBindingAccess)options.keyHotbarSlots[i]).setClickCount(0);
             }
         }
     }
