@@ -46,13 +46,6 @@ public class WildToolAccess
         WildToolAccessSoundEvents.registerAll();
     }
 
-    // Event is on the mod event bus only on the physical client
-    @SubscribeEvent
-    public void registerBindings(RegisterKeyMappingsEvent event) {
-        event.register(ACCESS_1_BINDING.get());
-        event.register(ACCESS_2_BINDING.get());
-    }
-
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
@@ -118,6 +111,12 @@ public class WildToolAccess
             }else{
                 hudAcc.openAccessbar(barNum);
             }
+        }
+
+        @SubscribeEvent
+        public static void registerBindings(RegisterKeyMappingsEvent event) {
+            event.register(ACCESS_1_BINDING.get());
+            event.register(ACCESS_2_BINDING.get());
         }
     }
 
