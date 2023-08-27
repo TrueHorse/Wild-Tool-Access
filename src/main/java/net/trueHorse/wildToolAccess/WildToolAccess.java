@@ -41,6 +41,9 @@ public class WildToolAccess
     {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        WildToolAccessConfig.loadCofigs();
+        WildToolAccessConfig.loadStuffItems();
+        WildToolAccessSoundEvents.registerAll();
     }
 
     // Event is on the mod event bus only on the physical client
@@ -60,9 +63,6 @@ public class WildToolAccess
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            WildToolAccessConfig.loadCofigs();
-            WildToolAccessConfig.loadStuffItems();
-            WildToolAccessSoundEvents.registerAll();
             WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
         }
 

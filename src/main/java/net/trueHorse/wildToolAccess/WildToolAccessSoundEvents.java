@@ -2,33 +2,37 @@ package net.trueHorse.wildToolAccess;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.util.ArrayList;
 
 public class WildToolAccessSoundEvents {
+
+    public static final DeferredRegister<SoundEvent> SOUNDS_REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS,WildToolAccess.MODID);
     public static SoundEvent selectInAccess1;
     public static SoundEvent selectInAccess2;
 
-    private static final ArrayList<SoundEvent> soundEvents = new ArrayList<SoundEvent>();
+    private static final ArrayList<RegistryObject<SoundEvent>> soundEventObjects = new ArrayList<>();
 
-    public static SoundEvent register(ResourceLocation id){
-        SoundEvent event = SoundEvent.createVariableRangeEvent(id);
-        ForgeRegistries.SOUND_EVENTS.register(id,event);
-        return event;
+    public static RegistryObject<SoundEvent> register(ResourceLocation id){
+        return SOUNDS_REGISTRY.register(id.getPath(),()->SoundEvent.createVariableRangeEvent(id));
     }
 
     public static void registerAll(){
-        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select0")));
-        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select1")));
-        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select2")));
-        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select3")));
+        soundEventObjects.add(register(new ResourceLocation("wildtoolaccess","select0")));
+        soundEventObjects.add(register(new ResourceLocation("wildtoolaccess","select1")));
+        soundEventObjects.add(register(new ResourceLocation("wildtoolaccess","select2")));
+        soundEventObjects.add(register(new ResourceLocation("wildtoolaccess","select3")));
+        SOUNDS_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     public static void updateSoundEventsAsConfigured(){
-        selectInAccess1 = soundEvents.get(WildToolAccessConfig.getIntValue("selectSound1"));
-        selectInAccess2 = soundEvents.get(WildToolAccessConfig.getIntValue("selectSound2"));
+        selectInAccess1 = soundEventObjects.get(WildToolAccessConfig.getIntValue("selectSound1")).get();
+        selectInAccess2 = soundEventObjects.get(WildToolAccessConfig.getIntValue("selectSound2")).get();
     }
     
 }
