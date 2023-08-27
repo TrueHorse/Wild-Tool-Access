@@ -12,8 +12,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.trueHorse.wildToolAccess.commands.WildToolAccessCommand;
-import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.glfw.GLFW;
@@ -128,7 +126,7 @@ public class WildToolAccess
 
         @SubscribeEvent
         public static void onCommandsRegister(RegisterClientCommandsEvent event){
-            WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
+            //WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
         }
 
     }

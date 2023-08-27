@@ -1,9 +1,8 @@
 package net.trueHorse.wildToolAccess;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.util.ArrayList;
@@ -14,15 +13,17 @@ public class WildToolAccessSoundEvents {
 
     private static final ArrayList<SoundEvent> soundEvents = new ArrayList<SoundEvent>();
 
-    public static SoundEvent register(Identifier id){
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
+    public static SoundEvent register(ResourceLocation id){
+        SoundEvent event = SoundEvent.createVariableRangeEvent(id);
+        ForgeRegistries.SOUND_EVENTS.register(id,event);
+        return event;
     }
 
     public static void registerAll(){
-        soundEvents.add(register(new Identifier("wildtoolaccess","select0")));
-        soundEvents.add(register(new Identifier("wildtoolaccess","select1")));
-        soundEvents.add(register(new Identifier("wildtoolaccess","select2")));
-        soundEvents.add(register(new Identifier("wildtoolaccess","select3")));
+        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select0")));
+        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select1")));
+        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select2")));
+        soundEvents.add(register(new ResourceLocation("wildtoolaccess","select3")));
     }
 
     public static void updateSoundEventsAsConfigured(){

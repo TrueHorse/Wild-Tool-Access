@@ -1,36 +1,35 @@
 package net.trueHorse.wildToolAccess.mixin;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.NonNullList;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.At;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.collection.DefaultedList;
-import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
-import net.trueHorse.wildToolAccess.InGameHudAccess;
+import java.util.ArrayList;
+import java.util.Collection;
 
-@Mixin(PlayerInventory.class)
+@Mixin(Inventory.class)
 public class PlayerInventoryMixin implements PlayerInventoryAccess{
 
     @Final
     @Shadow
-    public DefaultedList<ItemStack> main;
+    public NonNullList<ItemStack> items;
 
     @Inject(method = "scrollInHotbar", at = @At("HEAD"), cancellable = true)
     private void scrollInAccessBar(double scrollAmount, CallbackInfo info) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if(((InGameHudAccess)client.inGameHud).getOpenAccessBar()!=null){
-            ((InGameHudAccess)client.inGameHud).getOpenAccessBar().scrollInAccessBar(scrollAmount);
+        Minecraft client = Minecraft.getInstance();
+        if(((InGameHudAccess)client.gui).getOpenAccessBar()!=null){
+            ((InGameHudAccess)client.gui).getOpenAccessBar().scrollInAccessBar(scrollAmount);
             info.cancel();
         }
     }
@@ -38,7 +37,7 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Override
     public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for (ItemStack itemStack : main) {
+        for (ItemStack itemStack : items) {
             if (type.isAssignableFrom(itemStack.getItem().getClass())) {
                 stacks.add(itemStack);
             }
@@ -49,8 +48,8 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Override
     public ArrayList<ItemStack> getAllMainStacksWithTag(TagKey<Item> tag){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for (ItemStack itemStack : main) {
-            if (itemStack.isIn(tag)) {
+        for (ItemStack itemStack : items) {
+            if (itemStack.is(tag)) {
                 stacks.add(itemStack);
             }
         }
@@ -60,7 +59,7 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Override
     public ArrayList<ItemStack> getAllMainStacksOf(Collection<Item> items) {
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for (ItemStack itemStack : main) {
+        for (ItemStack itemStack : this.items) {
             if (items.contains(itemStack.getItem())) {
                 stacks.add(itemStack);
             }

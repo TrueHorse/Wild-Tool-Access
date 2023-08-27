@@ -1,9 +1,9 @@
 package net.trueHorse.wildToolAccess.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.screens.Screen;
 import net.trueHorse.wildToolAccess.AccessBar;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
@@ -14,21 +14,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 public abstract class MinecraftClientMixin {
 
     @Final
     @Shadow
-    public GameOptions options;
+    public Options options;
     @Final
     @Shadow
-    public InGameHud inGameHud;
+    public Gui inGameHud;
     
     @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
     private void handleAccessbarSelectInput(CallbackInfo info){
-        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.attackKey.wasPressed()){
+        if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.keyAttack.consumeClick()){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(true);
-            ((KeyBindingAccess)options.attackKey).setTimesPressed(0);
+            ((KeyBindingAccess)options.keyAttack).setTimesPressed(0);
         }
     }
 
@@ -53,9 +53,9 @@ public abstract class MinecraftClientMixin {
         if(!WildToolAccessConfig.getBoolValue("scrollWithNumberKeys")||openAccessbar==null) return;
 
         for(int i = 0; i < 9; ++i) {
-            if (options.hotbarKeys[i].wasPressed()) {
+            if (options.keyHotbarSlots[i].consumeClick()) {
                 openAccessbar.setSelectedAccessSlotIndex(Math.min(i,openAccessbar.getStacks().size()-1));
-                ((KeyBindingAccess)options.hotbarKeys[i]).setTimesPressed(0);
+                ((KeyBindingAccess)options.keyHotbarSlots[i]).setTimesPressed(0);
             }
         }
     }
