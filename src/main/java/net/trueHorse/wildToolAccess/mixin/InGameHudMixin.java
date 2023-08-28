@@ -19,6 +19,7 @@ import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.trueHorse.wildToolAccess.AccessBar;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
@@ -61,8 +62,9 @@ public class InGameHudMixin implements InGameHudAccess{
         accessBars = getAccessBarArray();
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;renderHotbar(FLnet/minecraft/client/gui/GuiGraphics;)V",shift = At.Shift.AFTER))
-    public void renderAccessBar(GuiGraphics context, float tickDelta, CallbackInfo ci){
+    //injecting in renderHotbar, because Forge overrides render and I don't want to go trough the effort of registering an overlay
+    @Inject(method = "renderHotbar", at = @At("RETURN"))
+    private void renderAccessBar(float tickDelta, GuiGraphics context, CallbackInfo ci){
         if(openAccessbar!=null){
             Player playerEntity = this.getCameraPlayer();
             if (playerEntity != null) {
