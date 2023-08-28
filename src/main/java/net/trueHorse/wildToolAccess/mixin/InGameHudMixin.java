@@ -123,7 +123,7 @@ public class InGameHudMixin implements InGameHudAccess{
         }else{
             tooltip = new ArrayList<Component>();
             if(labConf.equals("name")||labConf.equals("enchantments")){
-                MutableComponent name = (Component.literal("")).append(selectedStack.getDisplayName()).withStyle(selectedStack.getRarity().getStyleModifier());
+                MutableComponent name = (Component.literal("")).append(selectedStack.getHoverName()).withStyle(selectedStack.getRarity().getStyleModifier());
                 if (selectedStack.hasCustomHoverName()) {
                     name.withStyle(ChatFormatting.ITALIC);
                 }
