@@ -31,8 +31,8 @@ public class WildToolAccessSoundEvents {
     }
 
     public static void updateSoundEventsAsConfigured(){
-        selectInAccess1 = soundEventObjects.get(WildToolAccessConfig.getIntValue("selectSound1")).get();
-        selectInAccess2 = soundEventObjects.get(WildToolAccessConfig.getIntValue("selectSound2")).get();
+        selectInAccess1 = soundEventObjects.get(WildToolAccessConfig.selectSound1).get();
+        selectInAccess2 = soundEventObjects.get(WildToolAccessConfig.selectSound2).get();
     }
     
 }

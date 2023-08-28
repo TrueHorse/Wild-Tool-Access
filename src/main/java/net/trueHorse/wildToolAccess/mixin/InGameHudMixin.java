@@ -73,13 +73,13 @@ public class InGameHudMixin implements InGameHudAccess{
                 ResourceLocation barTextures;
                 barTextures = openAccessbar.getTextures();
 
-                int firstSlotXCoordinate = screenWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
-                int yCoordinate = screenHeight /2 -54+WildToolAccessConfig.getIntValue("yOffset");
+                int firstSlotXCoordinate = screenWidth / 2 -10+WildToolAccessConfig.xOffset;
+                int yCoordinate = screenHeight /2 -54+WildToolAccessConfig.yOffset;
                 context.pose().pushPose();
                 context.pose().translate(0.0F, 0.0F, -90.0F);
 
                 int xCoordinate;
-                int spaceBetweenSlots = 20+WildToolAccessConfig.getIntValue("spaceBetweenSlots");
+                int spaceBetweenSlots = 20+WildToolAccessConfig.spaceBetweenSlots;
                 
                 if(openAccessbar.getStacks().size()==1){
                     context.blit(barTextures, firstSlotXCoordinate, yCoordinate, 66, 0, 22, 22);
@@ -104,7 +104,7 @@ public class InGameHudMixin implements InGameHudAccess{
                     this.renderSlot(context, xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
                 }
 
-                String labConf = WildToolAccessConfig.getStringValue("itemInfoShown");
+                String labConf = WildToolAccessConfig.itemInfoShown;
                 if(!labConf.equals("non")&&openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlotIndex())!=ItemStack.EMPTY){
                     renderLabels(context, labConf, firstSlotXCoordinate, yCoordinate);
                 }
@@ -189,13 +189,13 @@ public class InGameHudMixin implements InGameHudAccess{
 
     private AccessBar[] getAccessBarArray(){
         return new AccessBar[]{
-                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
+                new AccessBar(WildToolAccessConfig.typeToAccess1,
                         WildToolAccessSoundEvents.selectInAccess1,
-                        accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture1")],
+                        accessBarTextureSheets[WildToolAccessConfig.barTexture1],
                         minecraft),
-                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
+                new AccessBar(WildToolAccessConfig.typeToAccess2,
                         WildToolAccessSoundEvents.selectInAccess2,
-                        accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture2")],
+                        accessBarTextureSheets[WildToolAccessConfig.barTexture2],
                         minecraft)
         };
     }

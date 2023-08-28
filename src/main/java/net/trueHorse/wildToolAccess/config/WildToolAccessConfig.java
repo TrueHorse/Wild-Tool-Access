@@ -1,275 +1,138 @@
 package net.trueHorse.wildToolAccess.config;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
-import java.io.*;
-import java.util.*;
+import java.util.List;
 
+@Mod.EventBusSubscriber(modid = WildToolAccess.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class WildToolAccessConfig {
-
-    private static final String[] OPTION_ORDER = {"toggleMode","leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
-    private static final Map<String,ConfigOption> configs = new HashMap<>();
-    private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
     public final static String MOD_CONFIG_DIR_NAME = Minecraft.getInstance().gameDirectory.getAbsolutePath() + "/config/wild_tool_access";
-    public final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
-    public static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
-    private static final String DEFAULT_STUFF_CONTENT = """
-                    {
-                        "values":[
-                            "minecraft:torch",
-                            "minecraft:ladder",
-                            "minecraft:bucket",
-                            "minecraft:cobblestone"
-                        ]
-                    }""";
 
-    public static void loadCofigs(){
-        resetConfigsToDefault();
+    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-        if(MOD_CONFIG_FILE.exists()){
-            try {
-                Properties tmpProperties = new Properties();
-                FileReader reader = new FileReader(MOD_CONFIG_FILE);
-                tmpProperties.load(reader);
-                reader.close();
-                tmpProperties.forEach((k,v)->{
-                    if(configs.get(k)!=null) configs.get(k).setVal((String) v);
-                });
-                renameDeprecatedProperties();
-            } catch (FileNotFoundException e) {
-                WildToolAccess.LOGGER.error("Config file was not found after existing. How?");
-                e.printStackTrace();
-            } catch (IOException e) {
-                WildToolAccess.LOGGER.error("Failed to read the actual config file.");
-                e.printStackTrace();
-            }
-        }
+    private static final ForgeConfigSpec.BooleanValue TOGGLE_MODE = BUILDER
+            .comment("If enabled, you don't need to hold down the key to keep the access bar open.")
+            .define("toggleMode", true);
+    private static final ForgeConfigSpec.BooleanValue LEFT_CLICK_SELECT = BUILDER
+            .comment("Left clicking will select current item.")
+            .define("leftClickSelect", true);
+    private static final ForgeConfigSpec.BooleanValue ESC_CLOSE = BUILDER
+            .comment("Pressing esc will close the access bar without selecting an item.")
+            .define("escClose",true);
+    private static final ForgeConfigSpec.BooleanValue SCROLL_WITH_NUMBER_KEYS = BUILDER
+            .comment("You can use number keys to select items in access bars like you can in your hotbar.")
+            .define("scrollWithNumberKeys",true);
+    private static final ForgeConfigSpec.IntValue SELECT_SOUND_1 = BUILDER
+            .comment("the Sound you want to play, when selecting an item in bar 1 (0-3)")
+            .defineInRange("selectSound1", 1, 0, 4);
+    private static final ForgeConfigSpec.IntValue SELECT_SOUND_2 = BUILDER
+            .comment("the Sound you want to play, when selecting an item in bar 2 (0-3)")
+            .defineInRange("selectSound1", 1, 0, 4);
+    private static final ForgeConfigSpec.IntValue BAR_TEXTURE_1 = BUILDER
+            .comment("texture of the access bar 1  0->mine 1->my brothers (or use your own with a texture pack of cause)")
+            .defineInRange("barTexture1", 0, 0, 1);
+    private static final ForgeConfigSpec.IntValue BAR_TEXTURE_2 = BUILDER
+            .comment("texture of the access bar 2  0->mine 1->my brothers (or use your own with a texture pack of cause)")
+            .defineInRange("barTexture2", 0, 0, 1);
+    private static final ForgeConfigSpec.IntValue X_OFFSET = BUILDER
+            .comment("horizontal offset of the bar from the default position")
+            .defineInRange("xOffset", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue Y_OFFSET = BUILDER
+            .comment("vertical offset of the bar from the default position")
+            .defineInRange("yOffset", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue SPACE_BETWEEN_SLOTS = BUILDER
+            .comment("space left between bar slots")
+            .defineInRange("spaceBetweenSlots", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.BooleanValue LEADING_EMPTY_SLOT = BUILDER
+            .comment("The first slot of the bars is empty.")
+            .define("leadingEmptySlot",true);
+    private static final ForgeConfigSpec.BooleanValue HELD_ITEM_SELECTED = BUILDER
+            .comment("When opening a bar your currently held item is selected, if it is contained in the bar.")
+            .define("heldItemSelected",false);
+    private static final ForgeConfigSpec.ConfigValue<String> ITEM_INFO_SHOWN = BUILDER
+            .comment("what information should be shown about the items  all->all; enchantments-> enchantments/potion effect and name;",
+                    "name->name; non->non")
+            .define("itemInfoShown", "enchantments",WildToolAccessConfig::validateItemInfoValue);
+    private static final ForgeConfigSpec.BooleanValue LAST_SWAPPED_OUT_FIRST = BUILDER
+            .comment("The tool swapped out last time should be shown in the first access bar slot next time.")
+            .define("lastSwappedOutFirst",true);
+    private static final ForgeConfigSpec.BooleanValue PUT_TO_THE_RIGHT_IF_POSSIBLE = BUILDER
+            .comment("The item that would be swapped out of your hotbar goes in the slot to the right instead, if that slot is empty")
+            .define("putToTheRightIfPossible",false);
+    private static final ForgeConfigSpec.IntValue LOCK_SWAPPING_TO_SLOT = BUILDER
+            .comment("Locks swapping to that hotbar slot. Values <1 and >hotbar size disable this option.")
+            .defineInRange("lockSwappingToSlot", 0, 0, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.IntValue HOTBAR_SLOT_AFTER_SWAP = BUILDER
+            .comment("After swapping your selected hotbar slot will be set to this slot. Values <1 and >hotbar size disable this option.")
+            .defineInRange("hotbarSlotAfterSwap", 0, 0, Integer.MAX_VALUE);
+    private static final ForgeConfigSpec.EnumValue<AccessType> TYPE_TO_ACCESS_1 = BUILDER
+            .comment("what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff",
+                    "Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.",
+                    "By default it includes torch, ladder, bucket and cobblestone.")
+            .defineEnum("typeToAccess1", AccessType.TOOLS);
+    private static final ForgeConfigSpec.EnumValue<AccessType> TYPE_TO_ACCESS_2 = BUILDER
+            .comment("what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff",
+                    "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.",
+                    "#By default it includes torch, ladder, bucket and cobblestone.")
+            .defineEnum("typeToAccess2", AccessType.SWORDS);
 
-        createOrUpdateConfigFile();
+
+    public static final ForgeConfigSpec SPEC = BUILDER.build();
+
+    public static boolean toggleMode;
+    public static boolean leftClickSelect;
+    public static boolean escClose;
+    public static boolean scrollWithNumberKeys;
+    public static int selectSound1;
+    public static int selectSound2;
+    public static int barTexture1;
+    public static int barTexture2;
+    public static int xOffset;
+    public static int yOffset;
+    public static int spaceBetweenSlots;
+    public static boolean leadingEmptySlot;
+    public static boolean heldItemSelected;
+    public static String itemInfoShown;
+    public static boolean lastSwappedOutFirst;
+    public static boolean putToTheRightIfPossible;
+    public static int lockSwappingToSlot;
+    public static int hotbarSlotAfterSwap;
+    public static Class<?> typeToAccess1;
+    public static Class<?> typeToAccess2;
+
+    private static boolean validateItemInfoValue(final Object obj){
+        return obj instanceof final String itemName && List.of("all","enchantments","name","non").contains(itemName);
     }
 
-    private static void resetConfigsToDefault(){
-        configs.clear();
-        configs.put("toggleMode",new ConfigOption("true",
-                "If enabled, you don't need to hold down the key to keep the access bar open."));
-        configs.put("leftClickSelect",new ConfigOption("true",
-                "Left clicking will select current item."));
-        configs.put("escClose",new ConfigOption("true",
-                "Pressing esc will close the access bar without selecting an item."));
-        configs.put("scrollWithNumberKeys",new ConfigOption("true",
-                "You can use number keys to select items in access bars like you can in your hotbar."));
-        configs.put("selectSound1",new ConfigOption("1",
-                "the Sound you want to play, when selecting an item in bar 1 (0-3)"));
-        configs.put("selectSound2",new ConfigOption("1",
-                "see above, but for bar 2"));
-        configs.put("barTexture1",new ConfigOption("0",
-                "texture of the access bar 1  0->mine 1->my brothers (or use your own with a texture pack of cause)"));
-        configs.put("barTexture2",new ConfigOption("0",
-                "see above, but for bar 2"));
-        configs.put("xOffset",new ConfigOption("0",
-                "horizontal offset of the bar from the default position"));
-        configs.put("yOffset",new ConfigOption("0",
-                "vertical offset of the bar from the default position"));
-        configs.put("spaceBetweenSlots",new ConfigOption("0",
-                "space left between bar slots"));
-        configs.put("leadingEmptySlot", new ConfigOption("true",
-                "The first slot of the bars is empty."));
-        configs.put("heldItemSelected",new ConfigOption("false",
-                "When opening a bar your currently held item is selected, if it is contained in the bar."));
-        configs.put("itemInfoShown",new ConfigOption("enchantments",
-                "what information should be shown about the items  all->all; enchantments-> enchantments/potion effect and name;\n" +
-                        "#name->name; non->non"));
-        configs.put("lastSwappedOutFirst",new ConfigOption("true",
-                "The tool swapped out last time should be shown in the first access bar slot next time."));
-        configs.put("putToTheRightIfPossible",new ConfigOption("false",
-                "The item that would be swapped out of your hotbar goes in the slot to the right instead, if that slot is empty"));
-        configs.put("lockSwappingToSlot",new ConfigOption("0",
-                "Locks swapping to that hotbar slot. Values <1 and >hotbar size disable this option."));
-        configs.put("hotbarSlotAfterSwap",new ConfigOption("0",
-                "After swapping your selected hotbar slot will be set to this slot. Values <1 and >hotbar size disable this option."));
-        configs.put("typeToAccess1",new ConfigOption("tools",
-                "what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff\n"+
-                        "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.\n"+
-                        "#By default it includes torch, ladder, bucket and cobblestone."));
-        configs.put("typeToAccess2",new ConfigOption("swords",
-                "see above, but for access 2"));
-    }
-
-    public static void loadStuffItems(){
-        ArrayList<Item> items = new ArrayList<Item>();
-
-        if(STUFF_FILE.exists()){
-            try {
-                JsonArray vals = GsonHelper.getAsJsonArray(GsonHelper.parse(new FileReader(STUFF_FILE)),"values");
-                for(JsonElement element:vals){
-                    if (element.isJsonPrimitive()) {
-
-                        Optional<Holder<Item>> itemHolder = ForgeRegistries.ITEMS.getHolder(new ResourceLocation(element.getAsString()));
-
-                        if(itemHolder.isEmpty()){
-                            WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
-                            continue;
-                        }
-                        items.add(itemHolder.get().get()) ;
-
-                    } else {
-                        WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");
-                    }
-                }
-
-                stuffItems = ImmutableSet.copyOf(items);
-            } catch (FileNotFoundException e) {
-                WildToolAccess.LOGGER.error("Stuff file was not found after existing. How?");
-                e.printStackTrace();
-            } catch (Exception e){
-                WildToolAccess.LOGGER.error("Stuff file could not be read as a .json file");
-                e.printStackTrace();
-            }
-        }else{
-            resetStuffFile();
-        }
-    }
-
-    public static ArrayList<Item> getDefaultStuffItems() {
-        ArrayList<Item> items = new ArrayList<Item>();
-        JsonArray vals = GsonHelper.getAsJsonArray(GsonHelper.parse(DEFAULT_STUFF_CONTENT), "values");
-        for (JsonElement element : vals) {
-            if (element.isJsonPrimitive()) {
-                items.add(ForgeRegistries.ITEMS.getValue(new ResourceLocation(element.getAsString())));
-            }
-        }
-        return items;
-    }
-
-    public static void createOrUpdateConfigFile(){
-        createOrUpdateFile(MOD_CONFIG_FILE,getConfigContentAsString());
-    }
-
-    public static void createStuffFileWithValuesEmpty(){
-        String content = """
-                    {
-                        "values":[
-                        
-                        ]
-                    }""";
-        writeStuffFile(content);
-    }
-
-    public static void resetStuffFile(){
-        writeStuffFile(DEFAULT_STUFF_CONTENT);
-    }
-
-    public static void writeStuffFile(String content){
-        createOrUpdateFile(STUFF_FILE,content);
-    }
-
-    public static void createOrUpdateFile(File file, String content) {
-        if(!file.getParentFile().exists()){
-            file.getParentFile().mkdirs();
-        }
-
-        try {
-            FileWriter confWriter = new FileWriter(file);
-            confWriter.write(content);
-            confWriter.close();
-        } catch (IOException e) {
-            WildToolAccess.LOGGER.error("Creation of "+file.getName()+" failed");
-            e.printStackTrace();
-        }
-    }
-
-    public static String getConfigContentAsString(){
-        StringBuilder configString = new StringBuilder();
-        ConfigOption option;
-        for (String key : OPTION_ORDER) {
-            option = configs.get(key);
-            configString.append("#").append(option.getDescription()).append("\n");
-            configString.append(key).append("=").append(option.getVal()).append("\n");
-        }
-        return configString.toString();
-    }
-
-    private static void renameDeprecatedProperties(){
-        String[] deprecatedKeys = {"labels","mouseSelect","moveIfNextEmpty","access1","access2"};
-        String[] replacements = {"itemInfoShown","leftClickSelect","putToTheRightIfPossible","typeToAccess1","typeToAccess2"};
-
-        for(int i=0;i<deprecatedKeys.length;i++){
-            if(configs.containsKey(deprecatedKeys[i])){
-                configs.put(replacements[i],configs.get(deprecatedKeys[i]));
-                configs.remove(deprecatedKeys[i]);
-            }
-        }
-    }
-
-    public static int getIntValue(String key){
-        if(configs.containsKey(key)){
-            try{
-                return Integer.parseInt(configs.get(key).getVal());
-            }catch(NumberFormatException e){
-                e.printStackTrace();
-                WildToolAccess.LOGGER.error(key+" is set to "+configs.get(key).getVal()+", which is not a numerical value.");
-                return Integer.parseInt(configs.get(key).getDefaultVal());
-            }
-        }else {
-            WildToolAccess.LOGGER.error("Couldn't get integer config option. Key "+key+" isn't present.");
-            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            return -1;
-        }
-    }
-
-    public static boolean getBoolValue(String key){
-        if(configs.containsKey(key)){
-            return Boolean.parseBoolean(configs.get(key).getVal());
-        }else{
-            WildToolAccess.LOGGER.error("Couldn't get boolean config option. Key "+key+" isn't present.");
-            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            return false;
-        }
-    }
-
-    public static Class<?> getClassValue(String key){
-        String prop = configs.get(key).getVal().toLowerCase();
-        Class<?> val;
-        try {
-            val = StringToTypeToAccessConverter.convert(prop);
-        }catch (IllegalArgumentException e){
-            WildToolAccess.LOGGER.error("Configured access option "+prop+" for "+key+" does not exist.");
-            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            val = StringToTypeToAccessConverter.convert(configs.get(key).getDefaultVal());
-        }
-        return val;
-    }
-
-    public static String getStringValue(String key){
-        if(configs.containsKey(key)){
-            return configs.get(key).getVal().toLowerCase();
-        }else {
-            WildToolAccess.LOGGER.error("Couldn't get string config option. Key "+key+" isn't present.");
-            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            return "";
-        }
-    }
-
-    public static void setValue(String key, String val){
-        if(configs.containsKey(key)){
-            configs.get(key).setVal(val);
-        }else{
-            WildToolAccess.LOGGER.error("Couldn't set config option. Key "+key+" isn't present.");
-            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-        }
-    }
-
-    public static ImmutableSet<Item> getStuffItems() {
-        return stuffItems;
+    @SubscribeEvent
+    static void onLoad(final ModConfigEvent event)
+    {
+        toggleMode = TOGGLE_MODE.get();
+        leftClickSelect = LEFT_CLICK_SELECT.get();
+        escClose = ESC_CLOSE.get();
+        scrollWithNumberKeys = SCROLL_WITH_NUMBER_KEYS.get();
+        selectSound1 = SELECT_SOUND_1.get();
+        selectSound2 = SELECT_SOUND_2.get();
+        barTexture1 = BAR_TEXTURE_1.get();
+        barTexture2 = BAR_TEXTURE_2.get();
+        xOffset = X_OFFSET.get();
+        yOffset = Y_OFFSET.get();
+        spaceBetweenSlots = SPACE_BETWEEN_SLOTS.get();
+        leadingEmptySlot = LEADING_EMPTY_SLOT.get();
+        heldItemSelected = HELD_ITEM_SELECTED.get();
+        itemInfoShown = ITEM_INFO_SHOWN.get();
+        lastSwappedOutFirst = LAST_SWAPPED_OUT_FIRST.get();
+        putToTheRightIfPossible = PUT_TO_THE_RIGHT_IF_POSSIBLE.get();
+        lockSwappingToSlot = LOCK_SWAPPING_TO_SLOT.get();
+        hotbarSlotAfterSwap = HOTBAR_SLOT_AFTER_SWAP.get();
+        typeToAccess1 = StringToTypeToAccessConverter.convert(TYPE_TO_ACCESS_1.get().name());
+        typeToAccess2 = StringToTypeToAccessConverter.convert(TYPE_TO_ACCESS_2.get().name());
     }
 }

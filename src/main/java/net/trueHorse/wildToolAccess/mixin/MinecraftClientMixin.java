@@ -26,7 +26,7 @@ public abstract class MinecraftClientMixin {
     
     @Inject(method = "handleKeybinds", at = @At(value = "HEAD"))
     private void handleAccessbarSelectInput(CallbackInfo info){
-        if(((InGameHudAccess) gui).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("leftClickSelect")&&this.options.keyAttack.consumeClick()){
+        if(((InGameHudAccess) gui).getOpenAccessBar()!=null&&WildToolAccessConfig.leftClickSelect&&this.options.keyAttack.consumeClick()){
             ((InGameHudAccess) gui).closeOpenAccessbar(true);
             ((KeyBindingAccess)options.keyAttack).setClickCount(0);
         }
@@ -34,7 +34,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "pauseGame", at = @At("HEAD"),cancellable = true)
     public void pauseMenuOrCloseAccess(boolean bl, CallbackInfo info){
-        if(((InGameHudAccess) gui).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("escClose")){
+        if(((InGameHudAccess) gui).getOpenAccessBar()!=null&&WildToolAccessConfig.escClose){
             ((InGameHudAccess) gui).closeOpenAccessbar(false);
             info.cancel();
         }
@@ -50,7 +50,7 @@ public abstract class MinecraftClientMixin {
     @Inject(method = "handleKeybinds",at = @At("HEAD"))
     private void handleAccessbarNumberKeySelection(CallbackInfo ci){
         AccessBar openAccessbar = ((InGameHudAccess) gui).getOpenAccessBar();
-        if(!WildToolAccessConfig.getBoolValue("scrollWithNumberKeys")||openAccessbar==null) return;
+        if(!WildToolAccessConfig.scrollWithNumberKeys||openAccessbar==null) return;
 
         for(int i = 0; i < 9; ++i) {
             if (options.keyHotbarSlots[i].consumeClick()) {
