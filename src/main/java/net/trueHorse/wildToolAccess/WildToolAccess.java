@@ -54,6 +54,7 @@ public class WildToolAccess
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
+            ((InGameHudAccess)Minecraft.getInstance().gui).refreshAccessbars();
         }
 
         @SubscribeEvent
