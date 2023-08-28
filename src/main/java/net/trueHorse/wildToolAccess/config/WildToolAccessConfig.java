@@ -17,7 +17,7 @@ import java.util.*;
 
 public class WildToolAccessConfig {
 
-    private static final String[] OPTION_ORDER = {"leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
+    private static final String[] OPTION_ORDER = {"toggleMode","leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
     private static final Map<String,ConfigOption> configs = new HashMap<>();
     private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
     public final static String MOD_CONFIG_DIR_NAME = Minecraft.getInstance().gameDirectory.getAbsolutePath() + "/config/wild_tool_access";
@@ -60,6 +60,8 @@ public class WildToolAccessConfig {
 
     private static void resetConfigsToDefault(){
         configs.clear();
+        configs.put("toggleMode",new ConfigOption("true",
+                "If enabled, you don't need to hold down the key to keep the access bar open."));
         configs.put("leftClickSelect",new ConfigOption("true",
                 "Left clicking will select current item."));
         configs.put("escClose",new ConfigOption("true",
