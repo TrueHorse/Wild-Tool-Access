@@ -14,6 +14,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
 import net.trueHorse.wildToolAccess.config.StuffHandler;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.apache.logging.log4j.LogManager;
@@ -67,7 +68,7 @@ public class WildToolAccess
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID,bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID,bus = Mod.EventBusSubscriber.Bus.FORGE,value = Dist.CLIENT)
     public static class ClientForgeEvent{
 
         private static boolean access1WasPressed;
@@ -76,7 +77,7 @@ public class WildToolAccess
 
         @SubscribeEvent
         public static void onCommandsRegister(RegisterClientCommandsEvent event){
-            //WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
+            WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
         }
 
         @SubscribeEvent
