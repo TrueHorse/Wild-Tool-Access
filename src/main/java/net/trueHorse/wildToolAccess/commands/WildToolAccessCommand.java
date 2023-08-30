@@ -83,7 +83,7 @@ public class WildToolAccessCommand {
             bwriter.close();
             fwriter.close();
 
-            source.sendSuccess(()-> feedback,false);
+            source.sendSuccess(feedback,false);
         } catch (FileNotFoundException e) {
             throw STUFF_FILE_NOT_FOUND.create();
         } catch (IOException e) {
@@ -98,28 +98,28 @@ public class WildToolAccessCommand {
 
     private static int executeClearStuff(CommandSourceStack source){
         StuffHandler.createStuffFileWithValuesEmpty();
-        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.cleared"),false);
+        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.cleared"),false);
         return 1;
     }
 
     private static int executeResetStuff(CommandSourceStack source){
         StuffHandler.resetStuffFile();
-        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.cleared"),false);
+        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.cleared"),false);
         return 1;
     }
 
     private static int executePrintStuff(CommandSourceStack source) throws CommandSyntaxException {
         if(!StuffHandler.STUFF_FILE.exists()){
-            source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
+            source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
         }else{
             try {
                 JsonObject obj = GsonHelper.parse(new FileReader(StuffHandler.STUFF_FILE));
                 JsonArray vals = GsonHelper.getAsJsonArray(obj, "values");
                 if(vals.isEmpty()){
-                    source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
+                    source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
                 }
 
-                vals.forEach(val->source.sendSuccess(()->Component.literal(val.getAsString()),false));
+                vals.forEach(val->source.sendSuccess(Component.literal(val.getAsString()),false));
             } catch (FileNotFoundException e) {
                 throw STUFF_FILE_NOT_FOUND.create();
             }
@@ -170,7 +170,7 @@ public class WildToolAccessCommand {
 
                 ids.forEach(id->{
                     if (vals.remove(new JsonPrimitive(id.toString()))) {
-                        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.already_contains", id.toString()),false);
+                        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.already_contains", id.toString()),false);
                         addedIds.remove(id);
                     }
                     vals.add(new JsonPrimitive(id.toString()));
@@ -186,7 +186,7 @@ public class WildToolAccessCommand {
 
                 ids.forEach(id->{
                     if(!vals.remove(new JsonPrimitive(id.toString()))){
-                        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString()),false);
+                        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString()),false);
                         removedIds.remove(id);
                     }
                 });

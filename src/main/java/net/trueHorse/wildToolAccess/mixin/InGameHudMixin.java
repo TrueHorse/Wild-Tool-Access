@@ -2,11 +2,13 @@ package net.trueHorse.wildToolAccess.mixin;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -19,7 +21,6 @@ import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.trueHorse.wildToolAccess.AccessBar;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
-import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(Gui.class)
-public class InGameHudMixin implements InGameHudAccess{
+public class InGameHudMixin extends GuiComponent implements InGameHudAccess{
 
     @Final @Shadow
     protected Minecraft minecraft;
@@ -42,6 +43,7 @@ public class InGameHudMixin implements InGameHudAccess{
     protected int screenWidth;
     @Shadow
     protected int screenHeight;
+    @Unique
     private final ResourceLocation[] accessBarTextureSheets = accessBarTextureSheets();
     @Unique
     private ResourceLocation[] accessBarTextureSheets(){
@@ -49,13 +51,15 @@ public class InGameHudMixin implements InGameHudAccess{
                 new ResourceLocation("wildtoolaccess", "textures/gui/access_widgets0.png"),
                 new ResourceLocation("wildtoolaccess", "textures/gui/access_widgets1.png")};
     }
+    @Unique
     private AccessBar[] accessBars;
+    @Unique
     private AccessBar openAccessbar;
 
     @Shadow
     private Player getCameraPlayer(){return null;}
     @Shadow
-    private void renderSlot(GuiGraphics context, int x, int y, float tickDelta, Player player, ItemStack stack, int seed){}
+    private void renderSlot(int x, int y, float tickDelta, Player player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void initAccessBar(Minecraft client, ItemRenderer itemRenderer, CallbackInfo ci){
@@ -64,56 +68,60 @@ public class InGameHudMixin implements InGameHudAccess{
 
     //injecting in renderHotbar, because Forge overrides render and I don't want to go trough the effort of registering an overlay
     @Inject(method = "renderHotbar", at = @At("RETURN"))
-    private void renderAccessBar(float tickDelta, GuiGraphics context, CallbackInfo ci){
+    private void renderAccessBar(float tickDelta, PoseStack poseStack, CallbackInfo ci){
         if(openAccessbar!=null){
             Player playerEntity = this.getCameraPlayer();
             if (playerEntity != null) {
                 openAccessbar.updateAccessStacks();
 
-                ResourceLocation barTextures;
-                barTextures = openAccessbar.getTextures();
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
+
+                RenderSystem.setShaderTexture(0,openAccessbar.getTextures());
 
                 int firstSlotXCoordinate = screenWidth / 2 -10+WildToolAccessConfig.xOffset;
-                int yCoordinate = screenHeight /2 -54+WildToolAccessConfig.yOffset;
-                context.pose().pushPose();
-                context.pose().translate(0.0F, 0.0F, -90.0F);
+                int yCoordinate = screenHeight/2 -54+WildToolAccessConfig.yOffset;
+                int m = this.getBlitOffset();
+                this.setBlitOffset(-90);
 
                 int xCoordinate;
                 int spaceBetweenSlots = 20+WildToolAccessConfig.spaceBetweenSlots;
                 
                 if(openAccessbar.getStacks().size()==1){
-                    context.blit(barTextures, firstSlotXCoordinate, yCoordinate, 66, 0, 22, 22);
+                    blit(poseStack, firstSlotXCoordinate, yCoordinate, 66, 0, 22, 22);
                 }else{
                     int k;
                     for(k = 1; k < openAccessbar.getStacks().size()-1; ++k) {
                         xCoordinate = firstSlotXCoordinate + k * spaceBetweenSlots - spaceBetweenSlots*openAccessbar.getSelectedAccessSlotIndex();
-                        context.blit(barTextures, xCoordinate, yCoordinate, 0, 0, 22, 22);
+                        blit(poseStack, xCoordinate, yCoordinate, 0, 0, 22, 22);
                     }
                     xCoordinate = firstSlotXCoordinate - spaceBetweenSlots*openAccessbar.getSelectedAccessSlotIndex();
-                    context.blit(barTextures, xCoordinate, yCoordinate, 22, 0, 22, 22);
+                    blit(poseStack, xCoordinate, yCoordinate, 22, 0, 22, 22);
                     xCoordinate = firstSlotXCoordinate + k * spaceBetweenSlots - spaceBetweenSlots*openAccessbar.getSelectedAccessSlotIndex();
-                    context.blit(barTextures, xCoordinate, yCoordinate, 44, 0, 22, 22);
+                    blit(poseStack, xCoordinate, yCoordinate, 44, 0, 22, 22);
                 }
-                context.blit(barTextures, firstSlotXCoordinate - 1, yCoordinate - 1, 0, 22, 24, 22);
+                blit(poseStack, firstSlotXCoordinate - 1, yCoordinate - 1, 0, 22, 24, 22);
 
-                context.pose().popPose();
+                setBlitOffset(m);
 
                 int seed =1;
                 for(int i = 0; i < openAccessbar.getStacks().size(); ++i) {
                     xCoordinate = firstSlotXCoordinate + i * spaceBetweenSlots + 3 - spaceBetweenSlots*(openAccessbar.getSelectedAccessSlotIndex());
-                    this.renderSlot(context, xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
+                    this.renderSlot(xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
                 }
 
                 String labConf = WildToolAccessConfig.itemInfoShown;
                 if(!labConf.equals("non")&&openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlotIndex())!=ItemStack.EMPTY){
-                    renderLabels(context, labConf, firstSlotXCoordinate, yCoordinate);
+                    renderLabels(poseStack, labConf, firstSlotXCoordinate, yCoordinate);
                 }
                 RenderSystem.disableBlend();
             }
         }
     }
 
-    private void renderLabels(GuiGraphics context,String labConf, int i, int j){
+    private void renderLabels(PoseStack poseStack, String labConf, int i, int j){
         ItemStack selectedStack = openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlotIndex());
         List<Component> tooltip;
         if(labConf.equals("all")){
@@ -136,7 +144,7 @@ public class InGameHudMixin implements InGameHudAccess{
                 }
                 if (selectedStack.getItem() instanceof PotionItem){
                     List<Component> temp = new ArrayList<Component>();
-                    selectedStack.getItem().appendHoverText(selectedStack, minecraft.player == null ? null : minecraft.player.level(), temp, TooltipFlag.Default.ADVANCED);
+                    selectedStack.getItem().appendHoverText(selectedStack, minecraft.player == null ? null : minecraft.player.level, temp, TooltipFlag.Default.ADVANCED);
                     tooltip.add(temp.get(0));
                 }
             }
@@ -150,11 +158,11 @@ public class InGameHudMixin implements InGameHudAccess{
         List<FormattedCharSequence>orderedToolTip = Lists.transform(tooltip, Component::getVisualOrderText);
         FormattedCharSequence name = orderedToolTip.get(0);
 
-        context.drawString(textRenderer, name, i+10+3-textRenderer.width(name)/2, j-15, -1);
+        textRenderer.drawShadow(poseStack,name, i+10+3-textRenderer.width(name)/2, j-15, -1);
         for(int v=1;v<orderedToolTip.size();v++) {
             FormattedCharSequence text = orderedToolTip.get(v);
             if (text != null) {
-                context.drawString(textRenderer, text, i + 10 + 3 - textRenderer.width(text) / 2, j + 15 + 10 * v, -1);
+                textRenderer.drawShadow(poseStack, text, i + 10 + 3 - textRenderer.width(text) / 2, j + 15 + 10 * v, -1);
             }
         }
     }

@@ -19,7 +19,7 @@ public class WildToolAccessSoundEvents {
     private static final ArrayList<RegistryObject<SoundEvent>> soundEventObjects = new ArrayList<>();
 
     public static RegistryObject<SoundEvent> register(ResourceLocation id){
-        return SOUNDS_REGISTRY.register(id.getPath(),()->SoundEvent.createVariableRangeEvent(id));
+        return SOUNDS_REGISTRY.register(id.getPath(),()->new SoundEvent(id));
     }
 
     public static void registerAll(){
