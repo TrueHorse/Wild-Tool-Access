@@ -43,7 +43,7 @@ public class StuffHandler {
                             WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
                             continue;
                         }
-                        items.add(itemHolder.get().get()) ;
+                        items.add(itemHolder.get().value()) ;
 
                     } else {
                         WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");

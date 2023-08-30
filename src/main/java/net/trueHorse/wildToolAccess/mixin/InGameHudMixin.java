@@ -9,10 +9,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
@@ -62,7 +62,7 @@ public class InGameHudMixin extends GuiComponent implements InGameHudAccess{
     private void renderSlot(int x, int y, float tickDelta, Player player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initAccessBar(Minecraft client, ItemRenderer itemRenderer, CallbackInfo ci){
+    private void initAccessBar(Minecraft client, CallbackInfo ci){
         accessBars = getAccessBarArray();
     }
 
@@ -126,12 +126,12 @@ public class InGameHudMixin extends GuiComponent implements InGameHudAccess{
         List<Component> tooltip;
         if(labConf.equals("all")){
             tooltip = selectedStack.getTooltipLines(minecraft.player, this.minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
-            tooltip.remove(CommonComponents.EMPTY);
-            tooltip.remove((Component.translatable("item.modifiers.mainhand")).withStyle(ChatFormatting.GRAY));
+            tooltip.remove(TextComponent.EMPTY);
+            tooltip.remove((new TranslatableComponent("item.modifiers.mainhand")).withStyle(ChatFormatting.GRAY));
         }else{
             tooltip = new ArrayList<Component>();
             if(labConf.equals("name")||labConf.equals("enchantments")){
-                MutableComponent name = (Component.literal("")).append(selectedStack.getHoverName()).withStyle(selectedStack.getRarity().getStyleModifier());
+                MutableComponent name = (new TextComponent("")).append(selectedStack.getHoverName()).withStyle(selectedStack.getRarity().getStyleModifier());
                 if (selectedStack.hasCustomHoverName()) {
                     name.withStyle(ChatFormatting.ITALIC);
                 }

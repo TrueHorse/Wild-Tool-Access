@@ -8,12 +8,13 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -30,15 +31,15 @@ import java.util.Set;
 
 public class WildToolAccessCommand {
 
-    private static final SimpleCommandExceptionType STUFF_FILE_NOT_FOUND = new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.file_not_found"));
-    private static final SimpleCommandExceptionType COULDNT_WRITE_TO_STUFF = new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.couldnt_write"));
-    private static final SimpleCommandExceptionType PROB_COULDNT_READ_STUFF = new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.probably_couldnt_read"));
+    private static final SimpleCommandExceptionType STUFF_FILE_NOT_FOUND = new SimpleCommandExceptionType(new TranslatableComponent("command.wildtoolaccess.stuff.file_not_found"));
+    private static final SimpleCommandExceptionType COULDNT_WRITE_TO_STUFF = new SimpleCommandExceptionType(new TranslatableComponent("command.wildtoolaccess.stuff.couldnt_write"));
+    private static final SimpleCommandExceptionType PROB_COULDNT_READ_STUFF = new SimpleCommandExceptionType(new TranslatableComponent("command.wildtoolaccess.stuff.probably_couldnt_read"));
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext){
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(Commands.literal("wta")
                 .then(Commands.literal("stuff")
                         .then(Commands.literal("add")
-                                .then(Commands.argument("item", ItemArgument.item(buildContext)).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.ADD, context.getSource())))
+                                .then(Commands.argument("item", ItemArgument.item()).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.ADD, context.getSource())))
                                 .then(Commands.argument("type", new AccessTypeArgumentType()).suggests((context, builder) -> {
                                     for(AccessType enumType : AccessType.values()){
                                         builder.suggest(enumType.name().toLowerCase());
@@ -47,7 +48,7 @@ public class WildToolAccessCommand {
                                 }).executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.ADD, context.getSource())))
                                 .then(Commands.literal("inventory").executes(context->WildToolAccessCommand.executeModifyStuff(WildToolAccessCommand.getItemListFromInventory(context),Operation.ADD, context.getSource()))))
                         .then(Commands.literal("remove")
-                                .then(Commands.argument("item", ItemArgument.item(buildContext)).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.REMOVE, context.getSource())))
+                                .then(Commands.argument("item", ItemArgument.item()).executes(context -> executeModifyStuff(WildToolAccessCommand.getItemListFromItemArgument(context),Operation.REMOVE, context.getSource())))
                                 .then(Commands.argument("type", new AccessTypeArgumentType()).suggests((context,builder) -> {
                                     for(AccessType enumType : AccessType.values()){
                                         builder.suggest(enumType.name().toLowerCase());
@@ -98,28 +99,28 @@ public class WildToolAccessCommand {
 
     private static int executeClearStuff(CommandSourceStack source){
         StuffHandler.createStuffFileWithValuesEmpty();
-        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.cleared"),false);
+        source.sendSuccess(new TranslatableComponent("command.wildtoolaccess.stuff.cleared"),false);
         return 1;
     }
 
     private static int executeResetStuff(CommandSourceStack source){
         StuffHandler.resetStuffFile();
-        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.cleared"),false);
+        source.sendSuccess(new TranslatableComponent("command.wildtoolaccess.stuff.cleared"),false);
         return 1;
     }
 
     private static int executePrintStuff(CommandSourceStack source) throws CommandSyntaxException {
         if(!StuffHandler.STUFF_FILE.exists()){
-            source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
+            source.sendSuccess(new TranslatableComponent("command.wildtoolaccess.stuff.no_stuff"),false);
         }else{
             try {
                 JsonObject obj = GsonHelper.parse(new FileReader(StuffHandler.STUFF_FILE));
                 JsonArray vals = GsonHelper.getAsJsonArray(obj, "values");
                 if(vals.isEmpty()){
-                    source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
+                    source.sendSuccess(new TranslatableComponent("command.wildtoolaccess.stuff.no_stuff"),false);
                 }
 
-                vals.forEach(val->source.sendSuccess(Component.literal(val.getAsString()),false));
+                vals.forEach(val->source.sendSuccess(new TextComponent(val.getAsString()),false));
             } catch (FileNotFoundException e) {
                 throw STUFF_FILE_NOT_FOUND.create();
             }
@@ -170,13 +171,13 @@ public class WildToolAccessCommand {
 
                 ids.forEach(id->{
                     if (vals.remove(new JsonPrimitive(id.toString()))) {
-                        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.already_contains", id.toString()),false);
+                        source.sendSuccess(new TranslatableComponent("command.wildtoolaccess.stuff.already_contains", id.toString()),false);
                         addedIds.remove(id);
                     }
                     vals.add(new JsonPrimitive(id.toString()));
                 });
 
-                return Component.translatable("command.wildtoolaccess.stuff.added",addedIds);
+                return new TranslatableComponent("command.wildtoolaccess.stuff.added",addedIds);
             }
         },
         REMOVE{
@@ -186,12 +187,12 @@ public class WildToolAccessCommand {
 
                 ids.forEach(id->{
                     if(!vals.remove(new JsonPrimitive(id.toString()))){
-                        source.sendSuccess(Component.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString()),false);
+                        source.sendSuccess(new TranslatableComponent("command.wildtoolaccess.stuff.does_not_contain",id.toString()),false);
                         removedIds.remove(id);
                     }
                 });
 
-                return Component.translatable("command.wildtoolaccess.stuff.removed",removedIds);
+                return new TranslatableComponent("command.wildtoolaccess.stuff.removed",removedIds);
             }
         };
 
