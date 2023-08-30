@@ -4,12 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.config.ModConfig;
 import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.WildToolAccess;
 import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
-import java.util.List;
+import java.util.Arrays;
 
 @Mod.EventBusSubscriber(modid = WildToolAccess.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class WildToolAccessConfig {
@@ -108,11 +108,11 @@ public class WildToolAccessConfig {
     public static Class<?> typeToAccess2;
 
     private static boolean validateItemInfoValue(final Object obj){
-        return obj instanceof final String itemName && List.of("all","enchantments","name","non").contains(itemName);
+        return obj instanceof String && Arrays.asList("all", "enchantments", "name", "non").contains(obj);
     }
 
     @SubscribeEvent
-    static void onLoad(final ModConfigEvent event)
+    static void onLoad(final ModConfig.ModConfigEvent event)
     {
         toggleMode = TOGGLE_MODE.get();
         leftClickSelect = LEFT_CLICK_SELECT.get();

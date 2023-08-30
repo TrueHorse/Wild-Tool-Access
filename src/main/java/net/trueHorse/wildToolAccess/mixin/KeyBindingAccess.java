@@ -1,10 +1,10 @@
 package net.trueHorse.wildToolAccess.mixin;
 
-import net.minecraft.client.KeyMapping;
+import net.minecraft.client.settings.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(KeyMapping.class)
+@Mixin(KeyBinding.class)
 public interface KeyBindingAccess {
 
     @Accessor("clickCount")

@@ -1,9 +1,9 @@
 package net.trueHorse.wildToolAccess.mixin;
 
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.screen.Screen;
 import net.trueHorse.wildToolAccess.AccessBar;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
@@ -19,10 +19,10 @@ public abstract class MinecraftClientMixin {
 
     @Final
     @Shadow
-    public Options options;
+    public GameSettings options;
     @Final
     @Shadow
-    public Gui gui;
+    public IngameGui gui;
     
     @Inject(method = "handleKeybinds", at = @At(value = "HEAD"))
     private void handleAccessbarSelectInput(CallbackInfo info){

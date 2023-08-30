@@ -1,16 +1,16 @@
 package net.trueHorse.wildToolAccess;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -28,15 +28,15 @@ public class WildToolAccess
     // Define mod id in a common place for everything to reference
     public static final String MODID = "wildtoolaccess";
     // Key mapping is lazily initialized so it doesn't exist until it is registered
-    public static final Lazy<KeyMapping> ACCESS_1_BINDING = Lazy.of(() -> new KeyMapping(
+    public static final Lazy<KeyBinding> ACCESS_1_BINDING = Lazy.of(() -> new KeyBinding(
             "key.wildtoolaccess.access1",
-            InputConstants.Type.KEYSYM,
+            InputMappings.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
             "key.categories.inventory"
     ));
-    public static final Lazy<KeyMapping> ACCESS_2_BINDING = Lazy.of(() -> new KeyMapping(
+    public static final Lazy<KeyBinding> ACCESS_2_BINDING = Lazy.of(() -> new KeyBinding(
             "key.wildtoolaccess.access2",
-            InputConstants.Type.KEYSYM,
+            InputMappings.Type.KEYSYM,
             -1,
             "key.categories.inventory"
     ));
@@ -72,7 +72,7 @@ public class WildToolAccess
         private static boolean bothWerePressed;
 
         @SubscribeEvent
-        public static void onCommandsRegister(RegisterClientCommandsEvent event){
+        public static void onCommandsRegister(RegisterCommandsEvent event){
             WildToolAccessCommands.registerCommands(event.getDispatcher());
         }
 
@@ -108,7 +108,7 @@ public class WildToolAccess
             }
         }
 
-        private static void onAccessBindingHeldStatusChanged(Lazy<KeyMapping> accessBinding, InGameHudAccess hudAcc){
+        private static void onAccessBindingHeldStatusChanged(Lazy<KeyBinding> accessBinding, InGameHudAccess hudAcc){
             if (accessBinding.get().isDown()) {
                 hudAcc.openAccessbar(accessBinding==ACCESS_1_BINDING?1:2);
             } else {

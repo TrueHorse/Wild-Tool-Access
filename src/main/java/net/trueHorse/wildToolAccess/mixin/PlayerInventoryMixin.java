@@ -1,11 +1,11 @@
 package net.trueHorse.wildToolAccess.mixin;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.NonNullList;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
 import org.spongepowered.asm.mixin.Final;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Mixin(Inventory.class)
+@Mixin(PlayerInventory.class)
 public class PlayerInventoryMixin implements PlayerInventoryAccess{
 
     @Final
@@ -46,10 +46,10 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     }
 
     @Override
-    public ArrayList<ItemStack> getAllMainStacksWithTag(TagKey<Item> tag){
+    public ArrayList<ItemStack> getAllMainStacksWithTag(Tag<Item> tag){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
         for (ItemStack itemStack : items) {
-            if (itemStack.is(tag)) {
+            if (tag.contains(itemStack.getItem())) {
                 stacks.add(itemStack);
             }
         }
