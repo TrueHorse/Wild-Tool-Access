@@ -32,7 +32,7 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(method = "openPauseMenu", at = @At("HEAD"),cancellable = true)
+    @Inject(method = "openGameMenu", at = @At("HEAD"),cancellable = true)
     public void pauseMenuOrCloseAccess(boolean bl, CallbackInfo info){
         if(((InGameHudAccess)inGameHud).getOpenAccessBar()!=null&&WildToolAccessConfig.getBoolValue("escClose")){
             ((InGameHudAccess)inGameHud).closeOpenAccessbar(false);
