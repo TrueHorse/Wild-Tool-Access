@@ -33,8 +33,7 @@ public class AccessBar{
 
     public void updateAccessStacks(){
         PlayerInventory inv = client.player.inventory;
-        stacks = WildToolAccessConfig.leadingEmptySlot ? new ArrayList<>(Collections.singletonList(ItemStack.EMPTY)) : new ArrayList<>();
-
+        stacks.clear();
 
         ArrayList<ItemStack> itemStacks = new ArrayList<>();
         if(!classToAccess.equals(StuffPlaceholder.class)){
@@ -52,10 +51,9 @@ public class AccessBar{
             }
         }
 
-        if(stacks.isEmpty()){
+        if(itemStacks.isEmpty()||WildToolAccessConfig.getBoolValue("leadingEmptySlot")){
             stacks.add(ItemStack.EMPTY);
         }
-
         stacks.addAll(itemStacks);
     }
 
