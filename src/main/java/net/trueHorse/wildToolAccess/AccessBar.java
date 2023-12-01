@@ -35,14 +35,7 @@ public class AccessBar{
         Inventory inv = client.player.getInventory();
         stacks.clear();
 
-
-        ArrayList<ItemStack> itemStacks = new ArrayList<>();
-        if(!classToAccess.equals(StuffPlaceholder.class)){
-            itemStacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOfType(classToAccess));
-        }else{
-            itemStacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOf(StuffHandler.getStuffItems()));
-        }
-
+        ArrayList<ItemStack> itemStacks = new ArrayList<>(((PlayerInventoryAccess) inv).getAllMainStacksOfType(classToAccess));
 
         if(itemStacks.isEmpty()||WildToolAccessConfig.leadingEmptySlot){
             stacks.add(ItemStack.EMPTY);
