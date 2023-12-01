@@ -3,6 +3,8 @@ package net.trueHorse.wildToolAccess.mixin;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import net.trueHorse.wildToolAccess.StuffPlaceholder;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,11 +40,17 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Override
     public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for (ItemStack itemStack : main) {
-            if (type.isAssignableFrom(itemStack.getItem().getClass())) {
-                stacks.add(itemStack);
+
+        if(type.equals(StuffPlaceholder.class)){
+            stacks.addAll(this.getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
+        }else{
+            for (ItemStack itemStack : main) {
+                if (type.isAssignableFrom(itemStack.getItem().getClass())) {
+                    stacks.add(itemStack);
+                }
             }
         }
+
         return stacks;
     }
 
