@@ -37,11 +37,17 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     @Override
     public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-        for (ItemStack itemStack : items) {
-            if (type.isAssignableFrom(itemStack.getItem().getClass())) {
-                stacks.add(itemStack);
+
+        if(type.equals(StuffPlaceholder.class)){
+            stacks.addAll(this.getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
+        }else{
+            for (ItemStack itemStack : items) {
+                if (type.isAssignableFrom(itemStack.getItem().getClass())) {
+                    stacks.add(itemStack);
+                }
             }
         }
+
         return stacks;
     }
 
