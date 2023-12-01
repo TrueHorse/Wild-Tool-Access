@@ -18,7 +18,7 @@ public class AccessBar{
     private final MinecraftClient client;
     private final Class<?> classToAccess;
     private final SoundEvent selectionSoundEvent;
-    private ArrayList<ItemStack> stacks;
+    private ArrayList<ItemStack> stacks = new ArrayList<>();
     private int selectedAccessSlotIndex = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
     private final Identifier textures;
@@ -41,6 +41,11 @@ public class AccessBar{
             itemStacks.addAll(((PlayerInventoryAccess)inv).getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
         }
 
+
+        if(itemStacks.isEmpty()||WildToolAccessConfig.getBoolValue("leadingEmptySlot")){
+            stacks.add(ItemStack.EMPTY);
+        }
+
         if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
             int prioStackSlot = inv.getSlotWithStack(lastSwappedOutTool);
             ItemStack prioStack = prioStackSlot == -1 ? ItemStack.EMPTY : inv.getStack(prioStackSlot);
@@ -50,9 +55,6 @@ public class AccessBar{
             }
         }
 
-        if(itemStacks.isEmpty()||WildToolAccessConfig.getBoolValue("leadingEmptySlot")){
-            stacks.add(ItemStack.EMPTY);
-        }
         stacks.addAll(itemStacks);
     }
 
@@ -99,7 +101,7 @@ public class AccessBar{
 
             client.getSoundManager().play(PositionedSoundInstance.master(selectionSoundEvent,1.0F,1.0F));
  
-            if(classToAccess.isAssignableFrom(selectedHotbarSlotStack.getItem().getClass())){
+            if(((ItemAccess)selectedHotbarSlotStack.getItem()).isOfAccessType(classToAccess)){
                 lastSwappedOutTool = selectedHotbarSlotStack.copy();
             }
         }
@@ -107,7 +109,7 @@ public class AccessBar{
 
     public void resetSelection(){
         PlayerInventory inv = client.player.inventory;
-        if(WildToolAccessConfig.getBoolValue("heldItemSelected")&&classToAccess.isAssignableFrom(inv.getStack(inv.selectedSlot).getItem().getClass())){
+        if(WildToolAccessConfig.getBoolValue("heldItemSelected")&&((ItemAccess)inv.getStack(inv.selectedSlot).getItem()).isOfAccessType(classToAccess)){
             updateAccessStacks();
             selectedAccessSlotIndex = stacks.indexOf(inv.getStack(inv.selectedSlot));
         }else{
