@@ -7,11 +7,9 @@ import net.minecraft.inventory.container.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.trueHorse.wildToolAccess.config.StuffHandler;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.function.BiConsumer;
 
 public class AccessBar{
@@ -37,11 +35,11 @@ public class AccessBar{
 
         ArrayList<ItemStack> itemStacks = new ArrayList<>(((PlayerInventoryAccess) inv).getAllMainStacksOfType(classToAccess));
 
-        if(itemStacks.isEmpty()||WildToolAccessConfig.getBoolValue("leadingEmptySlot")){
+        if(itemStacks.isEmpty()||WildToolAccessConfig.leadingEmptySlot){
             stacks.add(ItemStack.EMPTY);
         }
 
-        if(WildToolAccessConfig.getBoolValue("lastSwappedOutFirst")){
+        if(WildToolAccessConfig.lastSwappedOutFirst){
             int prioStackSlot = inv.findSlotMatchingItem(lastSwappedOutTool);
             ItemStack prioStack = prioStackSlot == -1 ? ItemStack.EMPTY : inv.getItem(prioStackSlot);
             if(prioStack!=ItemStack.EMPTY){
