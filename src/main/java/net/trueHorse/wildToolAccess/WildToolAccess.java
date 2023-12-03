@@ -69,7 +69,6 @@ public class WildToolAccess
 
         private static boolean access1WasPressed;
         private static boolean access2WasPressed;
-        private static boolean bothWerePressed;
 
         @SubscribeEvent
         public static void onCommandsRegister(RegisterCommandsEvent event){
@@ -83,7 +82,6 @@ public class WildToolAccess
 
                 if(!WildToolAccessConfig.toggleMode){
                     if(ACCESS_1_BINDING.get().isDown()&&ACCESS_2_BINDING.get().isDown()) {
-                        bothWerePressed = true;
                         return;
                     }
 
@@ -96,7 +94,6 @@ public class WildToolAccess
 
                     access1WasPressed = ACCESS_1_BINDING.get().isDown();
                     access2WasPressed = ACCESS_2_BINDING.get().isDown();
-                    bothWerePressed = false;
                 }else {
                     while (ACCESS_1_BINDING.get().consumeClick()) {
                         onToggleBarBindingPressed(1, hudAcc);
@@ -112,7 +109,7 @@ public class WildToolAccess
             if (accessBinding.get().isDown()) {
                 hudAcc.openAccessbar(accessBinding==ACCESS_1_BINDING?1:2);
             } else {
-                if(!bothWerePressed) {
+                if(hudAcc.getOpenAccessBar()!=null) {
                     hudAcc.closeOpenAccessbar(true);
                 }
             }
