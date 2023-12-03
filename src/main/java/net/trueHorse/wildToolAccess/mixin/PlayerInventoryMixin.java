@@ -8,6 +8,8 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.NonNullList;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
+import net.trueHorse.wildToolAccess.StuffPlaceholder;
+import net.trueHorse.wildToolAccess.config.StuffHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,7 +41,7 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 
         if(type.equals(StuffPlaceholder.class)){
-            stacks.addAll(this.getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
+            stacks.addAll(this.getAllMainStacksOf(StuffHandler.getStuffItems()));
         }else{
             for (ItemStack itemStack : items) {
                 if (type.isAssignableFrom(itemStack.getItem().getClass())) {
