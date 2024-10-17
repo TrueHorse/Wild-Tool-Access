@@ -11,6 +11,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.duck.PlayerInventoryAccess;
 
 public class AccessBar{
 

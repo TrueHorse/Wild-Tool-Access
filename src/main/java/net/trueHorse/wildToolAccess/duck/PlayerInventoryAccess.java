@@ -1,4 +1,4 @@
-package net.trueHorse.wildToolAccess;
+package net.trueHorse.wildToolAccess.duck;
 
 import java.util.ArrayList;
 import java.util.Collection;

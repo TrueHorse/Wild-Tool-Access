@@ -1,4 +1,4 @@
-package net.trueHorse.wildToolAccess;
+package net.trueHorse.wildToolAccess.duck;
 
 public interface ItemAccess {
 
