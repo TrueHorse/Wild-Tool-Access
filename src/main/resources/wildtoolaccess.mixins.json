@@ -6,7 +6,6 @@
   "refmap": "wildtoolaccess.mixins.refmap.json",
   "client": [
     "InGameHudMixin",
-    "ItemMixin",
     "KeyBindingAccess",
     "MinecraftClientMixin",
     "PlayerInventoryMixin"

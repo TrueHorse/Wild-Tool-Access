@@ -6,26 +6,24 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.network.chat.Component;
-import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
+import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
-public class AccessTypeArgumentType implements ArgumentType<AccessTypeArgument>{
+public class AccessTypeArgumentType implements ArgumentType<String>{
 
     private static final SimpleCommandExceptionType MISSING_TYPE = new SimpleCommandExceptionType(Component.translatable("argument.wildtoolaccess.type_to_access.missing"));
     private static final DynamicCommandExceptionType TYPE_UNKNOWN = new DynamicCommandExceptionType(input -> Component.translatable("argument.wildtoolaccess.type_to_access.unknown",input));
 
     @Override
-    public AccessTypeArgument parse(StringReader reader) throws CommandSyntaxException {
+    public String parse(StringReader reader) throws CommandSyntaxException {
         if(!reader.canRead()){
             throw MISSING_TYPE.create();
         }
         String input = reader.readString();
 
-        Class<?> type;
-        try {
-            type = StringToTypeToAccessConverter.convert(input);
-        }catch (IllegalArgumentException e){
+        if(!WildToolAccessConfig.getItemTypes().contains(input)){
             throw TYPE_UNKNOWN.createWithContext(reader,input);
+        }else{
+            return input;
         }
-        return new AccessTypeArgument(type);
     }
 }
