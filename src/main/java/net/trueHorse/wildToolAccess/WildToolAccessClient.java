@@ -3,6 +3,7 @@ package net.trueHorse.wildToolAccess;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
@@ -19,7 +20,7 @@ public class WildToolAccessClient implements ClientModInitializer{
     @Override
     public void onInitializeClient() {
         WildToolAccessConfig.loadCofigs();
-        WildToolAccessConfig.loadStuffItems();
+        CommonLifecycleEvents.TAGS_LOADED.register((registries,onClient)->WildToolAccessConfig.loadItemTypes(registries));
         WildToolAccessSoundEvents.registerAll();
         WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
         WildToolAccessCommands.registerCommands();

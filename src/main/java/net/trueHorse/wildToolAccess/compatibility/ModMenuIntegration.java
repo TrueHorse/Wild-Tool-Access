@@ -55,16 +55,14 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("scrollWithNumberKeys", Boolean.toString(newVal)))
                     .build());
             functionalityCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_1"), WildToolAccessConfig.getStringValue("typeToAccess1"), string -> Text.translatable("option_val.wildtoolaccess."+string))
-                    .setDefaultValue("tools")
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.type_to_access_1"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess1", newVal))
-                    .setSelections(List.of("tools","swords","ranged weapons","potions","buckets","stuff"))
+                    .setSelections(WildToolAccessConfig.getItemTypes())
                     .build());
             functionalityCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_2"), WildToolAccessConfig.getStringValue("typeToAccess2"), string -> Text.translatable("option_val.wildtoolaccess."+string))
-                    .setDefaultValue("swords")
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.type_to_access_2"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess2", newVal))
-                    .setSelections(List.of("tools","swords","ranged weapons","potions","buckets","stuff"))
+                    .setSelections(WildToolAccessConfig.getItemTypes())
                     .build());
             functionalityCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.leading_empty_slot"), WildToolAccessConfig.getBoolValue("leadingEmptySlot"))
                     .setDefaultValue(true)

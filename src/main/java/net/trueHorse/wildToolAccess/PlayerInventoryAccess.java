@@ -9,7 +9,7 @@ import net.minecraft.registry.tag.TagKey;
 
 public interface PlayerInventoryAccess {
     
-    <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type);
+    ArrayList<ItemStack> getAllMainStacksOfType(String name);
 
     ArrayList<ItemStack> getAllMainStacksWithTag(TagKey<Item> tag);
 

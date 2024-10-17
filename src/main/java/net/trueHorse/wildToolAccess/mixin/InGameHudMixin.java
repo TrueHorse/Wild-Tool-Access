@@ -182,11 +182,11 @@ public class InGameHudMixin implements InGameHudAccess{
 
     private AccessBar[] getAccessBarArray(){
         return new AccessBar[]{
-                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
+                new AccessBar(WildToolAccessConfig.getStringValue("typeToAccess1"),
                         WildToolAccessSoundEvents.selectInAccess1,
                         accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture1")],
                         client),
-                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
+                new AccessBar(WildToolAccessConfig.getStringValue("typeToAccess2"),
                         WildToolAccessSoundEvents.selectInAccess2,
                         accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture2")],
                         client)

@@ -1,7 +1,6 @@
 package net.trueHorse.wildToolAccess;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 import net.minecraft.client.MinecraftClient;
@@ -16,16 +15,16 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 public class AccessBar{
 
     private final MinecraftClient client;
-    private final Class<?> classToAccess;
+    private final String accessType;
     private final SoundEvent selectionSoundEvent;
-    private ArrayList<ItemStack> stacks = new ArrayList<>();
+    private final ArrayList<ItemStack> stacks = new ArrayList<>();
     private int selectedAccessSlotIndex = 0;
     private ItemStack lastSwappedOutTool =ItemStack.EMPTY;
     private final Identifier textures;
 
-    public AccessBar(Class<?> classToAccess, SoundEvent selectionSoundEvent, Identifier textures, MinecraftClient client){
+    public AccessBar(String accessType, SoundEvent selectionSoundEvent, Identifier textures, MinecraftClient client){
         this.client = client;
-        this.classToAccess = classToAccess;
+        this.accessType = accessType;
         this.selectionSoundEvent = selectionSoundEvent;
         this.textures = textures;
     }
@@ -34,7 +33,7 @@ public class AccessBar{
         PlayerInventory inv = client.player.getInventory();
         stacks.clear();
 
-        ArrayList<ItemStack> itemStacks = new ArrayList<>(((PlayerInventoryAccess) inv).getAllMainStacksOfType(classToAccess));
+        ArrayList<ItemStack> itemStacks = new ArrayList<>(((PlayerInventoryAccess) inv).getAllMainStacksOfType(accessType));
 
         if(itemStacks.isEmpty()||WildToolAccessConfig.getBoolValue("leadingEmptySlot")){
             stacks.add(ItemStack.EMPTY);
@@ -95,7 +94,7 @@ public class AccessBar{
 
             client.getSoundManager().play(PositionedSoundInstance.master(selectionSoundEvent,1.0F,1.0F));
  
-            if(((ItemAccess)selectedHotbarSlotStack.getItem()).isOfAccessType(classToAccess)){
+            if(WildToolAccessConfig.getItemType(accessType).contains(selectedAccessbarStack.getItem())){
                 lastSwappedOutTool = selectedHotbarSlotStack.copy();
             }
         }
@@ -103,7 +102,7 @@ public class AccessBar{
 
     public void resetSelection(){
         PlayerInventory inv = client.player.getInventory();
-        if(WildToolAccessConfig.getBoolValue("heldItemSelected")&&((ItemAccess)inv.getStack(inv.selectedSlot).getItem()).isOfAccessType(classToAccess)){
+        if(WildToolAccessConfig.getBoolValue("heldItemSelected")&&WildToolAccessConfig.getItemType(accessType).contains(inv.getStack(inv.selectedSlot).getItem())){
             updateAccessStacks();
             selectedAccessSlotIndex = stacks.indexOf(inv.getStack(inv.selectedSlot));
         }else{
