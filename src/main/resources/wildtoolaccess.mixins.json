@@ -5,7 +5,6 @@
   "package": "net.trueHorse.wildToolAccess.mixin",
   "client": [
     "InGameHudMixin",
-    "ItemMixin",
     "KeyBindingAccess",
     "MinecraftClientMixin",
     "PlayerInventoryMixin"
