@@ -79,7 +79,7 @@ public class WildToolAccessConfig {
             .comment("what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff",
                     "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.",
                     "#By default it includes torch, ladder, bucket and cobblestone.")
-            .define("typeToAccess2", "stuff",(val)->ItemTypeHandler.getItemTypes().contains(val.toString()));
+            .define("typeToAccess2", "stuff");
 
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
