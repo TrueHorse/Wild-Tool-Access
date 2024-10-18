@@ -109,17 +109,19 @@ public class WildToolAccessConfig {
                 "what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff\n"+
                         "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.\n"+
                         "#By default it includes torch, ladder, bucket and cobblestone."));
-        configs.put("typeToAccess2",new ConfigOption("swords",
+        configs.put("typeToAccess2",new ConfigOption("stuff",
                 "see above, but for access 2"));
     }
 
     public static void loadItemTypes(DynamicRegistryManager registries){
-        if(ITEM_TYPE_DIRECTORY.exists()){
-            for(File file : ITEM_TYPE_DIRECTORY.listFiles((file, name)->name.endsWith(".json"))) {
-                ArrayList<Item> items = new ArrayList<Item>();
-                try {
-                    JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(file)),"values");
+        if(!ITEM_TYPE_DIRECTORY.exists()){
+            createDefaultItemTypes();
+        }
 
+        for(File file : ITEM_TYPE_DIRECTORY.listFiles((file, name)->name.endsWith(".json"))) {
+            ArrayList<Item> items = new ArrayList<Item>();
+            try {
+                JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(file)),"values");
                     for(JsonElement element:vals){
                         if (element.isJsonPrimitive()) {
                             if(element.getAsString().startsWith("#")){
@@ -138,14 +140,12 @@ public class WildToolAccessConfig {
                         }
                     }
 
-                    ITEM_TYPES.put(file.getName().substring(0,file.getName().length()-4),ImmutableSet.copyOf(items));
+                    ITEM_TYPES.put(file.getName().substring(0,file.getName().length()-5),ImmutableSet.copyOf(items));
+
                 } catch (Exception e){
                     WildToolAccess.LOGGER.error(file.getName()+" could not be read.\n"+e.getMessage());
                 }
             }
-        }else{
-            createDefaultItemTypes();
-        }
     }
 
     public static void createOrUpdateConfigFile(){
