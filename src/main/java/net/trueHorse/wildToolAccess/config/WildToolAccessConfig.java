@@ -15,6 +15,7 @@ import net.minecraft.util.JsonHelper;
 import net.trueHorse.wildToolAccess.WildToolAccess;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 public class WildToolAccessConfig {
@@ -114,6 +115,22 @@ public class WildToolAccessConfig {
     }
 
     public static void loadItemTypes(DynamicRegistryManager registries){
+        File oldStuffFile = new File(WildToolAccessConfig.MOD_CONFIG_DIR_NAME+"/stuff.json");
+        if(oldStuffFile.exists()){
+            try {
+                Files.copy(oldStuffFile.toPath(),ITEM_TYPE_DIRECTORY.toPath().resolve("stuff.json"));
+            } catch (IOException e) {
+                WildToolAccess.LOGGER.error("Couldn't copy old stuff.json to item type folder.\n"+e.getMessage());
+            }
+            if(ITEM_TYPE_DIRECTORY.toPath().resolve("stuff.json").toFile().exists()){
+                try {
+                    Files.delete(oldStuffFile.toPath());
+                } catch (IOException e) {
+                    WildToolAccess.LOGGER.error("Failed to delete old stuff file.\n"+e.getMessage());
+                }
+            }
+        }
+
         if(!ITEM_TYPE_DIRECTORY.exists()){
             createDefaultItemTypes();
         }
