@@ -5,7 +5,7 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GameOptions;
 import net.trueHorse.wildToolAccess.AccessBar;
-import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.duck.InGameHudAccess;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

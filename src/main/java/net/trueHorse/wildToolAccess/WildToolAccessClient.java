@@ -3,10 +3,12 @@ package net.trueHorse.wildToolAccess;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.duck.InGameHudAccess;
 import org.lwjgl.glfw.GLFW;
 
 public class WildToolAccessClient implements ClientModInitializer{
@@ -19,7 +21,7 @@ public class WildToolAccessClient implements ClientModInitializer{
     @Override
     public void onInitializeClient() {
         WildToolAccessConfig.loadCofigs();
-        WildToolAccessConfig.loadStuffItems();
+        CommonLifecycleEvents.TAGS_LOADED.register((registries,onClient)->WildToolAccessConfig.loadItemTypes(registries));
         WildToolAccessSoundEvents.registerAll();
         WildToolAccessSoundEvents.updateSoundEventsAsConfigured();
         WildToolAccessCommands.registerCommands();

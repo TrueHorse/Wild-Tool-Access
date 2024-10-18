@@ -8,11 +8,12 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
-import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.duck.InGameHudAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ModMenuIntegration implements ModMenuApi {
 
@@ -54,17 +55,15 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.scroll_with_number_keys"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("scrollWithNumberKeys", Boolean.toString(newVal)))
                     .build());
-            functionalityCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_1"), WildToolAccessConfig.getStringValue("typeToAccess1"), string -> Text.translatable("option_val.wildtoolaccess."+string))
-                    .setDefaultValue("tools")
+            functionalityCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_1"), WildToolAccessConfig.getStringValue("typeToAccess1"), string -> (Objects.equals(Text.translatable("option_val.wildtoolaccess." + string).getString(), "option_val.wildtoolaccess." + string)) ? Text.literal(string) : Text.translatable("option_val.wildtoolaccess." + string))
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.type_to_access_1"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess1", newVal))
-                    .setSelections(List.of("tools","swords","ranged weapons","potions","buckets","stuff"))
+                    .setSelections(WildToolAccessConfig.getItemTypes())
                     .build());
             functionalityCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_2"), WildToolAccessConfig.getStringValue("typeToAccess2"), string -> Text.translatable("option_val.wildtoolaccess."+string))
-                    .setDefaultValue("swords")
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.type_to_access_2"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess2", newVal))
-                    .setSelections(List.of("tools","swords","ranged weapons","potions","buckets","stuff"))
+                    .setSelections(WildToolAccessConfig.getItemTypes())
                     .build());
             functionalityCat.addEntry(eb.startBooleanToggle(Text.translatable("option.wildtoolaccess.leading_empty_slot"), WildToolAccessConfig.getBoolValue("leadingEmptySlot"))
                     .setDefaultValue(true)

@@ -1,4 +1,6 @@
-package net.trueHorse.wildToolAccess;
+package net.trueHorse.wildToolAccess.duck;
+
+import net.trueHorse.wildToolAccess.AccessBar;
 
 public interface InGameHudAccess {
 

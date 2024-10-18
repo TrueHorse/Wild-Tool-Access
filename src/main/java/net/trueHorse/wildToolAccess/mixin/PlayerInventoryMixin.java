@@ -3,7 +3,6 @@ package net.trueHorse.wildToolAccess.mixin;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.trueHorse.wildToolAccess.StuffPlaceholder;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,8 +17,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.collection.DefaultedList;
-import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
-import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.duck.PlayerInventoryAccess;
+import net.trueHorse.wildToolAccess.duck.InGameHudAccess;
 
 @Mixin(PlayerInventory.class)
 public class PlayerInventoryMixin implements PlayerInventoryAccess{
@@ -38,20 +37,8 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
     }
 
     @Override
-    public <T> ArrayList<ItemStack> getAllMainStacksOfType(Class<T> type){
-        ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-
-        if(type.equals(StuffPlaceholder.class)){
-            stacks.addAll(this.getAllMainStacksOf(WildToolAccessConfig.getStuffItems()));
-        }else{
-            for (ItemStack itemStack : main) {
-                if (type.isAssignableFrom(itemStack.getItem().getClass())) {
-                    stacks.add(itemStack);
-                }
-            }
-        }
-
-        return stacks;
+    public ArrayList<ItemStack> getAllMainStacksOfType(String name){
+        return this.getAllMainStacksOf(WildToolAccessConfig.getItemType(name));
     }
 
     @Override

@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.AccessBar;
-import net.trueHorse.wildToolAccess.InGameHudAccess;
+import net.trueHorse.wildToolAccess.duck.InGameHudAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.spongepowered.asm.mixin.Final;
@@ -182,11 +182,11 @@ public class InGameHudMixin implements InGameHudAccess{
 
     private AccessBar[] getAccessBarArray(){
         return new AccessBar[]{
-                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess1"),
+                new AccessBar(WildToolAccessConfig.getStringValue("typeToAccess1"),
                         WildToolAccessSoundEvents.selectInAccess1,
                         accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture1")],
                         client),
-                new AccessBar(WildToolAccessConfig.getClassValue("typeToAccess2"),
+                new AccessBar(WildToolAccessConfig.getStringValue("typeToAccess2"),
                         WildToolAccessSoundEvents.selectInAccess2,
                         accessBarTextureSheets[WildToolAccessConfig.getIntValue("barTexture2")],
                         client)

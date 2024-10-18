@@ -5,23 +5,27 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.trueHorse.wildToolAccess.WildToolAccess;
-import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 public class WildToolAccessConfig {
 
     private static final String[] OPTION_ORDER = {"toggleMode", "leftClickSelect","escClose","scrollWithNumberKeys","selectSound1","selectSound2","barTexture1","barTexture2","xOffset","yOffset","spaceBetweenSlots","leadingEmptySlot","heldItemSelected","itemInfoShown","lastSwappedOutFirst","putToTheRightIfPossible","lockSwappingToSlot","hotbarSlotAfterSwap","typeToAccess1","typeToAccess2"};
     private static final Map<String,ConfigOption> configs = new HashMap<>();
-    private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
+    private final static Map<String,ImmutableSet<Item>> ITEM_TYPES = new HashMap<>();
     public final static String MOD_CONFIG_DIR_NAME = FabricLoader.getInstance().getConfigDir() + "/wild_tool_access";
     public final static File MOD_CONFIG_FILE = new File(MOD_CONFIG_DIR_NAME+"/wild_tool_access.properties");
-    public static final File STUFF_FILE = new File(MOD_CONFIG_DIR_NAME+"/stuff.json");
+    public static final File ITEM_TYPE_DIRECTORY = new File(MOD_CONFIG_DIR_NAME+"/item_types");
     private static final String DEFAULT_STUFF_CONTENT = """
                     {
                         "values":[
@@ -29,6 +33,12 @@ public class WildToolAccessConfig {
                             "minecraft:ladder",
                             "minecraft:bucket",
                             "minecraft:cobblestone"
+                        ]
+                    }""";
+    private static final String DEFAULT_TOOLS_CONTENT = """
+                    {
+                        "values":[
+                            "#minecraft:tools"
                         ]
                     }""";
 
@@ -100,75 +110,78 @@ public class WildToolAccessConfig {
                 "what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff\n"+
                         "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.\n"+
                         "#By default it includes torch, ladder, bucket and cobblestone."));
-        configs.put("typeToAccess2",new ConfigOption("swords",
+        configs.put("typeToAccess2",new ConfigOption("stuff",
                 "see above, but for access 2"));
     }
 
-    public static void loadStuffItems(){
-        ArrayList<Item> items = new ArrayList<Item>();
-
-        if(STUFF_FILE.exists()){
+    public static void loadItemTypes(DynamicRegistryManager registries){
+        File oldStuffFile = new File(WildToolAccessConfig.MOD_CONFIG_DIR_NAME+"/stuff.json");
+        if(oldStuffFile.exists()){
             try {
-                JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(STUFF_FILE)),"values");
-                for(JsonElement element:vals){
-                    if (element.isJsonPrimitive()) {
-                        Optional<Item> item = Registries.ITEM.getOrEmpty(new Identifier(element.getAsString()));
-
-                        if(item.isEmpty()){
-                            WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
-                            continue;
-                        }
-                        items.add(item.get()) ;
-
-                    } else {
-                        WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");
-                    }
+                Files.copy(oldStuffFile.toPath(),ITEM_TYPE_DIRECTORY.toPath().resolve("stuff.json"));
+            } catch (IOException e) {
+                WildToolAccess.LOGGER.error("Couldn't copy old stuff.json to item type folder.\n"+e.getMessage());
+            }
+            if(ITEM_TYPE_DIRECTORY.toPath().resolve("stuff.json").toFile().exists()){
+                try {
+                    Files.delete(oldStuffFile.toPath());
+                } catch (IOException e) {
+                    WildToolAccess.LOGGER.error("Failed to delete old stuff file.\n"+e.getMessage());
                 }
-
-                stuffItems = ImmutableSet.copyOf(items);
-            } catch (FileNotFoundException e) {
-                WildToolAccess.LOGGER.error("Stuff file was not found after existing. How?");
-                e.printStackTrace();
-            } catch (Exception e){
-                WildToolAccess.LOGGER.error("Stuff file could not be read as a .json file");
-                e.printStackTrace();
-            }
-        }else{
-            resetStuffFile();
-        }
-    }
-
-    public static ArrayList<Item> getDefaultStuffItems() {
-        ArrayList<Item> items = new ArrayList<Item>();
-        JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(DEFAULT_STUFF_CONTENT), "values");
-        for (JsonElement element : vals) {
-            if (element.isJsonPrimitive()) {
-                items.add(Registries.ITEM.get(new Identifier(element.getAsString())));
             }
         }
-        return items;
+
+        if(!ITEM_TYPE_DIRECTORY.exists()){
+            createDefaultItemTypes();
+        }
+
+        for(File file : ITEM_TYPE_DIRECTORY.listFiles((file, name)->name.endsWith(".json"))) {
+            ArrayList<Item> items = new ArrayList<Item>();
+            try {
+                JsonArray vals = JsonHelper.getArray(JsonHelper.deserialize(new FileReader(file)),"values");
+                    for(JsonElement element:vals){
+                        if (element.isJsonPrimitive()) {
+                            if(element.getAsString().startsWith("#")){
+                                registries.get(RegistryKeys.ITEM).iterateEntries(TagKey.of(RegistryKeys.ITEM,new Identifier(element.getAsString().substring(1)))).forEach((entry)->items.add(new ItemStack(entry).getItem()));
+                            }else{
+                                Optional<Item> item = Registries.ITEM.getOrEmpty(new Identifier(element.getAsString()));
+
+                                if(item.isEmpty()){
+                                    WildToolAccess.LOGGER.error(element.getAsString()+" in "+file.getName()+" couldn't be added to stuff, because it isn't a registered item.");
+                                }else{
+                                    items.add(item.get()) ;
+                                }
+                            }
+                        } else {
+                            WildToolAccess.LOGGER.error(element.getAsString()+" in "+file.getName()+" couldn't be added to stuff, because it is not json primitive.");
+                        }
+                    }
+
+                    ITEM_TYPES.put(file.getName().substring(0,file.getName().length()-5),ImmutableSet.copyOf(items));
+
+                } catch (Exception e){
+                    WildToolAccess.LOGGER.error(file.getName()+" could not be read.\n"+e.getMessage());
+                }
+            }
     }
 
     public static void createOrUpdateConfigFile(){
         createOrUpdateFile(MOD_CONFIG_FILE,getConfigContentAsString());
     }
 
-    public static void createStuffFileWithValuesEmpty(){
+    public static void createEmptyItemType(String name){
         String content = """
                     {
                         "values":[
                         
                         ]
                     }""";
-        writeStuffFile(content);
+        createOrUpdateFile(ITEM_TYPE_DIRECTORY.toPath().resolve(name+".json").toFile(),content);
     }
 
-    public static void resetStuffFile(){
-        writeStuffFile(DEFAULT_STUFF_CONTENT);
-    }
-
-    public static void writeStuffFile(String content){
-        createOrUpdateFile(STUFF_FILE,content);
+    public static void createDefaultItemTypes(){
+        createOrUpdateFile(ITEM_TYPE_DIRECTORY.toPath().resolve("stuff.json").toFile(),DEFAULT_STUFF_CONTENT);
+        createOrUpdateFile(ITEM_TYPE_DIRECTORY.toPath().resolve("tools.json").toFile(),DEFAULT_TOOLS_CONTENT);
     }
 
     public static void createOrUpdateFile(File file, String content) {
@@ -235,19 +248,6 @@ public class WildToolAccessConfig {
         }
     }
 
-    public static Class<?> getClassValue(String key){
-        String prop = configs.get(key).getVal().toLowerCase();
-        Class<?> val;
-        try {
-            val = StringToTypeToAccessConverter.convert(prop);
-        }catch (IllegalArgumentException e){
-            WildToolAccess.LOGGER.error("Configured access option "+prop+" for "+key+" does not exist.");
-            WildToolAccess.LOGGER.info(Arrays.toString(Thread.currentThread().getStackTrace()));
-            val = StringToTypeToAccessConverter.convert(configs.get(key).getDefaultVal());
-        }
-        return val;
-    }
-
     public static String getStringValue(String key){
         if(configs.containsKey(key)){
             return configs.get(key).getVal().toLowerCase();
@@ -267,7 +267,11 @@ public class WildToolAccessConfig {
         }
     }
 
-    public static ImmutableSet<Item> getStuffItems() {
-        return stuffItems;
+    public static ImmutableSet<Item> getItemType(String name) {
+        return Objects.requireNonNullElseGet(ITEM_TYPES.get(name), ImmutableSet::of);
+    }
+
+    public static Set<String> getItemTypes(){
+        return ITEM_TYPES.keySet();
     }
 }
