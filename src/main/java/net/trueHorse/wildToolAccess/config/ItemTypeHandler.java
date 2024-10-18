@@ -3,21 +3,26 @@ package net.trueHorse.wildToolAccess.config;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.item.ItemStack;
 import net.trueHorse.wildToolAccess.WildToolAccess;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
-public class StuffHandler {
+public class ItemTypeHandler {
 
-    private static ImmutableSet<Item> stuffItems = ImmutableSet.copyOf(getDefaultStuffItems());
-    public static final File STUFF_FILE = new File(WildToolAccessConfig.MOD_CONFIG_DIR_NAME+"/stuff.json");
+    private final static Map<String,ImmutableSet<Item>> ITEM_TYPES = new HashMap<>();
+    public static final File ITEM_TYPE_DIRECTORY = new File(WildToolAccessConfig.MOD_CONFIG_DIR_NAME+"/item_types");
     private static final String DEFAULT_STUFF_CONTENT = """
                     {
                         "values":[
@@ -27,69 +32,61 @@ public class StuffHandler {
                             "minecraft:cobblestone"
                         ]
                     }""";
+    private static final String DEFAULT_TOOLS_CONTENT = """
+                    {
+                        "values":[
+                            "#minecraft:tools"
+                        ]
+                    }""";
 
-    public static void loadStuffItems(){
-        ArrayList<Item> items = new ArrayList<Item>();
+    public static void loadItemTypes(RegistryAccess registries){
+        if(!ITEM_TYPE_DIRECTORY.exists()){
+            createDefaultItemTypes();
+        }
 
-        if(STUFF_FILE.exists()){
+        for(File file : ITEM_TYPE_DIRECTORY.listFiles((file, name)->name.endsWith(".json"))) {
+            ArrayList<Item> items = new ArrayList<Item>();
             try {
-                JsonArray vals = GsonHelper.getAsJsonArray(GsonHelper.parse(new FileReader(STUFF_FILE)),"values");
+                JsonArray vals = GsonHelper.getAsJsonArray(GsonHelper.parse(new FileReader(file)),"values");
                 for(JsonElement element:vals){
                     if (element.isJsonPrimitive()) {
+                        if(element.getAsString().startsWith("#")){
+                            registries.registryOrThrow(Registries.ITEM).getTagOrEmpty(TagKey.create(Registries.ITEM,new ResourceLocation(element.getAsString().substring(1)))).forEach((entry)->items.add(new ItemStack(entry).getItem()));
+                        }else{
+                            Optional<Item> item = BuiltInRegistries.ITEM.getOptional(new ResourceLocation(element.getAsString()));
 
-                        Optional<Holder<Item>> itemHolder = ForgeRegistries.ITEMS.getHolder(new ResourceLocation(element.getAsString()));
-
-                        if(itemHolder.isEmpty()){
-                            WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it isn't a registered item.");
-                            continue;
+                            if(item.isEmpty()){
+                                WildToolAccess.LOGGER.error(element.getAsString()+" in "+file.getName()+" couldn't be added to stuff, because it isn't a registered item.");
+                            }else{
+                                items.add(item.get()) ;
+                            }
                         }
-                        items.add(itemHolder.get().get()) ;
-
                     } else {
-                        WildToolAccess.LOGGER.error(element.getAsString()+" in stuff.json couldn't be added to stuff, because it is not json primitive.");
+                        WildToolAccess.LOGGER.error(element.getAsString()+" in "+file.getName()+" couldn't be added to stuff, because it is not json primitive.");
                     }
                 }
 
-                stuffItems = ImmutableSet.copyOf(items);
-            } catch (FileNotFoundException e) {
-                WildToolAccess.LOGGER.error("Stuff file was not found after existing. How?");
-                e.printStackTrace();
+                ITEM_TYPES.put(file.getName().substring(0,file.getName().length()-5),ImmutableSet.copyOf(items));
+
             } catch (Exception e){
-                WildToolAccess.LOGGER.error("Stuff file could not be read as a .json file");
-                e.printStackTrace();
+                WildToolAccess.LOGGER.error(file.getName()+" could not be read.\n"+e.getMessage());
             }
-        }else{
-            resetStuffFile();
         }
     }
 
-    public static ArrayList<Item> getDefaultStuffItems() {
-        ArrayList<Item> items = new ArrayList<Item>();
-        JsonArray vals = GsonHelper.getAsJsonArray(GsonHelper.parse(DEFAULT_STUFF_CONTENT), "values");
-        for (JsonElement element : vals) {
-            if (element.isJsonPrimitive()) {
-                items.add(ForgeRegistries.ITEMS.getValue(new ResourceLocation(element.getAsString())));
-            }
-        }
-        return items;
-    }
-
-    public static void createStuffFileWithValuesEmpty(){
+    public static void createEmptyItemType(String name){
         String content = """
                     {
                         "values":[
                         
                         ]
                     }""";
-        writeStuffFile(content);
+        createOrUpdateFile(ITEM_TYPE_DIRECTORY.toPath().resolve(name+".json").toFile(),content);
     }
 
-    public static void resetStuffFile(){
-        writeStuffFile(DEFAULT_STUFF_CONTENT);
-    }
-
-    public static void writeStuffFile(String content){
-        createOrUpdateFile(STUFF_FILE,content);
+    public static void createDefaultItemTypes(){
+        createOrUpdateFile(ITEM_TYPE_DIRECTORY.toPath().resolve("stuff.json").toFile(),DEFAULT_STUFF_CONTENT);
+        createOrUpdateFile(ITEM_TYPE_DIRECTORY.toPath().resolve("tools.json").toFile(),DEFAULT_TOOLS_CONTENT);
     }
 
     public static void createOrUpdateFile(File file, String content) {
@@ -107,7 +104,11 @@ public class StuffHandler {
         }
     }
 
-    public static ImmutableSet<Item> getStuffItems() {
-        return stuffItems;
+    public static ImmutableSet<Item> getItemType(String name) {
+        return Objects.requireNonNullElseGet(ITEM_TYPES.get(name), ImmutableSet::of);
+    }
+
+    public static Set<String> getItemTypes(){
+        return ITEM_TYPES.keySet();
     }
 }

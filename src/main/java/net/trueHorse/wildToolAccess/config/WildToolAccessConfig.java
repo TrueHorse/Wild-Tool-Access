@@ -5,9 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.trueHorse.wildToolAccess.AccessType;
 import net.trueHorse.wildToolAccess.WildToolAccess;
-import net.trueHorse.wildToolAccess.util.StringToTypeToAccessConverter;
 
 import java.util.List;
 
@@ -72,16 +70,16 @@ public class WildToolAccessConfig {
     private static final ForgeConfigSpec.IntValue HOTBAR_SLOT_AFTER_SWAP = BUILDER
             .comment("After swapping your selected hotbar slot will be set to this slot. Values <1 and >hotbar size disable this option.")
             .defineInRange("hotbarSlotAfterSwap", 0, 0, Integer.MAX_VALUE);
-    private static final ForgeConfigSpec.EnumValue<AccessType> TYPE_TO_ACCESS_1 = BUILDER
+    private static final ForgeConfigSpec.ConfigValue<String> TYPE_TO_ACCESS_1 = BUILDER
             .comment("what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff",
                     "Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.",
                     "By default it includes torch, ladder, bucket and cobblestone.")
-            .defineEnum("typeToAccess1", AccessType.TOOLS);
-    private static final ForgeConfigSpec.EnumValue<AccessType> TYPE_TO_ACCESS_2 = BUILDER
+            .define("typeToAccess1", "tools");
+    private static final ForgeConfigSpec.ConfigValue<String> TYPE_TO_ACCESS_2 = BUILDER
             .comment("what type of item you want to access  possible: tools, swords, ranged weapons, potions, buckets, stuff",
                     "#Stuff is defined in the stuff.json file in the config folder and can be modified by hand or via in game command.",
                     "#By default it includes torch, ladder, bucket and cobblestone.")
-            .defineEnum("typeToAccess2", AccessType.SWORDS);
+            .define("typeToAccess2", "stuff",(val)->ItemTypeHandler.getItemTypes().contains(val.toString()));
 
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
@@ -104,8 +102,8 @@ public class WildToolAccessConfig {
     public static boolean putToTheRightIfPossible;
     public static int lockSwappingToSlot;
     public static int hotbarSlotAfterSwap;
-    public static Class<?> typeToAccess1;
-    public static Class<?> typeToAccess2;
+    public static String typeToAccess1;
+    public static String typeToAccess2;
 
     private static boolean validateItemInfoValue(final Object obj){
         return obj instanceof final String itemName && List.of("all","enchantments","name","non").contains(itemName);
@@ -132,7 +130,7 @@ public class WildToolAccessConfig {
         putToTheRightIfPossible = PUT_TO_THE_RIGHT_IF_POSSIBLE.get();
         lockSwappingToSlot = LOCK_SWAPPING_TO_SLOT.get();
         hotbarSlotAfterSwap = HOTBAR_SLOT_AFTER_SWAP.get();
-        typeToAccess1 = StringToTypeToAccessConverter.convert(TYPE_TO_ACCESS_1.get().name());
-        typeToAccess2 = StringToTypeToAccessConverter.convert(TYPE_TO_ACCESS_2.get().name());
+        typeToAccess1 = TYPE_TO_ACCESS_1.get();
+        typeToAccess2 = TYPE_TO_ACCESS_2.get();
     }
 }

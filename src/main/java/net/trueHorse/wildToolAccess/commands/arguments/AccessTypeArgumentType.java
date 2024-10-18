@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.network.chat.Component;
-import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.config.ItemTypeHandler;
 
 public class AccessTypeArgumentType implements ArgumentType<String>{
 
@@ -20,7 +20,7 @@ public class AccessTypeArgumentType implements ArgumentType<String>{
         }
         String input = reader.readString();
 
-        if(!WildToolAccessConfig.getItemTypes().contains(input)){
+        if(!ItemTypeHandler.getItemTypes().contains(input)){
             throw TYPE_UNKNOWN.createWithContext(reader,input);
         }else{
             return input;

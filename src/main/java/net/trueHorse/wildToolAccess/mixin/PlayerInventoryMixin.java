@@ -8,7 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.trueHorse.wildToolAccess.InGameHudAccess;
 import net.trueHorse.wildToolAccess.PlayerInventoryAccess;
-import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.config.ItemTypeHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,7 +37,7 @@ public class PlayerInventoryMixin implements PlayerInventoryAccess{
 
     @Override
     public ArrayList<ItemStack> getAllMainStacksOfType(String name){
-        return this.getAllMainStacksOf(WildToolAccessConfig.getItemType(name));
+        return this.getAllMainStacksOf(ItemTypeHandler.getItemType(name));
     }
 
     @Override

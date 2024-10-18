@@ -7,7 +7,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
-import net.trueHorse.wildToolAccess.config.StuffHandler;
+import net.trueHorse.wildToolAccess.config.ItemTypeHandler;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class AccessBar{
 
             client.getSoundManager().play(SimpleSoundInstance.forUI(selectionSoundEvent,1.0F,1.0F));
  
-            if(WildToolAccessConfig.getItemType(accessType).contains(selectedAccessbarStack.getItem())){
+            if(ItemTypeHandler.getItemType(accessType).contains(selectedAccessbarStack.getItem())){
                 lastSwappedOutTool = selectedHotbarSlotStack.copy();
             }
         }
@@ -103,7 +103,7 @@ public class AccessBar{
 
     public void resetSelection(){
         Inventory inv = client.player.getInventory();
-        if(WildToolAccessConfig.heldItemSelected&&WildToolAccessConfig.getItemType(accessType).contains(inv.getItem(inv.selected).getItem())){
+        if(WildToolAccessConfig.heldItemSelected&&ItemTypeHandler.getItemType(accessType).contains(inv.getItem(inv.selected).getItem())){
             updateAccessStacks();
             selectedAccessSlotIndex = stacks.indexOf(inv.getItem(inv.selected));
         }else{

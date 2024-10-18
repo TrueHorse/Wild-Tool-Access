@@ -8,6 +8,7 @@ import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -15,7 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
-import net.trueHorse.wildToolAccess.config.StuffHandler;
+import net.trueHorse.wildToolAccess.config.ItemTypeHandler;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.glfw.GLFW;
@@ -46,7 +47,6 @@ public class WildToolAccess
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT,WildToolAccessConfig.SPEC);
-        StuffHandler.loadStuffItems();
         WildToolAccessSoundEvents.registerAll();
     }
 
@@ -77,6 +77,11 @@ public class WildToolAccess
         @SubscribeEvent
         public static void onCommandsRegister(RegisterClientCommandsEvent event){
             WildToolAccessCommands.registerCommands(event.getDispatcher(),event.getBuildContext());
+        }
+
+        @SubscribeEvent
+        public static void onTagsLoaded(TagsUpdatedEvent event){
+            ItemTypeHandler.loadItemTypes(event.getRegistryAccess());
         }
 
         @SubscribeEvent
