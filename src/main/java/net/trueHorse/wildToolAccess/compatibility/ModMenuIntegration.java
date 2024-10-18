@@ -13,6 +13,7 @@ import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ModMenuIntegration implements ModMenuApi {
 
@@ -54,7 +55,7 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.scroll_with_number_keys"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("scrollWithNumberKeys", Boolean.toString(newVal)))
                     .build());
-            functionalityCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_1"), WildToolAccessConfig.getStringValue("typeToAccess1"), string -> Text.translatable("option_val.wildtoolaccess."+string))
+            functionalityCat.addEntry(eb.startStringDropdownMenu(Text.translatable("option.wildtoolaccess.type_to_access_1"), WildToolAccessConfig.getStringValue("typeToAccess1"), string -> (Objects.equals(Text.translatable("option_val.wildtoolaccess." + string).getString(), "option_val.wildtoolaccess." + string)) ? Text.literal(string) : Text.translatable("option_val.wildtoolaccess." + string))
                     .setTooltip(Text.translatable("tooltip.wildtoolaccess.type_to_access_1"))
                     .setSaveConsumer(newVal->WildToolAccessConfig.setValue("typeToAccess1", newVal))
                     .setSelections(WildToolAccessConfig.getItemTypes())
