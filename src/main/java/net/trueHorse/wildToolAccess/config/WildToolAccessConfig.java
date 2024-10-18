@@ -251,7 +251,7 @@ public class WildToolAccessConfig {
     }
 
     public static ImmutableSet<Item> getItemType(String name) {
-        return ITEM_TYPES.get(name);
+        return Objects.requireNonNullElseGet(ITEM_TYPES.get(name), ImmutableSet::of);
     }
 
     public static Set<String> getItemTypes(){
