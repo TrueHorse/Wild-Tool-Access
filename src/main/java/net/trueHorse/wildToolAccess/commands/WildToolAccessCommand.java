@@ -27,9 +27,9 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 public class WildToolAccessCommand {
 
-    private static final Function<String,CommandException> TYPE_FILE_NOT_FOUND = ((typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.file_not_found")));
-    private static final Function<String,CommandException> COULDNT_WRITE_TO_TYPE_FILE = (typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.couldnt_write"));
-    private static final Function<String,CommandException> PROB_COULDNT_READ_TYPE_FILE = (typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.probably_couldnt_read"));
+    private static final Function<String,CommandException> TYPE_FILE_NOT_FOUND = ((typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.file_not_found",typeName)));
+    private static final Function<String,CommandException> COULDNT_WRITE_TO_TYPE_FILE = (typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.couldnt_write",typeName));
+    private static final Function<String,CommandException> PROB_COULDNT_READ_TYPE_FILE = (typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.probably_couldnt_read",typeName));
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess){
         dispatcher.register(literal("wta")
