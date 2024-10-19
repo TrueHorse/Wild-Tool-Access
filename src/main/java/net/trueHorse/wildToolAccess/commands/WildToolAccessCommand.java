@@ -23,12 +23,13 @@ import net.trueHorse.wildToolAccess.config.ItemTypeHandler;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 public class WildToolAccessCommand {
 
-    private static final SimpleCommandExceptionType STUFF_FILE_NOT_FOUND = new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.file_not_found"));
-    private static final SimpleCommandExceptionType COULDNT_WRITE_TO_STUFF = new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.couldnt_write"));
-    private static final SimpleCommandExceptionType PROB_COULDNT_READ_STUFF = new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.probably_couldnt_read"));
+    private static final Function<String,SimpleCommandExceptionType> STUFF_FILE_NOT_FOUND = (typeName)->new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.file_not_found",typeName));
+    private static final Function<String, SimpleCommandExceptionType> COULDNT_WRITE_TO_STUFF = (typeName)->new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.couldnt_write",typeName));
+    private static final Function<String, SimpleCommandExceptionType> PROB_COULDNT_READ_STUFF = (typeName)->new SimpleCommandExceptionType(Component.translatable("command.wildtoolaccess.stuff.probably_couldnt_read",typeName));
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext){
         dispatcher.register(Commands.literal("wta")
@@ -52,28 +53,29 @@ public class WildToolAccessCommand {
                                 }).executes(context->WildToolAccessCommand.executeModifyItemType(context, WildToolAccessCommand.getItemListFromAccessTypeArgument(context),Operation.REMOVE, context.getSource())))
                                 .then(Commands.literal("inventory").executes(context->WildToolAccessCommand.executeModifyItemType(context, WildToolAccessCommand.getItemListFromInventory(context),Operation.REMOVE, context.getSource())))
                                 .then(Commands.literal("all").executes(WildToolAccessCommand::executeClearItemType)))
-                        .then(Commands.literal("list").executes(context -> WildToolAccessCommand.executePrintItemType(context.getSource())))
+                        .then(Commands.literal("list").executes(WildToolAccessCommand::executePrintItemType))
                 ));
     }
 
     private static int executeModifyItemType(CommandContext<CommandSourceStack> context, ArrayList<ResourceLocation> itemIds, Operation operation, CommandSourceStack source) throws CommandSyntaxException {
         String itemType = context.getArgument("itemType",String.class);
-        if(!ItemTypeHandler.ITEM_TYPE_DIRECTORY.toPath().resolve(itemType).toFile().exists()){
+        File typeFile = ItemTypeHandler.ITEM_TYPE_DIRECTORY.toPath().resolve(itemType+".json").toFile();
+        if(!typeFile.exists()){
             ItemTypeHandler.createEmptyItemType(itemType);
         }
 
         JsonObject obj;
         try {
-            obj = GsonHelper.parse(new FileReader(ItemTypeHandler.ITEM_TYPE_DIRECTORY));
+            obj = GsonHelper.parse(new FileReader(typeFile));
         } catch (FileNotFoundException e) {
-            throw STUFF_FILE_NOT_FOUND.create();
+            throw STUFF_FILE_NOT_FOUND.apply(itemType).create();
         }
 
         JsonArray vals = GsonHelper.getAsJsonArray(obj,"values");
-        Component feedback = operation.apply(itemIds,vals,source);
+        Component feedback = operation.apply(itemIds,vals,source,itemType);
 
         try{
-            FileWriter fwriter = new FileWriter(ItemTypeHandler.ITEM_TYPE_DIRECTORY);
+            FileWriter fwriter = new FileWriter(typeFile);
             BufferedWriter bwriter = new BufferedWriter(fwriter);
             bwriter.write(obj.toString());
             bwriter.close();
@@ -81,11 +83,11 @@ public class WildToolAccessCommand {
 
             source.sendSuccess(()-> feedback,false);
         } catch (FileNotFoundException e) {
-            throw STUFF_FILE_NOT_FOUND.create();
+            throw STUFF_FILE_NOT_FOUND.apply(itemType).create();
         } catch (IOException e) {
-            throw COULDNT_WRITE_TO_STUFF.create();
+            throw COULDNT_WRITE_TO_STUFF.apply(itemType).create();
         } catch (Exception e){
-           throw PROB_COULDNT_READ_STUFF.create();
+           throw PROB_COULDNT_READ_STUFF.apply(itemType).create();
         }
 
         ItemTypeHandler.loadItemTypes(source.registryAccess());
@@ -93,26 +95,31 @@ public class WildToolAccessCommand {
     }
 
     private static int executeClearItemType(CommandContext<CommandSourceStack> context){
-        ItemTypeHandler.createEmptyItemType(context.getArgument("itemType",String.class));
+        String typeName = context.getArgument("itemType",String.class);
+
+        ItemTypeHandler.createEmptyItemType(typeName);
         ItemTypeHandler.loadItemTypes(context.getSource().registryAccess());
-        context.getSource().sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.cleared"),false);
+        context.getSource().sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.cleared",typeName),false);
         return 1;
     }
 
-    private static int executePrintItemType(CommandSourceStack source) throws CommandSyntaxException {
-        if(!ItemTypeHandler.ITEM_TYPE_DIRECTORY.exists()){
-            source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
+    private static int executePrintItemType(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        String typeName = context.getArgument("itemType",String.class);
+        File typeFile = ItemTypeHandler.ITEM_TYPE_DIRECTORY.toPath().resolve(typeName+".json").toFile();
+
+        if(!typeFile.exists()){
+            context.getSource().sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.no_stuff",typeName),false);
         }else{
             try {
-                JsonObject obj = GsonHelper.parse(new FileReader(ItemTypeHandler.ITEM_TYPE_DIRECTORY));
+                JsonObject obj = GsonHelper.parse(new FileReader(typeFile));
                 JsonArray vals = GsonHelper.getAsJsonArray(obj, "values");
                 if(vals.isEmpty()){
-                    source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.no_stuff"),false);
+                    context.getSource().sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.no_stuff",typeName),false);
                 }
 
-                vals.forEach(val->source.sendSuccess(()->Component.literal(val.getAsString()),false));
+                vals.forEach(val->context.getSource().sendSuccess(()->Component.literal(val.getAsString()),false));
             } catch (FileNotFoundException e) {
-                throw STUFF_FILE_NOT_FOUND.create();
+                throw STUFF_FILE_NOT_FOUND.apply(typeName).create();
             }
         }
         return 1;
@@ -141,37 +148,37 @@ public class WildToolAccessCommand {
     private enum Operation{
         ADD{
             @Override
-            protected Component apply(ArrayList<ResourceLocation> ids, JsonArray vals, CommandSourceStack source) {
+            protected Component apply(ArrayList<ResourceLocation> ids, JsonArray vals, CommandSourceStack source, String typeName) {
                 ArrayList<ResourceLocation> addedIds = new ArrayList<>(ids);
 
                 ids.forEach(id->{
                     if (vals.remove(new JsonPrimitive(id.toString()))) {
-                        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.already_contains", id.toString()),false);
+                        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.already_contains", id.toString(),typeName),false);
                         addedIds.remove(id);
                     }
                     vals.add(new JsonPrimitive(id.toString()));
                 });
 
-                return Component.translatable("command.wildtoolaccess.stuff.added",addedIds);
+                return Component.translatable("command.wildtoolaccess.stuff.added",addedIds,typeName);
             }
         },
         REMOVE{
             @Override
-            protected Component apply(ArrayList<ResourceLocation> ids, JsonArray vals, CommandSourceStack source) {
+            protected Component apply(ArrayList<ResourceLocation> ids, JsonArray vals, CommandSourceStack source, String typeName) {
                 ArrayList<ResourceLocation> removedIds = new ArrayList<>(ids);
 
                 ids.forEach(id->{
                     if(!vals.remove(new JsonPrimitive(id.toString()))){
-                        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString()),false);
+                        source.sendSuccess(()->Component.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString(),typeName),false);
                         removedIds.remove(id);
                     }
                 });
 
-                return Component.translatable("command.wildtoolaccess.stuff.removed",removedIds);
+                return Component.translatable("command.wildtoolaccess.stuff.removed",removedIds,typeName);
             }
         };
 
-        protected abstract Component apply(ArrayList<ResourceLocation> ids, JsonArray vals, CommandSourceStack source);
+        protected abstract Component apply(ArrayList<ResourceLocation> ids, JsonArray vals, CommandSourceStack source, String typeName);
     }
 
 }
