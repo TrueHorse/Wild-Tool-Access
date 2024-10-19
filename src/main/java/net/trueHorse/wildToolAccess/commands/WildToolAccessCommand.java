@@ -20,15 +20,16 @@ import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class WildToolAccessCommand {
 
-    private static final CommandException STUFF_FILE_NOT_FOUND = new CommandException(Text.translatable("command.wildtoolaccess.stuff.file_not_found"));
-    private static final CommandException COULDNT_WRITE_TO_STUFF = new CommandException(Text.translatable("command.wildtoolaccess.stuff.couldnt_write"));
-    private static final CommandException PROB_COULDNT_READ_STUFF = new CommandException(Text.translatable("command.wildtoolaccess.stuff.probably_couldnt_read"));
+    private static final Function<String,CommandException> TYPE_FILE_NOT_FOUND = ((typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.file_not_found")));
+    private static final Function<String,CommandException> COULDNT_WRITE_TO_TYPE_FILE = (typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.couldnt_write"));
+    private static final Function<String,CommandException> PROB_COULDNT_READ_TYPE_FILE = (typeName)->new CommandException(Text.translatable("command.wildtoolaccess.stuff.probably_couldnt_read"));
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess){
         dispatcher.register(literal("wta")
@@ -52,28 +53,29 @@ public class WildToolAccessCommand {
                                 }).executes(context->WildToolAccessCommand.executeModifyItemType(context, WildToolAccessCommand.getItemListFromAccessTypeArgument(context,registryAccess),Operation.REMOVE, context.getSource())))
                                 .then(literal("inventory").executes(context->WildToolAccessCommand.executeModifyItemType(context, WildToolAccessCommand.getItemListFromInventory(context),Operation.REMOVE, context.getSource())))
                                 .then(literal("all").executes(WildToolAccessCommand::executeClearItemType)))
-                        .then(literal("list").executes(context -> WildToolAccessCommand.executePrintItemType(context.getSource())))
+                        .then(literal("list").executes(WildToolAccessCommand::executePrintItemType))
                 ));
     }
 
     private static int executeModifyItemType(CommandContext<FabricClientCommandSource> context, ArrayList<Identifier> itemIds, Operation operation, FabricClientCommandSource source){
         String itemType = context.getArgument("itemType",String.class);
-        if(!WildToolAccessConfig.ITEM_TYPE_DIRECTORY.toPath().resolve(itemType).toFile().exists()){
+        File typeFile = WildToolAccessConfig.ITEM_TYPE_DIRECTORY.toPath().resolve(itemType+".json").toFile();
+        if(!typeFile.exists()){
             WildToolAccessConfig.createEmptyItemType(itemType);
         }
 
         JsonObject obj;
         try {
-            obj = JsonHelper.deserialize(new FileReader(WildToolAccessConfig.ITEM_TYPE_DIRECTORY));
+            obj = JsonHelper.deserialize(new FileReader(typeFile));
         } catch (FileNotFoundException e) {
-            throw STUFF_FILE_NOT_FOUND;
+            throw TYPE_FILE_NOT_FOUND.apply(itemType);
         }
 
         JsonArray vals = JsonHelper.getArray(obj,"values");
-        Text feedback = operation.apply(itemIds,vals,source);
+        Text feedback = operation.apply(itemIds,vals,source,itemType);
 
         try{
-            FileWriter fwriter = new FileWriter(WildToolAccessConfig.ITEM_TYPE_DIRECTORY);
+            FileWriter fwriter = new FileWriter(typeFile);
             BufferedWriter bwriter = new BufferedWriter(fwriter);
             bwriter.write(obj.toString());
             bwriter.close();
@@ -81,11 +83,11 @@ public class WildToolAccessCommand {
 
             source.sendFeedback(feedback);
         } catch (FileNotFoundException e) {
-            throw STUFF_FILE_NOT_FOUND;
+            throw TYPE_FILE_NOT_FOUND.apply(itemType);
         } catch (IOException e) {
-            throw COULDNT_WRITE_TO_STUFF;
+            throw COULDNT_WRITE_TO_TYPE_FILE.apply(itemType);
         } catch (Exception e){
-           throw PROB_COULDNT_READ_STUFF;
+           throw PROB_COULDNT_READ_TYPE_FILE.apply(itemType);
         }
 
         WildToolAccessConfig.loadItemTypes(source.getPlayer().clientWorld.getRegistryManager());
@@ -93,26 +95,29 @@ public class WildToolAccessCommand {
     }
 
     private static int executeClearItemType(CommandContext<FabricClientCommandSource> context){
-        WildToolAccessConfig.createEmptyItemType(context.getArgument("itemType",String.class));
+        String typeName = context.getArgument("itemType",String.class);
+        WildToolAccessConfig.createEmptyItemType(typeName);
         WildToolAccessConfig.loadItemTypes(context.getSource().getPlayer().clientWorld.getRegistryManager());
-        context.getSource().sendFeedback(Text.translatable("command.wildtoolaccess.stuff.cleared"));
+        context.getSource().sendFeedback(Text.translatable("command.wildtoolaccess.stuff.cleared",typeName));
         return 1;
     }
 
-    private static int executePrintItemType(FabricClientCommandSource source){
-        if(!WildToolAccessConfig.ITEM_TYPE_DIRECTORY.exists()){
-            source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.no_stuff"));
+    private static int executePrintItemType(CommandContext<FabricClientCommandSource> context){
+        String typeName = context.getArgument("itemType",String.class);
+        File typeFile = WildToolAccessConfig.ITEM_TYPE_DIRECTORY.toPath().resolve(typeName+".json").toFile();
+        if(!typeFile.exists()){
+            context.getSource().sendFeedback(Text.translatable("command.wildtoolaccess.stuff.no_stuff",typeName));
         }else{
             try {
-                JsonObject obj = JsonHelper.deserialize(new FileReader(WildToolAccessConfig.ITEM_TYPE_DIRECTORY));
+                JsonObject obj = JsonHelper.deserialize(new FileReader(typeFile));
                 JsonArray vals = JsonHelper.getArray(obj, "values");
                 if(vals.isEmpty()){
-                    source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.no_stuff"));
+                    context.getSource().sendFeedback(Text.translatable("command.wildtoolaccess.stuff.no_stuff",typeName));
                 }
 
-                vals.forEach(val->source.sendFeedback(Text.of(val.getAsString())));
+                vals.forEach(val->context.getSource().sendFeedback(Text.of(val.getAsString())));
             } catch (FileNotFoundException e) {
-                throw STUFF_FILE_NOT_FOUND;
+                throw TYPE_FILE_NOT_FOUND.apply(typeName);
             }
         }
         return 1;
@@ -141,37 +146,37 @@ public class WildToolAccessCommand {
     private enum Operation{
         ADD{
             @Override
-            protected Text apply(ArrayList<Identifier> ids, JsonArray vals, FabricClientCommandSource source) {
+            protected Text apply(ArrayList<Identifier> ids, JsonArray vals, FabricClientCommandSource source, String typeName) {
                 ArrayList<Identifier> addedIds = new ArrayList<>(ids);
 
                 ids.forEach(id->{
                     if (vals.remove(new JsonPrimitive(id.toString()))) {
-                        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.already_contains", id.toString()));
+                        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.already_contains", id.toString(), typeName));
                         addedIds.remove(id);
                     }
                     vals.add(new JsonPrimitive(id.toString()));
                 });
 
-                return Text.translatable("command.wildtoolaccess.stuff.added",addedIds);
+                return Text.translatable("command.wildtoolaccess.stuff.added",addedIds,typeName);
             }
         },
         REMOVE{
             @Override
-            protected Text apply(ArrayList<Identifier> ids, JsonArray vals, FabricClientCommandSource source) {
+            protected Text apply(ArrayList<Identifier> ids, JsonArray vals, FabricClientCommandSource source, String typeName) {
                 ArrayList<Identifier> removedIds = new ArrayList<>(ids);
 
                 ids.forEach(id->{
                     if(!vals.remove(new JsonPrimitive(id.toString()))){
-                        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString()));
+                        source.sendFeedback(Text.translatable("command.wildtoolaccess.stuff.does_not_contain",id.toString(),typeName));
                         removedIds.remove(id);
                     }
                 });
 
-                return Text.translatable("command.wildtoolaccess.stuff.removed",removedIds);
+                return Text.translatable("command.wildtoolaccess.stuff.removed",removedIds,typeName);
             }
         };
 
-        protected abstract Text apply(ArrayList<Identifier> ids, JsonArray vals, FabricClientCommandSource source);
+        protected abstract Text apply(ArrayList<Identifier> ids, JsonArray vals, FabricClientCommandSource source, String typeName);
     }
 
 }
