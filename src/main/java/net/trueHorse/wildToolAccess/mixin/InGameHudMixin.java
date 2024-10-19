@@ -5,11 +5,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
@@ -17,9 +19,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.trueHorse.wildToolAccess.AccessBar;
-import net.trueHorse.wildToolAccess.duck.InGameHudAccess;
 import net.trueHorse.wildToolAccess.WildToolAccessSoundEvents;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
+import net.trueHorse.wildToolAccess.duck.InGameHudAccess;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,28 +38,24 @@ public class InGameHudMixin implements InGameHudAccess{
 
     @Final @Shadow
     private MinecraftClient client;
-    @Shadow
-    private int scaledWidth;
-    @Shadow
-    private int scaledHeight;
     private final Identifier[] accessBarTextureSheets = {
-        new Identifier("wildtoolaccess","textures/gui/access_widgets0.png"),
-        new Identifier("wildtoolaccess","textures/gui/access_widgets1.png")};
+        Identifier.of("wildtoolaccess","textures/gui/access_widgets0.png"),
+        Identifier.of("wildtoolaccess","textures/gui/access_widgets1.png")};
     private AccessBar[] accessBars;
     private AccessBar openAccessbar;
 
     @Shadow
     private PlayerEntity getCameraPlayer(){return null;}
     @Shadow
-    private void renderHotbarItem(DrawContext context, int x, int y, float tickDelta, PlayerEntity player, ItemStack stack, int seed){}
+    private void renderHotbarItem(DrawContext context, int x, int y, RenderTickCounter renderTickCounter, PlayerEntity player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initAccessBar(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
+    private void initAccessBar(MinecraftClient client, CallbackInfo ci){
         accessBars = getAccessBarArray();
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/gui/DrawContext;)V",shift = At.Shift.AFTER))
-    public void renderAccessBar(DrawContext context, float tickDelta, CallbackInfo ci){
+    @Inject(method = "renderMainHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V",shift = At.Shift.AFTER))
+    public void renderAccessBar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci){
         if(openAccessbar!=null){
             PlayerEntity playerEntity = this.getCameraPlayer();
             if (playerEntity != null) {
@@ -66,8 +64,8 @@ public class InGameHudMixin implements InGameHudAccess{
                 Identifier barTextures;
                 barTextures = openAccessbar.getTextures();
 
-                int firstSlotXCoordinate = scaledWidth / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
-                int yCoordinate = scaledHeight/2 -54+WildToolAccessConfig.getIntValue("yOffset");
+                int firstSlotXCoordinate = context.getScaledWindowWidth() / 2 -10+WildToolAccessConfig.getIntValue("xOffset");
+                int yCoordinate = context.getScaledWindowHeight()/2 -54+WildToolAccessConfig.getIntValue("yOffset");
                 context.getMatrices().push();
                 context.getMatrices().translate(0.0F, 0.0F, -90.0F);
 
@@ -94,7 +92,7 @@ public class InGameHudMixin implements InGameHudAccess{
                 int seed =1;
                 for(int i = 0; i < openAccessbar.getStacks().size(); ++i) {
                     xCoordinate = firstSlotXCoordinate + i * spaceBetweenSlots + 3 - spaceBetweenSlots*(openAccessbar.getSelectedAccessSlotIndex());
-                    this.renderHotbarItem(context, xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
+                    this.renderHotbarItem(context, xCoordinate, yCoordinate+3, tickCounter, playerEntity, openAccessbar.getStacks().get(i),seed++);
                 }
 
                 String labConf = WildToolAccessConfig.getStringValue("itemInfoShown");
@@ -110,26 +108,26 @@ public class InGameHudMixin implements InGameHudAccess{
         ItemStack selectedStack = openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlotIndex());
         List<Text> tooltip;
         if(labConf.equals("all")){
-            tooltip = selectedStack.getTooltip(client.player, this.client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.BASIC);
+            tooltip = selectedStack.getTooltip(Item.TooltipContext.DEFAULT,client.player, this.client.options.advancedItemTooltips ? TooltipType.Default.ADVANCED : TooltipType.Default.BASIC);
             tooltip.remove(ScreenTexts.EMPTY);
             tooltip.remove((Text.translatable("item.modifiers.mainhand")).formatted(Formatting.GRAY));
         }else{
             tooltip = new ArrayList<Text>();
             if(labConf.equals("name")||labConf.equals("enchantments")){
-                MutableText name = (Text.literal("")).append(selectedStack.getName()).formatted(selectedStack.getRarity().formatting);
-                if (selectedStack.hasCustomName()) {
+                MutableText name = (Text.literal("")).append(selectedStack.getName()).formatted(selectedStack.getRarity().getFormatting());
+                if (selectedStack.getComponents().contains(DataComponentTypes.CUSTOM_NAME)) {
                     name.formatted(Formatting.ITALIC);
                 }
                 tooltip.add(name);
             }
     
             if(labConf.equals("enchantments")){
-                if (selectedStack.hasNbt()) {
-                       ItemStack.appendEnchantments(tooltip, selectedStack.getEnchantments());
+                if (!selectedStack.getComponents().isEmpty()) {
+                       ((ItemStackInvoker)(Object)selectedStack).invokeAppendTooltip(DataComponentTypes.ENCHANTMENTS, Item.TooltipContext.create(client.world),tooltip::add, this.client.options.advancedItemTooltips ? TooltipType.Default.ADVANCED : TooltipType.Default.BASIC);
                 }
                 if (selectedStack.getItem() instanceof PotionItem){
                     List<Text> temp = new ArrayList<Text>();
-                    selectedStack.getItem().appendTooltip(selectedStack, client.player == null ? null : client.player.getWorld(), temp, TooltipContext.Default.ADVANCED);
+                    selectedStack.getItem().appendTooltip(selectedStack, Item.TooltipContext.create(client.world), temp, TooltipType.Default.ADVANCED);
                     tooltip.add(temp.get(0));
                 }
             }

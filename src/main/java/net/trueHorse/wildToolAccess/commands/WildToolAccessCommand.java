@@ -7,7 +7,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
@@ -26,16 +25,16 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 public class WildToolAccessCommand {
 
-    private static final CommandException STUFF_FILE_NOT_FOUND = new CommandException(Text.translatable("command.wildtoolaccess.stuff.file_not_found"));
-    private static final CommandException COULDNT_WRITE_TO_STUFF = new CommandException(Text.translatable("command.wildtoolaccess.stuff.couldnt_write"));
-    private static final CommandException PROB_COULDNT_READ_STUFF = new CommandException(Text.translatable("command.wildtoolaccess.stuff.probably_couldnt_read"));
+    private static final Text STUFF_FILE_NOT_FOUND = Text.translatable("command.wildtoolaccess.stuff.file_not_found");
+    private static final Text COULDNT_WRITE_TO_STUFF = Text.translatable("command.wildtoolaccess.stuff.couldnt_write");
+    private static final Text PROB_COULDNT_READ_STUFF = Text.translatable("command.wildtoolaccess.stuff.probably_couldnt_read");
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess){
         dispatcher.register(literal("wta")
                 .then(argument("itemType", StringArgumentType.word())
                         .then(literal("add")
                                 .then(argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes(context -> executeModifyItemType(context, WildToolAccessCommand.getItemListFromItemArgument(context),Operation.ADD, context.getSource())))
-                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).suggests((context,builder) -> {
+                                .then(argument("type", new AccessTypeArgumentType()).suggests((context,builder) -> {
                                     for(String itemType : WildToolAccessConfig.getItemTypes()){
                                         builder.suggest(itemType);
                                     }
@@ -44,7 +43,7 @@ public class WildToolAccessCommand {
                                 .then(literal("inventory").executes(context->WildToolAccessCommand.executeModifyItemType(context, WildToolAccessCommand.getItemListFromInventory(context),Operation.ADD, context.getSource()))))
                         .then(literal("remove")
                                 .then(argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes(context -> executeModifyItemType(context, WildToolAccessCommand.getItemListFromItemArgument(context),Operation.REMOVE, context.getSource())))
-                                .then(argument("type", new AccessTypeArgumentType(registryAccess)).suggests((context,builder) -> {
+                                .then(argument("type", new AccessTypeArgumentType()).suggests((context,builder) -> {
                                     for(String itemType : WildToolAccessConfig.getItemTypes()){
                                         builder.suggest(itemType);
                                     }
@@ -66,7 +65,8 @@ public class WildToolAccessCommand {
         try {
             obj = JsonHelper.deserialize(new FileReader(WildToolAccessConfig.ITEM_TYPE_DIRECTORY));
         } catch (FileNotFoundException e) {
-            throw STUFF_FILE_NOT_FOUND;
+            source.sendError(STUFF_FILE_NOT_FOUND);
+            return 0;
         }
 
         JsonArray vals = JsonHelper.getArray(obj,"values");
@@ -81,11 +81,14 @@ public class WildToolAccessCommand {
 
             source.sendFeedback(feedback);
         } catch (FileNotFoundException e) {
-            throw STUFF_FILE_NOT_FOUND;
+            source.sendError(STUFF_FILE_NOT_FOUND);
+            return 0;
         } catch (IOException e) {
-            throw COULDNT_WRITE_TO_STUFF;
+            source.sendError(COULDNT_WRITE_TO_STUFF);
+            return 0;
         } catch (Exception e){
-           throw PROB_COULDNT_READ_STUFF;
+           source.sendError(PROB_COULDNT_READ_STUFF);
+           return 0;
         }
 
         WildToolAccessConfig.loadItemTypes(source.getPlayer().clientWorld.getRegistryManager());
@@ -112,7 +115,8 @@ public class WildToolAccessCommand {
 
                 vals.forEach(val->source.sendFeedback(Text.of(val.getAsString())));
             } catch (FileNotFoundException e) {
-                throw STUFF_FILE_NOT_FOUND;
+                source.sendError(STUFF_FILE_NOT_FOUND);
+                return 0;
             }
         }
         return 1;

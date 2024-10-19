@@ -7,7 +7,8 @@
     "InGameHudMixin",
     "KeyBindingAccess",
     "MinecraftClientMixin",
-    "PlayerInventoryMixin"
+    "PlayerInventoryMixin",
+    "ItemStackInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -19,10 +19,10 @@ public class WildToolAccessSoundEvents {
     }
 
     public static void registerAll(){
-        soundEvents.add(register(new Identifier("wildtoolaccess","select0")));
-        soundEvents.add(register(new Identifier("wildtoolaccess","select1")));
-        soundEvents.add(register(new Identifier("wildtoolaccess","select2")));
-        soundEvents.add(register(new Identifier("wildtoolaccess","select3")));
+        soundEvents.add(register(Identifier.of("wildtoolaccess","select0")));
+        soundEvents.add(register(Identifier.of("wildtoolaccess","select1")));
+        soundEvents.add(register(Identifier.of("wildtoolaccess","select2")));
+        soundEvents.add(register(Identifier.of("wildtoolaccess","select3")));
     }
 
     public static void updateSoundEventsAsConfigured(){
