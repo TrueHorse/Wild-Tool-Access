@@ -68,9 +68,9 @@ public class ItemTypeHandler {
                 for(JsonElement element:vals){
                     if (element.isJsonPrimitive()) {
                         if(element.getAsString().startsWith("#")){
-                            registries.registryOrThrow(Registries.ITEM).getTagOrEmpty(TagKey.create(Registries.ITEM,new ResourceLocation(element.getAsString().substring(1)))).forEach((entry)->items.add(new ItemStack(entry).getItem()));
+                            registries.registryOrThrow(Registries.ITEM).getTagOrEmpty(TagKey.create(Registries.ITEM,ResourceLocation.parse(element.getAsString().substring(1)))).forEach((entry)->items.add(new ItemStack(entry).getItem()));
                         }else{
-                            Optional<Item> item = BuiltInRegistries.ITEM.getOptional(new ResourceLocation(element.getAsString()));
+                            Optional<Item> item = BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(element.getAsString()));
 
                             if(item.isEmpty()){
                                 WildToolAccess.LOGGER.error(element.getAsString()+" in "+file.getName()+" couldn't be added to stuff, because it isn't a registered item.");

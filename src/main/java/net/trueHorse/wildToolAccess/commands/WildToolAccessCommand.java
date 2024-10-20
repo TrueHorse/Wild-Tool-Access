@@ -14,10 +14,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.commands.arguments.item.ItemInput;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.trueHorse.wildToolAccess.commands.arguments.AccessTypeArgumentType;
 import net.trueHorse.wildToolAccess.config.ItemTypeHandler;
 
@@ -127,19 +127,19 @@ public class WildToolAccessCommand {
 
     private static ArrayList<ResourceLocation> getItemListFromItemArgument(CommandContext<CommandSourceStack> context) {
         ArrayList<ResourceLocation> list = new ArrayList<ResourceLocation>();
-        list.add(ForgeRegistries.ITEMS.getKey(context.getArgument("item", ItemInput.class).getItem()));
+        list.add(BuiltInRegistries.ITEM.getKey(context.getArgument("item", ItemInput.class).getItem()));
         return list;
     }
 
     private static ArrayList<ResourceLocation> getItemListFromAccessTypeArgument(CommandContext<CommandSourceStack> context){
-        return new ArrayList<>(ItemTypeHandler.getItemType(context.getArgument("type", String.class)).stream().map(ForgeRegistries.ITEMS::getKey).toList());
+        return new ArrayList<>(ItemTypeHandler.getItemType(context.getArgument("type", String.class)).stream().map(BuiltInRegistries.ITEM::getKey).toList());
     }
 
     private static ArrayList<ResourceLocation> getItemListFromInventory(CommandContext<CommandSourceStack> context){
         ArrayList<ResourceLocation> ids = new ArrayList<ResourceLocation>();
         Minecraft.getInstance().player.getInventory().items.forEach(stack-> {
             if(!stack.isEmpty()){
-                ids.add(ForgeRegistries.ITEMS.getKey(stack.getItem()));
+                ids.add(BuiltInRegistries.ITEM.getKey(stack.getItem()));
             }
         } );
         return ids;

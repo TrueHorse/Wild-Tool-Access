@@ -3,17 +3,21 @@ package net.trueHorse.wildToolAccess.mixin;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.TooltipFlag;
@@ -37,17 +41,13 @@ import java.util.List;
 public class InGameHudMixin implements InGameHudAccess{
 
     @Final @Shadow
-    protected Minecraft minecraft;
-    @Shadow
-    protected int screenWidth;
-    @Shadow
-    protected int screenHeight;
+    private Minecraft minecraft;
     private final ResourceLocation[] accessBarTextureSheets = accessBarTextureSheets();
     @Unique
     private ResourceLocation[] accessBarTextureSheets(){
         return new ResourceLocation[]{
-                new ResourceLocation("wildtoolaccess", "textures/gui/access_widgets0.png"),
-                new ResourceLocation("wildtoolaccess", "textures/gui/access_widgets1.png")};
+                ResourceLocation.tryBuild("wildtoolaccess", "textures/gui/access_widgets0.png"),
+                ResourceLocation.tryBuild("wildtoolaccess", "textures/gui/access_widgets1.png")};
     }
     private AccessBar[] accessBars;
     private AccessBar openAccessbar;
@@ -55,16 +55,16 @@ public class InGameHudMixin implements InGameHudAccess{
     @Shadow
     private Player getCameraPlayer(){return null;}
     @Shadow
-    private void renderSlot(GuiGraphics context, int x, int y, float tickDelta, Player player, ItemStack stack, int seed){}
+    private void renderSlot(GuiGraphics context, int x, int y, DeltaTracker deltaTracker, Player player, ItemStack stack, int seed){}
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initAccessBar(Minecraft client, ItemRenderer itemRenderer, CallbackInfo ci){
+    private void initAccessBar(Minecraft client, CallbackInfo ci){
         accessBars = getAccessBarArray();
     }
 
     //injecting in renderHotbar, because Forge overrides render and I don't want to go trough the effort of registering an overlay
     @Inject(method = "renderHotbar", at = @At("RETURN"))
-    private void renderAccessBar(float tickDelta, GuiGraphics context, CallbackInfo ci){
+    private void renderAccessBar(GuiGraphics context, DeltaTracker deltaTracker,  CallbackInfo ci){
         if(openAccessbar!=null){
             Player playerEntity = this.getCameraPlayer();
             if (playerEntity != null) {
@@ -73,8 +73,8 @@ public class InGameHudMixin implements InGameHudAccess{
                 ResourceLocation barTextures;
                 barTextures = openAccessbar.getTextures();
 
-                int firstSlotXCoordinate = screenWidth / 2 -10+WildToolAccessConfig.xOffset;
-                int yCoordinate = screenHeight /2 -54+WildToolAccessConfig.yOffset;
+                int firstSlotXCoordinate = context.guiWidth() / 2 -10+WildToolAccessConfig.xOffset;
+                int yCoordinate = context.guiHeight() /2 -54+WildToolAccessConfig.yOffset;
                 context.pose().pushPose();
                 context.pose().translate(0.0F, 0.0F, -90.0F);
 
@@ -101,7 +101,7 @@ public class InGameHudMixin implements InGameHudAccess{
                 int seed =1;
                 for(int i = 0; i < openAccessbar.getStacks().size(); ++i) {
                     xCoordinate = firstSlotXCoordinate + i * spaceBetweenSlots + 3 - spaceBetweenSlots*(openAccessbar.getSelectedAccessSlotIndex());
-                    this.renderSlot(context, xCoordinate, yCoordinate+3, tickDelta, playerEntity, openAccessbar.getStacks().get(i),seed++);
+                    this.renderSlot(context, xCoordinate, yCoordinate+3, deltaTracker, playerEntity, openAccessbar.getStacks().get(i),seed++);
                 }
 
                 String labConf = WildToolAccessConfig.itemInfoShown;
@@ -117,26 +117,26 @@ public class InGameHudMixin implements InGameHudAccess{
         ItemStack selectedStack = openAccessbar.getStacks().get(openAccessbar.getSelectedAccessSlotIndex());
         List<Component> tooltip;
         if(labConf.equals("all")){
-            tooltip = selectedStack.getTooltipLines(minecraft.player, this.minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
+            tooltip = selectedStack.getTooltipLines(Item.TooltipContext.of(minecraft.level),minecraft.player, this.minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
             tooltip.remove(CommonComponents.EMPTY);
             tooltip.remove((Component.translatable("item.modifiers.mainhand")).withStyle(ChatFormatting.GRAY));
         }else{
             tooltip = new ArrayList<Component>();
             if(labConf.equals("name")||labConf.equals("enchantments")){
                 MutableComponent name = (Component.literal("")).append(selectedStack.getHoverName()).withStyle(selectedStack.getRarity().getStyleModifier());
-                if (selectedStack.hasCustomHoverName()) {
+                if (selectedStack.getComponents().has(DataComponents.ENCHANTMENTS)) {
                     name.withStyle(ChatFormatting.ITALIC);
                 }
                 tooltip.add(name);
             }
     
             if(labConf.equals("enchantments")){
-                if (selectedStack.hasTag()) {
-                       ItemStack.appendEnchantmentNames(tooltip, selectedStack.getEnchantmentTags());
+                if (selectedStack.getComponents().isEmpty()) {
+                    ((ItemStackInvoker)(Object)selectedStack).invokeAddToTooltip(DataComponents.ENCHANTMENTS, Item.TooltipContext.of(minecraft.level),tooltip::add, this.minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
                 }
                 if (selectedStack.getItem() instanceof PotionItem){
                     List<Component> temp = new ArrayList<Component>();
-                    selectedStack.getItem().appendHoverText(selectedStack, minecraft.player == null ? null : minecraft.player.level(), temp, TooltipFlag.Default.ADVANCED);
+                    selectedStack.getItem().appendHoverText(selectedStack, Item.TooltipContext.of(minecraft.level), temp, TooltipFlag.Default.ADVANCED);
                     tooltip.add(temp.get(0));
                 }
             }

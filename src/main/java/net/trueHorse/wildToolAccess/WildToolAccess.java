@@ -3,25 +3,27 @@ package net.trueHorse.wildToolAccess;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
 import net.trueHorse.wildToolAccess.config.ItemTypeHandler;
 import net.trueHorse.wildToolAccess.config.WildToolAccessConfig;
 import org.apache.logging.log4j.LogManager;
 import org.lwjgl.glfw.GLFW;
 
-// The value here should match an entry in the META-INF/mods.toml file
+// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(WildToolAccess.MODID)
 public class WildToolAccess
 {
@@ -42,16 +44,16 @@ public class WildToolAccess
             "key.categories.inventory"
     ));
 
-    public WildToolAccess()
+    public WildToolAccess(IEventBus modEventBus, ModContainer modContainer)
     {
         // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT,WildToolAccessConfig.SPEC);
-        WildToolAccessSoundEvents.registerAll();
+        //NeoForge.EVENT_BUS.register(this);
+        modContainer.registerConfig(ModConfig.Type.CLIENT,WildToolAccessConfig.SPEC);
+        WildToolAccessSoundEvents.registerAll(modEventBus);
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
         @SubscribeEvent
@@ -68,7 +70,7 @@ public class WildToolAccess
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID,bus = Mod.EventBusSubscriber.Bus.FORGE,value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID,bus = EventBusSubscriber.Bus.GAME,value = Dist.CLIENT)
     public static class ClientForgeEvent{
 
         private static boolean access1WasPressed;
@@ -85,31 +87,29 @@ public class WildToolAccess
         }
 
         @SubscribeEvent
-        public static void onClientTick(TickEvent.ClientTickEvent event) {
-            if (event.phase == TickEvent.Phase.END) { // Only call code once as the tick event is called twice every tick
-                InGameHudAccess hudAcc = ((InGameHudAccess)Minecraft.getInstance().gui);
+        public static void onClientTick(ClientTickEvent.Post event) {
+            InGameHudAccess hudAcc = ((InGameHudAccess)Minecraft.getInstance().gui);
 
-                if(!WildToolAccessConfig.toggleMode){
-                    if(ACCESS_1_BINDING.get().isDown()&&ACCESS_2_BINDING.get().isDown()) {
-                        return;
-                    }
+            if(!WildToolAccessConfig.toggleMode){
+                if(ACCESS_1_BINDING.get().isDown()&&ACCESS_2_BINDING.get().isDown()) {
+                    return;
+                }
 
-                    if(ACCESS_1_BINDING.get().isDown()!=access1WasPressed) {
-                        onAccessBindingHeldStatusChanged(ACCESS_1_BINDING, hudAcc);
-                    }
-                    if(ACCESS_2_BINDING.get().isDown()!=access2WasPressed) {
-                        onAccessBindingHeldStatusChanged(ACCESS_2_BINDING, hudAcc);
-                    }
+                if(ACCESS_1_BINDING.get().isDown()!=access1WasPressed) {
+                    onAccessBindingHeldStatusChanged(ACCESS_1_BINDING, hudAcc);
+                }
+                if(ACCESS_2_BINDING.get().isDown()!=access2WasPressed) {
+                    onAccessBindingHeldStatusChanged(ACCESS_2_BINDING, hudAcc);
+                }
 
-                    access1WasPressed = ACCESS_1_BINDING.get().isDown();
-                    access2WasPressed = ACCESS_2_BINDING.get().isDown();
-                }else {
-                    while (ACCESS_1_BINDING.get().consumeClick()) {
-                        onToggleBarBindingPressed(1, hudAcc);
-                    }
-                    while (ACCESS_2_BINDING.get().consumeClick()) {
-                        onToggleBarBindingPressed(2, hudAcc);
-                    }
+                access1WasPressed = ACCESS_1_BINDING.get().isDown();
+                access2WasPressed = ACCESS_2_BINDING.get().isDown();
+            }else {
+                while (ACCESS_1_BINDING.get().consumeClick()) {
+                    onToggleBarBindingPressed(1, hudAcc);
+                }
+                while (ACCESS_2_BINDING.get().consumeClick()) {
+                    onToggleBarBindingPressed(2, hudAcc);
                 }
             }
         }
