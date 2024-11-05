@@ -117,6 +117,7 @@ repositories {
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
     maven { url "https://maven.fabricmc.net/" }
+    maven { url "https://maven.shedaniel.me/" }
 
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
@@ -135,6 +136,7 @@ dependencies {
 
     // Apply Mixin AP
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
+    implementation fg.deobf( "me.shedaniel.cloth:cloth-config-forge:11.1.136")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
