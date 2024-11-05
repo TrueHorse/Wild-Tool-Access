@@ -122,8 +122,6 @@ public class ItemTypeHandler {
     }
 
     public static ImmutableSet<Item> getItemType(String name) {
-        WildToolAccess.LOGGER.info(name);
-        WildToolAccess.LOGGER.info(ITEM_TYPES);
         return Objects.requireNonNullElseGet(ITEM_TYPES.get(name), ImmutableSet::of);
     }
 
