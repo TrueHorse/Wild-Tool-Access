@@ -36,7 +36,7 @@ public class ItemTypeHandler {
     private static final String DEFAULT_TOOLS_CONTENT = """
                     {
                         "values":[
-                            "#minecraft:tools"
+                            "#minecraft:breaks_decorated_pots"
                         ]
                     }""";
 
@@ -122,6 +122,8 @@ public class ItemTypeHandler {
     }
 
     public static ImmutableSet<Item> getItemType(String name) {
+        WildToolAccess.LOGGER.info(name);
+        WildToolAccess.LOGGER.info(ITEM_TYPES);
         return Objects.requireNonNullElseGet(ITEM_TYPES.get(name), ImmutableSet::of);
     }
 
