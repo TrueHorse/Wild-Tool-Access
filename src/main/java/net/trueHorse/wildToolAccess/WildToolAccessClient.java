@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.trueHorse.wildToolAccess.commands.WildToolAccessCommands;
@@ -68,24 +69,28 @@ public class WildToolAccessClient implements ClientModInitializer{
     }
 
     private void onAccessBindingHeldStatusChanged(KeyBinding accessBinding, InGameHudAccess hudAcc){
-        if (accessBinding.isPressed()) {
-            hudAcc.openAccessbar(accessBinding==access1Binding?1:2);
-        } else {
-            if(hudAcc.getOpenAccessBar()!=null) {
-                hudAcc.closeOpenAccessbar(true);
+        if(!MinecraftClient.getInstance().player.isSpectator()){
+            if (accessBinding.isPressed()) {
+                hudAcc.openAccessbar(accessBinding == access1Binding ? 1 : 2);
+            } else {
+                if (hudAcc.getOpenAccessBar() != null) {
+                    hudAcc.closeOpenAccessbar(true);
+                }
             }
         }
     }
     
     private void onToggleBarBindingPressed(int barNum, InGameHudAccess hudAcc){
-        if(hudAcc.getOpenAccessBar()!=null){
-            if(hudAcc.isBarWithNumberOpen(barNum)){
-                hudAcc.closeOpenAccessbar(true);
-            }else{
+        if(!MinecraftClient.getInstance().player.isSpectator()){
+            if (hudAcc.getOpenAccessBar() != null) {
+                if (hudAcc.isBarWithNumberOpen(barNum)) {
+                    hudAcc.closeOpenAccessbar(true);
+                } else {
+                    hudAcc.openAccessbar(barNum);
+                }
+            } else {
                 hudAcc.openAccessbar(barNum);
             }
-        }else{
-            hudAcc.openAccessbar(barNum);
         }
     }
 }
