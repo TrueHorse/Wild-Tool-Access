@@ -117,24 +117,28 @@ public class WildToolAccess
         }
 
         private static void onAccessBindingHeldStatusChanged(Lazy<KeyMapping> accessBinding, InGameHudAccess hudAcc){
-            if (accessBinding.get().isDown()) {
-                hudAcc.openAccessbar(accessBinding==ACCESS_1_BINDING?1:2);
-            } else {
-                if(hudAcc.getOpenAccessBar()!=null) {
-                    hudAcc.closeOpenAccessbar(true);
+            if(!Minecraft.getInstance().player.isSpectator()){
+                if (accessBinding.get().isDown()) {
+                    hudAcc.openAccessbar(accessBinding == ACCESS_1_BINDING ? 1 : 2);
+                } else {
+                    if (hudAcc.getOpenAccessBar() != null) {
+                        hudAcc.closeOpenAccessbar(true);
+                    }
                 }
             }
         }
 
         private static void onToggleBarBindingPressed(int barNum, InGameHudAccess hudAcc){
-            if(hudAcc.getOpenAccessBar()!=null){
-                if(hudAcc.isBarWithNumberOpen(barNum)){
-                    hudAcc.closeOpenAccessbar(true);
-                }else{
+            if(!Minecraft.getInstance().player.isSpectator()){
+                if (hudAcc.getOpenAccessBar() != null) {
+                    if (hudAcc.isBarWithNumberOpen(barNum)) {
+                        hudAcc.closeOpenAccessbar(true);
+                    } else {
+                        hudAcc.openAccessbar(barNum);
+                    }
+                } else {
                     hudAcc.openAccessbar(barNum);
                 }
-            }else{
-                hudAcc.openAccessbar(barNum);
             }
         }
 
